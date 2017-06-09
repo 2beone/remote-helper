@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:scrollbars="vertical|none" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/mypic"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/singup_pic"/>
+
+        <RelativeLayout
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="150dp" >
+
+            <LinearLayout
+                android:id="@+id/basic_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:paddingRight="5px" >
+
+                <ListView
+                    android:id="@+id/basic_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="#00000000"
+                    android:listSelector="#00000000" />
+
+                <LinearLayout
+                    android:id="@+id/basic_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="* "
+                            android:textColor="#FF0000"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="이름 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)홍길동"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="나이 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:digits="0123456789"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)27"
+                            android:inputType="number"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/birth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="생년월일 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_birth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:digits="0123456789-"
+                            android:inputType="number"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)1234년 00월 00일"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/sex"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="성별 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_sex"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)남"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/mobile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="연락처 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_mobile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:digits="0123456789-"
+                            android:inputType="number"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)010-0000-0000"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/emergency"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="긴급연락처 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_emergency"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:digits="0123456789-"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)02-0000-0000"
+                            android:inputType="number"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/addr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="거주지주소 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_addr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)서울특별시 광진구 자양동 우성아파트"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/detail_addr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="상세주소 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_detail_addr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)7동 206호"
+                            android:textSize="10sp" >
+                        </EditText>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/health_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/basic_info"
+                android:layout_marginBottom="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:paddingRight="5px" >
+
+                <ListView
+                    android:id="@+id/health_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="#00000000"
+                    android:listSelector="#00000000" />
+
+                <LinearLayout
+                    android:id="@+id/health_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/blood"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="혈액형 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_blood"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)RH+ AB형"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/sick"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="질환 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_sick"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)심장병"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/hospital"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="주치병원 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_hospital"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)강동성심병원"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/doctor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="주치의 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_doctor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)신경외과 홍길동교수"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/etc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:text="기타사항 : "
+                            android:textColor="#000000"
+                            android:textSize="10sp" />
+
+                        <EditText
+                            android:id="@+id/edit_etc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="ex)알러지, 혈압 ..."
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/basic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="10dp"
+                android:background="#dbdce4"
+                android:text="기본정보"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/health"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/basic_info"
+                android:background="#dbdce4"
+                android:paddingLeft="10dp"
+                android:text="건강정보"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/edit_basic"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/edit_button" />
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/edit_mypic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@+id/mypic"
+            android:layout_alignRight="@+id/mypic"
+            android:background="@drawable/photo_edit_button" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/insert"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/signup_insert_button"
+                android:visibility="invisible" />
+
+            <ImageButton
+                android:id="@+id/cancel"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/signup_cancel_button"
+                android:visibility="invisible" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>

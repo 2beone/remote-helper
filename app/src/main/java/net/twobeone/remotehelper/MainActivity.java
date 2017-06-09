@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        helper = new SQLiteHelper(getApplicationContext(), "userinfo.db", null, 1);
+//        helper = new SQLiteHelper(getApplicationContext(), "userinfo.db", null, 1);
 
         checkPermissions();
 

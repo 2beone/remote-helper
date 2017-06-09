@@ -170,8 +170,9 @@ public class WebRTCClientWebSocket {
 
         mWebSocketClient = null;
 
-        iceServers.add(new PeerConnection.IceServer("stun:stun2.1.google.com:19302"));
-        iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
+//        iceServers.add(new PeerConnection.IceServer("stun:stun2.1.google.com:19302"));
+//        iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
+        iceServers.add(new PeerConnection.IceServer("stun:remohelper.com:3478"));
 
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));

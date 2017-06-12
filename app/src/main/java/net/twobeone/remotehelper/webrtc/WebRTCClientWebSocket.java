@@ -41,12 +41,18 @@ import org.webrtc.VideoSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -170,9 +176,9 @@ public class WebRTCClientWebSocket {
 
         mWebSocketClient = null;
 
-//        iceServers.add(new PeerConnection.IceServer("stun:stun2.1.google.com:19302"));
-//        iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
-        iceServers.add(new PeerConnection.IceServer("stun:remohelper.com:3478"));
+        iceServers.add(new PeerConnection.IceServer("stun:stun2.1.google.com:19302"));
+        iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
+//        iceServers.add(new PeerConnection.IceServer("stun:remohelper.com:3478"));
 
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
@@ -193,9 +199,10 @@ public class WebRTCClientWebSocket {
         }
 
         mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
+
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
+                Log.e("SSSSS", "Opened");
                 try {
                     JSONObject message = new JSONObject();
                     message.put("type", "login");
@@ -227,7 +234,7 @@ public class WebRTCClientWebSocket {
                     } else if (type.equals("login")) {
                         Log.e("SSSSS list", ""+data.getJSONArray("people").length());
 //                        people = data.getJSONArray("people").getString(0);
-                        people = "2beone1";//임의 2beone1로만 연결
+                        people = "2beone";//임의 2beone1로만 연결
                         JSONObject message = new JSONObject();
                         message.put("type", "call");
                         message.put("name", people);
@@ -284,15 +291,32 @@ public class WebRTCClientWebSocket {
                 Log.e("SSSSS", "Error WebSocket " + e.getMessage());
             }
         };
+
+        KeyManager[] keyManager = null;
+        try {
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            KeyManagerFactory factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            factory.init(keyStore, null);
+            keyManager = factory.getKeyManagers();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new TrustAllManager()}, null);
+            sslContext.init(keyManager, new TrustManager[]{new TrustAllManager()}, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
             mWebSocketClient.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(sslContext));
         } catch (NoSuchAlgorithmException e) {
             Log.e("Websocket", "Error SSL " + e.getMessage());
         } catch (KeyManagementException e) {
             Log.e("Websocket", "Error SSL " + e.getMessage());
         }
+
         setCamera();
         mWebSocketClient.connect();
     }
@@ -316,7 +340,7 @@ public class WebRTCClientWebSocket {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             // TODO Auto-generated method stub
-            return null;
+            return new java.security.cert.X509Certificate[]{};
         }
     }
 

@@ -16,12 +16,19 @@
 
 package net.twobeone.remotehelper.webrtc;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.opengl.EGLContext;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
+import net.twobeone.remotehelper.handler.GPSInfo;
+import net.twobeone.remotehelper.handler.SQLiteHelper;
+
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,21 +45,18 @@ import org.webrtc.VideoCapturer;
 import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoSource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -120,9 +124,9 @@ public class WebRTCClientWebSocket {
         public void execute(String peerId, JSONObject payload) throws JSONException {
             Log.e("SSSSS", "SetRemoteSDPCommand");
             WebRTCClientWebSocket.Peer peer = peers.get(peerId);
-            SessionDescription  sdp = new SessionDescription(
-                        SessionDescription.Type.fromCanonicalForm(payload.getString("type")),
-                        payload.getString("sdp").replace("VP9","VP8")//내폰용
+            SessionDescription sdp = new SessionDescription(
+                    SessionDescription.Type.fromCanonicalForm(payload.getString("type")),
+                    payload.getString("sdp").replace("VP9", "VP8")//내폰용
             );
             peer.pc.setRemoteDescription(peer, sdp);
         }
@@ -178,7 +182,7 @@ public class WebRTCClientWebSocket {
 
         iceServers.add(new PeerConnection.IceServer("stun:stun2.1.google.com:19302"));
         iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
-//        iceServers.add(new PeerConnection.IceServer("stun:remohelper.com:3478"));
+        iceServers.add(new PeerConnection.IceServer("stun:remohelper.com:3478"));
 
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
@@ -198,150 +202,140 @@ public class WebRTCClientWebSocket {
             return;
         }
 
-        mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
-
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.e("SSSSS", "Opened");
-                try {
-                    JSONObject message = new JSONObject();
-                    message.put("type", "login");
-                    message.put("name", "김진혁");
-                    mWebSocketClient.send(message.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onMessage(String s) {
-                Log.e("SSSSS Receive", s);
-
-                try {
-                    JSONObject data = new JSONObject(s);
-                    String type = data.getString("type");
-                    JSONObject payload = null;
-                    if (type.equals("offer")) {
-                        payload = data.getJSONObject("offer");
-                    } else if (type.equals("answer")) {
-                        payload = data.getJSONObject("answer");
-                    } else if (type.equals("leave")) {
-                        JSONObject message = new JSONObject();
-                        message.put("type", "leave");
-                        message.put("name", people);
-                        mWebSocketClient.send(message.toString());
-                        removePeer(people);
-                    } else if (type.equals("login")) {
-                        Log.e("SSSSS list", ""+data.getJSONArray("people").length());
-//                        people = data.getJSONArray("people").getString(0);
-                        people = "2beone";//임의 2beone1로만 연결
-                        JSONObject message = new JSONObject();
-                        message.put("type", "call");
-                        message.put("name", people);
-                        message.put("saviorName", "김진혁");
-                        mWebSocketClient.send(message.toString());
-                    } else if (type.equals("candidate")){
-                        payload = data.getJSONObject("candidate");
-                    } else if (type.equals("callAnswer")){
-                        people = data.getString("name");
-                    } else if (type.equals("cameraClick")){
-                        WebRTCClientWebSocket.Peer peer = peers.get(people);
-                        peer.pc.removeStream(localMS);
-
-                        localMS.dispose();
-                        localMS = null;
-                        videoSource.dispose();
-                        videoSource = null;
-                        videoCapturer.dispose();
-                        videoCapturer = null;
-                        audioSource.dispose();
-                        audioSource = null;
-                        setCamera();
-
-                        peer.pc.addStream(localMS);
-                        payload = data.getJSONObject("offer2");
-                    }
-                    // if peer is unknown, try to add him
-                    if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call") && !type.equals("cameraClick")) {
-                        // if MAX_PEER is reach, ignore the call
-
-                        int endPoint = findEndPoint();
-                        if (endPoint != MAX_PEER) {
-                            WebRTCClientWebSocket.Peer peer = addPeer(people, endPoint);
-                            peer.pc.addStream(localMS);
-                            Log.e("SSSSS", "TYPE!!!!!!" + type);
-                            commandMap.get(type).execute(people, payload);
-                        }
-                    } else if(!type.equals("leave") && !type.equals("login")) {
-                        Log.e("SSSSS", "TYPE!!!!!!" + type);
-                        commandMap.get(type).execute(people, payload);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.e("SSSSS", "Closed " + s);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("SSSSS", "Error WebSocket " + e.getMessage());
-            }
-        };
-
-        KeyManager[] keyManager = null;
-        try {
-            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            KeyManagerFactory factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            factory.init(keyStore, null);
-            keyManager = factory.getKeyManagers();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManager, new TrustManager[]{new TrustAllManager()}, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-            mWebSocketClient.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(sslContext));
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("Websocket", "Error SSL " + e.getMessage());
-        } catch (KeyManagementException e) {
-            Log.e("Websocket", "Error SSL " + e.getMessage());
-        }
 
         setCamera();
-        mWebSocketClient.connect();
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    mWebSocketClient = new WebSocketClient(uri) {
+
+                        @Override
+                        public void onOpen(ServerHandshake handshakedata) {
+                            Log.e("SSSSS", "Opened");
+                            try {
+                                JSONObject message = new JSONObject();
+                                message.put("type", "login");
+                                message.put("name", "김진혁");
+                                mWebSocketClient.send(message.toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onMessage(String s) {
+                            Log.e("SSSSS", "onMessage");
+                            try {
+                                JSONObject data = new JSONObject(s);
+                                String type = data.getString("type");
+                                JSONObject payload = null;
+                                if (type.equals("offer")) {
+                                    payload = data.getJSONObject("offer");
+                                } else if (type.equals("answer")) {
+                                    payload = data.getJSONObject("answer");
+                                } else if (type.equals("leave")) {
+                                    JSONObject message = new JSONObject();
+                                    message.put("type", "leave");
+                                    message.put("name", people);
+                                    mWebSocketClient.send(message.toString());
+                                    removePeer(people);
+                                } else if (type.equals("login")) {
+                                    Log.e("SSSSS list", "" + data.getJSONArray("people").length());
+                                    people = data.getJSONArray("people").getString(0);
+//                                    people = "2beone1";//임의 2beone1로만 연결
+                                    JSONObject message = new JSONObject();
+                                    message.put("type", "call");
+                                    message.put("name", people);
+                                    message.put("saviorName", "김진혁");
+                                    mWebSocketClient.send(message.toString());
+                                } else if (type.equals("candidate")) {
+                                    payload = data.getJSONObject("candidate");
+                                } else if (type.equals("callAnswer")) {
+                                    people = data.getString("name");
+                                } else if (type.equals("cameraClick")) {
+                                    WebRTCClientWebSocket.Peer peer = peers.get(people);
+                                    peer.pc.removeStream(localMS);
+
+                                    localMS.dispose();
+                                    localMS = null;
+                                    videoSource.dispose();
+                                    videoSource = null;
+                                    videoCapturer.dispose();
+                                    videoCapturer = null;
+                                    audioSource.dispose();
+                                    audioSource = null;
+                                    setCamera();
+
+                                    peer.pc.addStream(localMS);
+                                    payload = data.getJSONObject("offer2");
+                                }
+                                // if peer is unknown, try to add him
+                                if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call") && !type.equals("cameraClick")) {
+                                    // if MAX_PEER is reach, ignore the call
+
+                                    int endPoint = findEndPoint();
+                                    if (endPoint != MAX_PEER) {
+                                        WebRTCClientWebSocket.Peer peer = addPeer(people, endPoint);
+                                        peer.pc.addStream(localMS);
+                                        Log.e("SSSSS", "TYPE!!!!!!" + type);
+                                        commandMap.get(type).execute(people, payload);
+                                    }
+                                } else if (!type.equals("leave") && !type.equals("login")) {
+                                    Log.e("SSSSS", "TYPE!!!!!!" + type);
+                                    commandMap.get(type).execute(people, payload);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onClose(int code, String reason, boolean remote) {
+                            Log.e("SSSSS", "onClose");
+                        }
+
+                        @Override
+                        public void onError(Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    };
+
+                    mWebSocketClient.setSocket(getSSLContext().getSocketFactory().createSocket());
+                    mWebSocketClient.connect();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 
-    private class TrustAllManager implements X509TrustManager {
+    private SSLContext getSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
 
-        @Override
-        public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-                throws CertificateException {
-            // TODO Auto-generated method stub
+        TrustManager[] trustManagers = new TrustManager[]{new X509TrustManager() {
 
-        }
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
 
-        @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-                throws CertificateException {
-            // TODO Auto-generated method stub
+            }
 
-        }
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
 
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            // TODO Auto-generated method stub
-            return new java.security.cert.X509Certificate[]{};
-        }
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }};
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, new java.security.SecureRandom());
+        return sslContext;
     }
 
     private class Peer implements SdpObserver, PeerConnection.Observer {
@@ -358,8 +352,8 @@ public class WebRTCClientWebSocket {
                 if (sdp.type.canonicalForm().equals("offer") ||
                         sdp.type.canonicalForm().equals("offer2")) {
                     Log.e("SSSSS", "offer sdp change video codecs");
-                    payload.put("sdp", sdp.description.replace("m=video 9 RTP/SAVPF 100 116 117 96","m=video 9 RTP/SAVPF 98 100 116 117 96")
-                            .replace("VP8","VP9")
+                    payload.put("sdp", sdp.description.replace("m=video 9 RTP/SAVPF", "m=video 9 RTP/SAVPF 98")
+                            .replace("VP8", "VP9")
                             .replace("a=rtpmap:100 VP9", "a=rtcp-rsize\r\n" +
                                     "a=rtpmap:98 VP8/90000\r\n" +
                                     "a=rtcp-fb:98 ccm fir\r\n" +
@@ -398,7 +392,7 @@ public class WebRTCClientWebSocket {
         public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
             Log.e("SSSSS", "onIceConnectionChange ::: " + iceConnectionState.toString());
             if (iceConnectionState == PeerConnection.IceConnectionState.DISCONNECTED) {
-                Log.e("SSSSS","DISCONNECTED");
+                Log.e("SSSSS", "DISCONNECTED");
                 for (WebRTCClientWebSocket.Peer peer : peers.values()) {
                     peer.pc.dispose();
                 }
@@ -477,7 +471,6 @@ public class WebRTCClientWebSocket {
         videoCapturer = null;
         audioSource.dispose();
         audioSource = null;
-//        peer.pc.close();
         peer.pc = null;
 
         peers.remove(peer.id);
@@ -505,7 +498,6 @@ public class WebRTCClientWebSocket {
     public void onDestroy() {
         Log.e("SSSSS", "onDestroy");
         mWebSocketClient.close();
-        Log.e("SSSSS", "Here4");
         mListener.onClose();
     }
 
@@ -515,10 +507,10 @@ public class WebRTCClientWebSocket {
     }
 
     private void setCamera() {
-        if (camera.equals("front")){
+        if (camera.equals("front")) {
             videoCapturer = getVideoCapturerFront();
             camera = "back";
-        }else {
+        } else {
             videoCapturer = getVideoCapturerBack();
             camera = "front";
         }

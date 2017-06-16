@@ -17,16 +17,10 @@
 package net.twobeone.remotehelper.webrtc;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Address;
-import android.location.Geocoder;
 import android.opengl.EGLContext;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
-
-import net.twobeone.remotehelper.handler.GPSInfo;
-import net.twobeone.remotehelper.handler.SQLiteHelper;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -45,17 +39,21 @@ import org.webrtc.VideoCapturer;
 import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoSource;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -67,7 +65,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class WebRTCClientWebSocket {
 
-    private WebSocketClient mWebSocketClient;
+    private final Context mContext;
+    public WebSocketClient mWebSocketClient;
     private URI uri;
 
     private final static int MAX_PEER = 2;
@@ -83,14 +82,20 @@ public class WebRTCClientWebSocket {
     private WebRTCClientWebSocket.RtcListener mListener;
     private HashMap<String, WebRTCClientWebSocket.Command> commandMap;
     private String people = "";
+    private String fileName = "";
+    private String filePath = "";
     private VideoCapturer videoCapturer;
     private String camera = "front";
+    private String Save_Path;
+    private String url = "https://remohelper.com:440/download/";
 
     public interface RtcListener {
 
         void onStatusChanged(String newStatus);
 
         void onLocalStream(MediaStream localStream);
+
+        void onStartRecording();
 
         void onClose();
     }
@@ -163,20 +168,19 @@ public class WebRTCClientWebSocket {
         mWebSocketClient.send(message.toString());
     }
 
-    public WebRTCClientWebSocket(WebRTCClientWebSocket.RtcListener listener, String host, PeerConnectionParameters params, EGLContext mEGLcontext) {
-
+    public WebRTCClientWebSocket(Context context, WebRTCClientWebSocket.RtcListener listener, String host, PeerConnectionParameters params, EGLContext mEGLcontext) {
+        Log.e("SSSSS", "WebRTCClientWebSocket Init");
+        Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
+        mContext = context;
         mListener = listener;
         pcParams = params;
-        PeerConnectionFactory.initializeAndroidGlobals(listener, true, true,
-                params.videoCodecHwAcceleration, mEGLcontext);
 
-        audioSource = null;
-        videoSource = null;
-        localMS = null;
-        factory = null;
-        videoCapturer = null;
+        PeerConnectionFactory.initializeAndroidGlobals(mContext, true, true, params.videoCodecHwAcceleration, mEGLcontext);
+
+        Log.e("SSSSS", "initializeAndroidGlobals Init");
 
         factory = new PeerConnectionFactory();
+        Log.e("SSSSS", "PeerConnectionFactory Init");
 
         mWebSocketClient = null;
 
@@ -197,11 +201,11 @@ public class WebRTCClientWebSocket {
 
         try {
             uri = new URI(host);
+            Log.e("SSSSS", "URI OK");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
-
 
         setCamera();
 
@@ -226,7 +230,7 @@ public class WebRTCClientWebSocket {
 
                         @Override
                         public void onMessage(String s) {
-                            Log.e("SSSSS", "onMessage");
+                            Log.e("SSSSS", "onMessage " + s);
                             try {
                                 JSONObject data = new JSONObject(s);
                                 String type = data.getString("type");
@@ -243,13 +247,26 @@ public class WebRTCClientWebSocket {
                                     removePeer(people);
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
-                                    people = data.getJSONArray("people").getString(0);
-//                                    people = "2beone1";//임의 2beone1로만 연결
-                                    JSONObject message = new JSONObject();
-                                    message.put("type", "call");
-                                    message.put("name", people);
-                                    message.put("saviorName", "김진혁");
-                                    mWebSocketClient.send(message.toString());
+                                    if (data.getJSONArray("people").length() >0) {
+//                                    people = data.getJSONArray("people").getString(0);
+                                        people = "chae";//임의 2beone1로만 연결
+                                        JSONObject message = new JSONObject();
+                                        message.put("type", "call");
+                                        message.put("name", people);
+                                        message.put("saviorName", "김진혁");
+                                        mWebSocketClient.send(message.toString());
+                                    } else {
+//                                        localMS.dispose();
+//                                        localMS = null;
+//                                        videoSource.dispose();
+//                                        videoSource = null;
+//                                        videoCapturer.dispose();
+//                                        videoCapturer = null;
+//                                        audioSource.dispose();
+//                                        audioSource = null;
+                                        mWebSocketClient.close();
+                                        startRecording();
+                                    }
                                 } else if (type.equals("candidate")) {
                                     payload = data.getJSONObject("candidate");
                                 } else if (type.equals("callAnswer")) {
@@ -270,9 +287,15 @@ public class WebRTCClientWebSocket {
 
                                     peer.pc.addStream(localMS);
                                     payload = data.getJSONObject("offer2");
+                                } else if (type.equals("file")) {
+                                    fileName = data.getString("filename");
+                                    filePath = data.getString("filepath");
+                                    Log.e("SSSSS", "fileName ::: " + fileName + " filePath ::: " + filePath);
+
+                                    downloadThread(url + filePath, Save_Path + fileName, fileName);
                                 }
                                 // if peer is unknown, try to add him
-                                if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call") && !type.equals("cameraClick")) {
+                                if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call") && !type.equals("cameraClick") && !type.equals("file")) {
                                     // if MAX_PEER is reach, ignore the call
 
                                     int endPoint = findEndPoint();
@@ -282,7 +305,7 @@ public class WebRTCClientWebSocket {
                                         Log.e("SSSSS", "TYPE!!!!!!" + type);
                                         commandMap.get(type).execute(people, payload);
                                     }
-                                } else if (!type.equals("leave") && !type.equals("login")) {
+                                } else if (!type.equals("leave") && !type.equals("login") && !type.equals("file")) {
                                     Log.e("SSSSS", "TYPE!!!!!!" + type);
                                     commandMap.get(type).execute(people, payload);
                                 }
@@ -293,12 +316,30 @@ public class WebRTCClientWebSocket {
 
                         @Override
                         public void onClose(int code, String reason, boolean remote) {
+                            if (localMS != null) {
+                                WebRTCClientWebSocket.Peer peer = peers.get(people);
+
+                                peer.pc.removeStream(localMS);
+
+                                localMS.dispose();
+                                localMS = null;
+                                videoSource.dispose();
+                                videoSource = null;
+                                videoCapturer.dispose();
+                                videoCapturer = null;
+                                audioSource.dispose();
+                                audioSource = null;
+                                peer.pc = null;
+
+                                peers.remove(peer.id);
+                                endPoints[peer.endPoint] = false;
+                            }
                             Log.e("SSSSS", "onClose");
                         }
 
                         @Override
                         public void onError(Exception ex) {
-                            ex.printStackTrace();
+                            Log.e("SSSSS", "onError " + ex.toString());
                         }
                     };
 
@@ -306,6 +347,7 @@ public class WebRTCClientWebSocket {
                     mWebSocketClient.connect();
 
                 } catch (Exception e) {
+                    Log.e("SSSSS", "Socket Error " + e.toString());
                     e.printStackTrace();
                 }
                 return null;
@@ -457,7 +499,7 @@ public class WebRTCClientWebSocket {
         return peer;
     }
 
-    private void removePeer(String id) {
+    public void removePeer(String id) {
         Log.e("SSSSS", "removePeer");
         WebRTCClientWebSocket.Peer peer = peers.get(id);
 
@@ -551,5 +593,66 @@ public class WebRTCClientWebSocket {
     private VideoCapturer getVideoCapturerBack() {
         String backCameraDeviceName = VideoCapturerAndroid.getNameOfBackFacingDevice();//후방
         return VideoCapturerAndroid.create(backCameraDeviceName);
+    }
+
+    public void clearSocket() {
+        try {
+            JSONObject message = new JSONObject();
+            message.put("type", "leave");
+            message.put("name", people);
+            mWebSocketClient.send(message.toString());
+        } catch (JSONException e) {
+
+        }
+    }
+
+    private void downloadThread(String serverPath, String localPath, String filename) {
+        final String ServerUrl = serverPath;
+        final String FileName = filename;
+        final int sub = serverPath.lastIndexOf(".");
+        final String FileExtend = serverPath.substring(sub);
+        final String LocalPath = localPath + FileExtend;
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                Log.e("SSSSS", "filedownload");
+
+                URL fileurl;
+                int Read;
+                try {
+                    fileurl = new URL(ServerUrl);
+                    HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
+                    byte[] tmpByte = new byte[1024];
+                    InputStream is = conn.getInputStream();
+                    File file = new File(LocalPath);
+
+                    if (!file.exists())
+                        file.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    for (; ; ) {
+                        Read = is.read(tmpByte);
+                        if (Read <= 0) {
+                            break;
+                        }
+                        fos.write(tmpByte, 0, Read);
+                    }
+                    is.close();
+                    fos.close();
+                    conn.disconnect();
+
+                } catch (MalformedURLException e) {
+                    Log.e("ERROR1", e.getMessage());
+                } catch (IOException e) {
+                    Log.e("ERROR2", e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    private void startRecording(){
+        mListener.onStartRecording();
     }
 }

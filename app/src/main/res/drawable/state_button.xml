@@ -15,13 +15,14 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#0a2141">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/switchfragment" />
 
-</RelativeLayout>
+    <item android:state_pressed="true">
+        <bitmap android:src="@drawable/main_btn_my_on"/>
+    </item>
+
+    <item>
+        <bitmap android:src="@drawable/main_btn_my_off"/>
+    </item>
+</selector>

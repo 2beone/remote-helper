@@ -5,11 +5,12 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "fr.pchab.androidrtc"
-        minSdkVersion 15
+        applicationId "net.twobeone.remotehelper"
+        minSdkVersion 21
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        multiDexEnabled true
+        versionCode 2
+        versionName "1.0.1"
     }
     buildTypes {
         release {
@@ -30,6 +31,9 @@ dependencies {
     compile files('libs/autobanh.jar')
     compile files('libs/base_java.jar')
     compile files('libs/libjingle_peerconnection.jar')
-    compile 'com.github.nkzawa:socket.io-client:0.4.2'
+    compile "org.java-websocket:Java-WebSocket:1.3.4"
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+//    compile 'com.github.nkzawa:socket.io-client:0.4.2'
+//    compile "org.java-websocket:Java-WebSocket:1.3.0"
     compile 'io.pristine:libjingle:8871@aar'
 }

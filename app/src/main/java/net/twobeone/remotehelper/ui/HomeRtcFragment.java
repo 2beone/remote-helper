@@ -75,7 +75,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     private String Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
 
-    private Camera cam;
+    private Camera cam = null;
     private MediaRecorder mediaRecorder;
     private boolean recording = false;
     private String save_name = System.currentTimeMillis() + "";
@@ -103,7 +103,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                         | LayoutParams.FLAG_DISMISS_KEYGUARD
                         | LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | LayoutParams.FLAG_TURN_SCREEN_ON);
-        mSocketAddress = "wss://remohelper.com:9090";
+        mSocketAddress = "wss://remohelper.com:9094";
         Log.e("SSSSS", "onCreateview");
 
         return view;
@@ -223,7 +223,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     public void onStartRecording() {
 //        VideoRendererGui.remove(localRender);
         if (!recording) {
-            setting();
+//            setting();
 //            getActivity().runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
@@ -235,10 +235,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                     try {
                         mediaRecorder = new MediaRecorder();
-                        cam.lock();
-                        cam.unlock();
-                        refreshCamera(cam);
-                        mediaRecorder.setCamera(cam);
+//                        cam.lock();
+//                        cam.unlock();
+//                        refreshCamera(cam);
+//                        mediaRecorder.setCamera(cam);
                         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -246,7 +246,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// H264
                         mediaRecorder.setOrientationHint(270);
                         mediaRecorder.setOutputFile(Save_Path + save_name + ".mp4");
-                        mediaRecorder.setPreviewDisplay(sh.getSurface());
+//                        mediaRecorder.setPreviewDisplay(sh.getSurface());
                         mediaRecorder.prepare();
                         mediaRecorder.start();
                         recording = true;
@@ -264,7 +264,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
                         }
                         getActivity().onBackPressed();
-                        return;
                     }
 //                }
 //            });
@@ -339,7 +338,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     .addFormDataPart("file", pathToOurFile, RequestBody.create(media_type_video, file))
                     .addFormDataPart("sariodId", device_ID/* regid */).addFormDataPart("type", "S")
                     .addFormDataPart("param", obj.toString()).build();
-            // .addFormDataPart("device_id", /* regid */ device_ID).build();
 
             builder.build();
             Request request = new Request.Builder().url(urlServer).post(requestBody).build();
@@ -389,7 +387,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             cam.setPreviewDisplay(sh);
             cam.startPreview();
         } catch (Exception e) {
-            Log.e("SSSSS",e.toString());
+            Log.e("SSSSS","Preview?? "+e.toString());
         }
     }
 

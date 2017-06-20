@@ -40,5 +40,12 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity android:name=".ui.UserInfoActivity" />
+
+        <activity android:name=".ui.SearchAddressActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+
     </application>
 </manifest>

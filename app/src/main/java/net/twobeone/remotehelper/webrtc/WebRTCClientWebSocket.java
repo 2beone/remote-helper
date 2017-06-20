@@ -256,14 +256,14 @@ public class WebRTCClientWebSocket {
                                         message.put("saviorName", "김진혁");
                                         mWebSocketClient.send(message.toString());
                                     } else {
-                                        localMS.dispose();
-                                        localMS = null;
-                                        videoSource.dispose();
-                                        videoSource = null;
-                                        videoCapturer.dispose();
-                                        videoCapturer = null;
-                                        audioSource.dispose();
-                                        audioSource = null;
+//                                        localMS.dispose();
+//                                        localMS = null;
+//                                        videoSource.dispose();
+//                                        videoSource = null;
+//                                        videoCapturer.dispose();
+//                                        videoCapturer = null;
+//                                        audioSource.dispose();
+//                                        audioSource = null;
 //                                        mWebSocketClient.close();
                                         startRecording();
                                     }

@@ -1,5 +1,6 @@
 package net.twobeone.remotehelper.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.widget.RoundImageView;
@@ -58,6 +60,17 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        Button userBtn = (Button) nav_hear_view.findViewById(R.id.btn_user);
+        userBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                startActivity(intent);
+
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
     }
 
     @Override
@@ -101,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onBackPressed();
             }
         } catch (Exception e) {
-
+            super.onBackPressed();
         }
     }
 

@@ -3,40 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:background="?attr/colorPrimaryDark"
-    android:padding="20dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <net.twobeone.remotehelper.widget.RoundImageView
-        android:id="@+id/user_img"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignParentTop="true"
-        />
-
-    <TextView
-        android:id="@+id/userage_txt"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ㅇㅇ세"
-        android:layout_alignParentBottom="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        />
+        android:layout_height="match_parent"
+        android:padding="20dp">
 
-    <TextView
-        android:id="@+id/username_txt"
+        <net.twobeone.remotehelper.widget.RoundImageView
+            android:id="@+id/user_img"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            />
+
+        <TextView
+            android:id="@+id/userage_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            />
+
+    </RelativeLayout>
+
+
+    <Button
+        android:id="@+id/btn_user"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        android:layout_above="@id/userage_txt"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        />
-
-    <ImageButton
-        android:id="@+id/edit_mypic"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/btn_user_edit" />
+        android:layout_height="match_parent"
+        android:background="@drawable/btn_user_menu"/>
 
 </RelativeLayout>

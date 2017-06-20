@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimaryDark"
+    android:padding="20dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <net.twobeone.remotehelper.widget.RoundImageView
+        android:id="@+id/user_img"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:id="@+id/userage_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ㅇㅇ세"
+        android:layout_alignParentBottom="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        />
+
+    <TextView
+        android:id="@+id/username_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:layout_above="@id/userage_txt"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        />
+
+    <ImageButton
+        android:id="@+id/edit_mypic"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/btn_user_edit" />
+
+</RelativeLayout>

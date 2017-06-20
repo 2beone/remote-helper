@@ -1,28 +1,12 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.ui;
-//
-//import android.app.Activity;
-//import android.app.Fragment;
-//import android.app.FragmentManager;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -31,60 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-//import android.os.Bundle;
-//import android.support.annotation.Nullable;
-//import android.view.Window;
-//
-//import net.twobeone.remotehelper.R;
-//
-///**
-// * Created by Administrator on 2017-04-27.
-// */
-//
-//public class MainActivity extends Activity {
-//
-//    private Fragment fragment;
-//    private Fragment homefragment;
-//    private FragmentManager fm;
-//    private FragmentTransaction fragmentTransaction;
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        setContentView(R.layout.activity_main);
-//
-//        homefragment = new HomeFragment();
-//        fragment = new HomeRtcFragment();
-//
-//        fm = getFragmentManager();
-//        fragmentTransaction = fm.beginTransaction();
-//        fragmentTransaction.add(R.id.switchfragment, homefragment);
-//        fragmentTransaction.commit();
-//    }
-//
-//    @Override
-//    public void onBackPressed() {
-//        if(!fm.findFragmentByTag("rtcfragment").isRemoving()){
-//            fragmentTransaction = fm.beginTransaction();
-//            fragmentTransaction.remove(fragment);
-//            fragmentTransaction.replace(R.id.switchfragment, homefragment);
-//            fragmentTransaction.commit();
-//        }else{
-//            super.onBackPressed();
-//        }
-//    }
-//}
 
 public class MainActivity extends AppCompatActivity {
 
@@ -119,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         if (mViewPager != null) {
             setupViewPager(mViewPager);
         }
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
     }
 
     @Override
@@ -152,16 +91,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        try{
+        try {
             fm = getSupportFragmentManager();
-            if(!fm.findFragmentByTag("rtcfragment").isRemoving()){
+            if (!fm.findFragmentByTag("rtcfragment").isRemoving()) {
                 fragmentTransaction = fm.beginTransaction();
                 fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
                 fragmentTransaction.commit();
-            }else{
+            } else {
                 super.onBackPressed();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

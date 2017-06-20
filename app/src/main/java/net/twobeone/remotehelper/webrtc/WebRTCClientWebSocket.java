@@ -247,23 +247,23 @@ public class WebRTCClientWebSocket {
                                     removePeer(people);
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
-                                    if (data.getJSONArray("people").length() >5) {
-//                                    people = data.getJSONArray("people").getString(0);
-                                        people = "chae";//임의 2beone1로만 연결
+                                    if (data.getJSONArray("people").length() >0) {
+                                    people = data.getJSONArray("people").getString(0);
+//                                        people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
                                         message.put("name", people);
                                         message.put("saviorName", "김진혁");
                                         mWebSocketClient.send(message.toString());
                                     } else {
-//                                        localMS.dispose();
-//                                        localMS = null;
-//                                        videoSource.dispose();
-//                                        videoSource = null;
-//                                        videoCapturer.dispose();
-//                                        videoCapturer = null;
-//                                        audioSource.dispose();
-//                                        audioSource = null;
+                                        localMS.dispose();
+                                        localMS = null;
+                                        videoSource.dispose();
+                                        videoSource = null;
+                                        videoCapturer.dispose();
+                                        videoCapturer = null;
+                                        audioSource.dispose();
+                                        audioSource = null;
 //                                        mWebSocketClient.close();
                                         startRecording();
                                     }

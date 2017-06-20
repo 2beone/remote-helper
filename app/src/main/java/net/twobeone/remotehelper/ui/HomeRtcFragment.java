@@ -1,6 +1,7 @@
 package net.twobeone.remotehelper.ui;
 
-import android.app.Fragment;
+//import android.app.Fragment;
+
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -9,8 +10,10 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -82,8 +85,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private void setting() {
         cam = Camera.open(1);
         cam.setDisplayOrientation(90);
-        sv = (SurfaceView) getActivity().findViewById(R.id.preview);
-        sv.setVisibility(sv.VISIBLE);
+//        sv = (SurfaceView) getActivity().findViewById(R.id.preview);
+//        sv.setVisibility(sv.VISIBLE);
         sh = vsv.getHolder();
         sh.addCallback(this);
         sh.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -95,8 +98,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         view = inflater.inflate(R.layout.fragment_rtc, container, false);
 
         getActivity().getWindow().addFlags(
-                LayoutParams.FLAG_FULLSCREEN
-                        | LayoutParams.FLAG_KEEP_SCREEN_ON
+//                LayoutParams.FLAG_FULLSCREEN
+                        LayoutParams.FLAG_KEEP_SCREEN_ON
                         | LayoutParams.FLAG_DISMISS_KEYGUARD
                         | LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | LayoutParams.FLAG_TURN_SCREEN_ON);
@@ -119,7 +122,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
 
-        VideoRendererGui.setView(vsv, runnable = new Runnable() {
+        VideoRendererGui.setView(vsv, new Runnable() {
             @Override
             public void run() {
                 init();
@@ -218,12 +221,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStartRecording() {
-        VideoRendererGui.remove(localRender);
+//        VideoRendererGui.remove(localRender);
         if (!recording) {
-//            setting();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            setting();
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
 
                     File dir = new File(Save_Path);
 
@@ -232,25 +235,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                     try {
                         mediaRecorder = new MediaRecorder();
-//                        cam.lock();
-//                        cam.unlock();
-//                        if (sh.getSurface() == null) {
-//                            // preview surface does not exist
-//                            return;
-//                        }
-//                        // stop preview before making changes
-//                        try {
-//                            cam.stopPreview();
-//                        } catch (Exception e) {
-//                            // ignore: tried to stop a non-existent preview
-//                        }
-//                        try {
-//                            cam.setPreviewDisplay(sh);
-//                            cam.startPreview();
-//                        } catch (Exception e) {
-//
-//                        }
-//                        mediaRecorder.setCamera(cam);
+                        cam.lock();
+                        cam.unlock();
+                        refreshCamera(cam);
+                        mediaRecorder.setCamera(cam);
                         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -262,49 +250,66 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                         mediaRecorder.prepare();
                         mediaRecorder.start();
                         recording = true;
+                        handler.sendEmptyMessage(0);
                     } catch (final Exception ex) {
                         Log.e("JH", ex.toString());
+                        mediaRecorder.stop();
                         mediaRecorder.release();
+                        mediaRecorder = null;
+                        recording = false;
+                        try {
+                            cam.stopPreview();
+                            cam.release();
+                        } catch (Exception e) {
+
+                        }
+                        getActivity().onBackPressed();
                         return;
                     }
-                }
-            });
+//                }
+//            });
         }
+    }
 
-        new CountDownTimer(5000, 500) {
+    public Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            if (msg.what == 0) {
+                new CountDownTimer(5000, 500) {
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onFinish() {
-                // TODO Auto-generated method stub
-                if (recording) {
-                    mediaRecorder.stop();
-                    mediaRecorder.release();
-                    mediaRecorder = null;
-                    recording = false;
-                    try {
-                        cam.stopPreview();
-                        cam.release();
-                    } catch (Exception e) {
-
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        // TODO Auto-generated method stub
                     }
 
-                    // 서버로 녹화한 영상 전송
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            fileUpload();
+                    @Override
+                    public void onFinish() {
+                        // TODO Auto-generated method stub
+                        if (recording) {
+                            mediaRecorder.stop();
+                            mediaRecorder.release();
+                            mediaRecorder = null;
+                            recording = false;
+                            try {
+                                cam.stopPreview();
+                                cam.release();
+                            } catch (Exception e) {
+
+                            }
+
+                            // 서버로 녹화한 영상 전송
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fileUpload();
+                                }
+                            }).start();
+                            getActivity().onBackPressed();
                         }
-                    }).start();
-                    getActivity().onBackPressed();
-                }
+                    }
+                }.start();
             }
-        }.start();
-    }
+        }
+    };
 
     public void fileUpload() {
 
@@ -348,16 +353,48 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
+        try {
+            if (cam == null) {
+                cam.setPreviewDisplay(surfaceHolder);
+                cam.startPreview();
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
+        refreshCamera(cam);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
 
+    }
+
+    public void refreshCamera(Camera camera) {
+        if (sh.getSurface() == null) {
+            // preview surface does not exist
+            return;
+        }
+        // stop preview before making changes
+        try {
+            cam.stopPreview();
+        } catch (Exception e) {
+            // ignore: tried to stop a non-existent preview
+        }
+        setCamera(camera);
+        try {
+            cam.setPreviewDisplay(sh);
+            cam.startPreview();
+        } catch (Exception e) {
+            Log.e("SSSSS",e.toString());
+        }
+    }
+
+    public void setCamera(Camera camera) {
+        // method to set a camera instance
+        cam = camera;
     }
 }

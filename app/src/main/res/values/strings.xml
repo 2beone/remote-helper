@@ -17,5 +17,5 @@
     <string name="nav_family2_title">스마트오산</string>
 
     <!-- 액티비티 타이틀 -->
-    <string name="troubles_activity_title">통신환경 체크</string>
+    <string name="troubles_activity_title">디바이스 점검</string>
 </resources>

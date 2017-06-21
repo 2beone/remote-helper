@@ -253,6 +253,10 @@ public class WebRTCClientWebSocket {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
                                         people = data.getJSONArray("people").getString(0);
+                                        if(people.equals("police")){
+                                            people = "";
+                                            people = data.getJSONArray("people").getString(1);
+                                        }
 //                                        people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
@@ -275,7 +279,7 @@ public class WebRTCClientWebSocket {
                                 } else if (type.equals("callAnswer")) {
                                     people = data.getString("name");
                                 } else if (type.equals("cameraClick")) {
-                                    WebRTCClientWebSocket.Peer peer = peers.get(people);
+                                    Peer peer = peers.get(people);
                                     peer.pc.removeStream(localMS);
 
                                     localMS.dispose();
@@ -311,7 +315,7 @@ public class WebRTCClientWebSocket {
 
                                     int endPoint = findEndPoint();
                                     if (endPoint != MAX_PEER) {
-                                        WebRTCClientWebSocket.Peer peer = addPeer(people, endPoint);
+                                        Peer peer = addPeer(people, endPoint);
                                         peer.pc.addStream(localMS);
                                         Log.e("SSSSS", "TYPE!!!!!!" + type);
                                         commandMap.get(type).execute(people, payload);
@@ -328,7 +332,7 @@ public class WebRTCClientWebSocket {
                         @Override
                         public void onClose(int code, String reason, boolean remote) {
                             if (localMS != null) {
-                                WebRTCClientWebSocket.Peer peer = peers.get(people);
+                                Peer peer = peers.get(people);
 
                                 peer.pc.removeStream(localMS);
 

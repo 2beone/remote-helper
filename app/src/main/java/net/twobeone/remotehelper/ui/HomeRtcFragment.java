@@ -2,7 +2,6 @@ package net.twobeone.remotehelper.ui;
 
 //import android.app.Fragment;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -21,6 +20,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -90,6 +90,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private ImageButton change_video;
     private ImageView voice_img;
     private boolean mutests = false;
+    private Button sos_button;
 
     private void setting() {
         cam = Camera.open(1);
@@ -112,6 +113,9 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         mSocketAddress = "wss://remohelper.com:9090";
         Log.e("SSSSS", "onCreateview");
 
+        sos_button = (Button) getActivity().findViewById(R.id.btn_call);
+        sos_button.setVisibility(sos_button.INVISIBLE);
+
         vsv = (GLSurfaceView) view.findViewById(R.id.glview_call);
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
@@ -128,12 +132,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, true);
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.e("SSSSS", "onAttach");
     }
 
     @Override
@@ -218,21 +216,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     }
 
     @Override
-    public void onDestroy() {
-        Log.e("SSSSS", "Here5");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
     public void onDetach() {
         Log.e("SSSSS", "Here6");
         VideoRendererGui.remove(localRender);
+        sos_button.setVisibility(sos_button.VISIBLE);
         if (!clientWebSocket.mWebSocketClient.isClosed()) {
             Log.e("SSSSS", "clientWebSocket disconnect");
             clientWebSocket.clearSocket();
@@ -284,10 +271,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 cam.unlock();
                 refreshCamera(cam);
                 mediaRecorder.setCamera(cam);
-                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
                 mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// H264
                 mediaRecorder.setOrientationHint(270);
                 mediaRecorder.setOutputFile(Save_Path + save_name + ".mp4");

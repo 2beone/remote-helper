@@ -7,6 +7,7 @@
     <string name="no_data">보관된 자료가 없습니다.</string>
 
     <!-- 네비게이션 -->
+    <string name="nav_safezone">안전지대</string>
     <string name="nav_app_title">앱정보</string>
     <string name="nav_app_settings_title">설정</string>
     <string name="nav_family_title">패밀리</string>

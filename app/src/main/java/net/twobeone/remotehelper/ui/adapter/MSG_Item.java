@@ -14,13 +14,36 @@
  * limitations under the License.
  */
 
-package net.twobeone.remotehelper.ui;
+package net.twobeone.remotehelper.ui.adapter;
 
-import android.support.v4.app.Fragment;
+import android.graphics.drawable.Drawable;
 
-/**
- * Created by Administrator on 2017-06-20.
- */
+public class MSG_Item {
+	private Drawable iconDrawable;
+	private String name;
+	private String extend;
 
-public class Tab2Fragment extends Fragment {
+	public void setTitle(String title) {
+		name = title;
+	}
+
+	public String getTitle() {
+		return this.name;
+	}
+
+	public void setExtend(String Extend) {
+		extend = Extend;
+	}
+
+	public String getExtend() {
+		return this.extend;
+	}
+
+	public void setIcon(Drawable icon) {
+		iconDrawable = icon;
+	}
+
+	public Drawable getIcon() {
+		return this.iconDrawable;
+	}
 }

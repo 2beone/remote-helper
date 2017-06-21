@@ -47,8 +47,8 @@
 
                         <net.twobeone.remotehelper.widget.RoundImageView
                             android:id="@+id/user_img"
-                            android:layout_width="130dp"
-                            android:layout_height="130dp"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
                             android:layout_marginBottom="10dp"

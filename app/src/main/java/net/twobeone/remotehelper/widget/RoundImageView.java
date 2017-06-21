@@ -19,6 +19,7 @@ import android.widget.ImageView;
  */
 
 public class RoundImageView extends AppCompatImageView {
+
     public RoundImageView(Context context) {
         super(context);
     }
@@ -80,9 +81,9 @@ public class RoundImageView extends AppCompatImageView {
         canvas.drawBitmap(sbmp, rect, rect, paint);
 
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.LTGRAY);
         paint.setStrokeWidth(5);
-        canvas.drawCircle(radius / 2, radius / 2, radius / 2 - 5, paint);
+        canvas.drawCircle(radius / 2, radius / 2, radius / 2 - 1, paint);
 
         return output;
     }

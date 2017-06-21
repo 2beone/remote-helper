@@ -18,14 +18,17 @@ package net.twobeone.remotehelper.ui;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,7 +56,9 @@ import net.twobeone.remotehelper.ui.adapter.Status_Item_Adapter;
 import net.twobeone.remotehelper.util.TBOUtil;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 
 import io.realm.Realm;
@@ -132,6 +137,7 @@ public class UserInfoActivity extends AppCompatActivity {
         edit_mypic.setBackground(TBOUtil.getDrawable(mContext, R.drawable.btn_photo_edit));
         iv_UserPhoto = (RoundImageView) findViewById(R.id.user_img);
         iv_UserPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+        iv_UserPhoto.setImageResource(R.drawable.user_default);
 
         basic_adapter = new Status_Item_Adapter();
         health_adapter = new Status_Item_Adapter();
@@ -146,6 +152,16 @@ public class UserInfoActivity extends AppCompatActivity {
         health_listview.setAdapter(health_adapter);
 
         Realm.init(this);
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+        if (userInfo != null) {
+            if (userInfo.getImgPath() != null) {
+                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
+                File img = new File(userInfo.getImgPath());
+                mImageCaptureUri = Uri.fromFile(img);
+                iv_UserPhoto.setImageURI(mImageCaptureUri);
+            }
+        }
 
         name = (EditText) findViewById(R.id.edit_name);
         age = (EditText) findViewById(R.id.edit_age);
@@ -355,6 +371,39 @@ public class UserInfoActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        edit_mypic.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doTakePhotoAction();
+                    }
+                };
+                DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doTakeAlbumAction();
+                    }
+                };
+                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                };
+
+                new AlertDialog.Builder(mContext, AlertDialog.THEME_HOLO_LIGHT).setTitle("업로드할 이미지 선택")
+                        .setPositiveButton("사진촬영", cameraListener).setNeutralButton("앨범선택", albumListener)
+                        .setNegativeButton("취소", cancelListener).show();
+            }
+        });
     }
 
     @Override
@@ -372,7 +421,6 @@ public class UserInfoActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) {
@@ -388,13 +436,10 @@ public class UserInfoActivity extends AppCompatActivity {
                     addr.setText(get_addr.substring(sub + 1));
                 break;
 
-            case PIC_FROM_ALBUM:
-
+            case PIC_FROM_ALBUM: {
                 mImageCaptureUri = data.getData();
 
-                Log.d("JH", mImageCaptureUri.getPath() + "\n" + data.getData());
-
-            case PIC_FROM_CAMERA:
+                Log.d("SSSSSS", mImageCaptureUri.getPath() + "\n" + data.getData());
 
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(mImageCaptureUri, "image/*");
@@ -407,7 +452,23 @@ public class UserInfoActivity extends AppCompatActivity {
                 intent.putExtra("return-data", true);
                 startActivityForResult(intent, CROP_FROM_IMAGE);
                 break;
+            }
+            case PIC_FROM_CAMERA: {
+                String url = "/tmp_userImg.jpg";
+                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + url));
+                Log.d("SSSSSS", "image uri : " + uri);
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(uri, "image/*");
 
+                intent.putExtra("outputX", 200);
+                intent.putExtra("outputY", 300);
+                intent.putExtra("aspectX", 1);
+                intent.putExtra("aspectY", 1);
+                intent.putExtra("scale", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, CROP_FROM_IMAGE);
+                break;
+            }
             case CROP_FROM_IMAGE:
 
                 if (resultCode != RESULT_OK) {
@@ -416,14 +477,16 @@ public class UserInfoActivity extends AppCompatActivity {
 
                 final Bundle extras = data.getExtras();
 
-                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper/"
-                        + System.currentTimeMillis() + ".jpg";
+//                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper/"
+//                        + System.currentTimeMillis() + ".jpg";
+                String filePath = getFilesDir().getPath() + "/RemoteHelper/userImg.jpg";
+
 
                 if (extras != null) {
                     Bitmap photo = extras.getParcelable("data");
                     iv_UserPhoto.setImageBitmap(photo);
 
-//                    storeCropImage(photo, filePath);
+                    storeCropImage(photo, filePath);
 
                     absoultePath = filePath;
                     break;
@@ -433,6 +496,48 @@ public class UserInfoActivity extends AppCompatActivity {
                 if (f.exists()) {
                     f.delete();
                 }
+        }
+    }
+
+    private void storeCropImage(Bitmap bitmap, final String filePath) {
+        String dirPath = getFilesDir().getPath() + "/RemoteHelper/";
+        File directory_RemoteHelper = new File(dirPath);
+
+        if (!directory_RemoteHelper.exists())
+            directory_RemoteHelper.mkdir();
+
+        File copyFile = new File(filePath);
+        BufferedOutputStream out = null;
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+                if (userInfo == null) {
+                    userInfo = new UserInfo();
+                }
+                userInfo.setImgPath(filePath);
+                bgRealm.copyToRealm(userInfo);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+            }
+        });
+
+        try {
+            copyFile.createNewFile();
+            out = new BufferedOutputStream(new FileOutputStream(copyFile));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(copyFile)));
+
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -448,7 +553,12 @@ public class UserInfoActivity extends AppCompatActivity {
             basic_adapter.addItem("성별 : ", userInfo.getSex());
             basic_adapter.addItem("연락처 : ", userInfo.getMobile());
             basic_adapter.addItem("긴급연락처 : ", userInfo.getEmergency());
-            basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
+            if (userInfo.getAddress() != null) {
+                basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
+            } else {
+                basic_adapter.addItem("거주지주소 : ", "");
+            }
+
 
             health_adapter.deleteItem();
             health_adapter.addItem("혈액형 : ", userInfo.getBloodType());
@@ -511,6 +621,23 @@ public class UserInfoActivity extends AppCompatActivity {
         }
     }
 
+    public void doTakePhotoAction() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        String url = "/tmp_userImg.jpg";
+        Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + url));
+        Log.d("SSSSSS", "image uri : " + uri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, PIC_FROM_CAMERA);
+    }
+
+    public void doTakeAlbumAction() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PIC_FROM_ALBUM);
+    }
+
     private void DialogDatePicker() {
         Calendar c = Calendar.getInstance();
         int cyear = 1991;//c.get(Calendar.YEAR);
@@ -521,7 +648,6 @@ public class UserInfoActivity extends AppCompatActivity {
 
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // TODO Auto-generated method stub
                 String date_selected = String.valueOf(year) + "년" + String.valueOf(monthOfYear + 1) + "월"
                         + String.valueOf(dayOfMonth) + "일";
                 birth.setText(date_selected);

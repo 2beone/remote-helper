@@ -69,7 +69,7 @@ public class DownloadDataFragment extends Fragment {
 
         list = new File(path);
         fileList = list.listFiles();
-        if (fileList.length > 0) {
+        if (fileList != null && fileList.length > 0) {
             for (int i = 0; i < fileList.length; i++) {
                 sub = fileList[i].getName().lastIndexOf(".");
                 filename = fileList[i].getName().substring(0, sub);

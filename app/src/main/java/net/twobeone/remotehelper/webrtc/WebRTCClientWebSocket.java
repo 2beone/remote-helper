@@ -76,6 +76,7 @@ public class WebRTCClientWebSocket {
     private LinkedList<PeerConnection.IceServer> iceServers = new LinkedList<>();
     private PeerConnectionParameters pcParams;
     private MediaConstraints pcConstraints = new MediaConstraints();
+    private MediaStream remoteMS = null;
     private MediaStream localMS = null;
     private AudioSource audioSource = null;
     private VideoSource videoSource = null;
@@ -88,6 +89,8 @@ public class WebRTCClientWebSocket {
     private String camera = "front";
     private String Save_Path;
     private String url = "https://remohelper.com:440/download/";
+    private JSONObject payload = null;
+    private JSONObject data = null;
 
     public interface RtcListener {
 
@@ -232,9 +235,9 @@ public class WebRTCClientWebSocket {
                         public void onMessage(String s) {
                             Log.e("SSSSS", "onMessage " + s);
                             try {
-                                JSONObject data = new JSONObject(s);
+                                data = new JSONObject(s);
                                 String type = data.getString("type");
-                                JSONObject payload = null;
+                                payload = null;
                                 if (type.equals("offer")) {
                                     payload = data.getJSONObject("offer");
                                 } else if (type.equals("answer")) {
@@ -247,8 +250,8 @@ public class WebRTCClientWebSocket {
                                     removePeer(people);
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
-                                    if (data.getJSONArray("people").length() >5) {
-//                                    people = data.getJSONArray("people").getString(0);
+                                    if (data.getJSONArray("people").length() > 0) {
+//                                        people = data.getJSONArray("people").getString(0);
                                         people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
@@ -256,14 +259,14 @@ public class WebRTCClientWebSocket {
                                         message.put("saviorName", "김진혁");
                                         mWebSocketClient.send(message.toString());
                                     } else {
-//                                        localMS.dispose();
-//                                        localMS = null;
-//                                        videoSource.dispose();
-//                                        videoSource = null;
-//                                        videoCapturer.dispose();
-//                                        videoCapturer = null;
-//                                        audioSource.dispose();
-//                                        audioSource = null;
+                                        localMS.dispose();
+                                        localMS = null;
+                                        videoSource.dispose();
+                                        videoSource = null;
+                                        videoCapturer.dispose();
+                                        videoCapturer = null;
+                                        audioSource.dispose();
+                                        audioSource = null;
 //                                        mWebSocketClient.close();
                                         startRecording();
                                     }
@@ -293,9 +296,18 @@ public class WebRTCClientWebSocket {
                                     Log.e("SSSSS", "fileName ::: " + fileName + " filePath ::: " + filePath);
 
                                     downloadThread(url + filePath, Save_Path + fileName, fileName);
+                                } else if (type.equals("police")) {
+                                    payload = data.getJSONObject("offer");
+                                    people = "police";
+                                    JSONObject message = new JSONObject();
+                                    message.put("type", "call");
+                                    message.put("name", people);
+                                    message.put("saviorName", "김진혁");
+                                    mWebSocketClient.send(message.toString());
                                 }
                                 // if peer is unknown, try to add him
-                                if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call") && !type.equals("cameraClick") && !type.equals("file") && !people.equals("")) {
+                                if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call")
+                                        && !type.equals("cameraClick") && !type.equals("file") && !people.equals("")) {
                                     // if MAX_PEER is reach, ignore the call
 
                                     int endPoint = findEndPoint();
@@ -461,6 +473,7 @@ public class WebRTCClientWebSocket {
 
         @Override
         public void onAddStream(MediaStream mediaStream) {
+            remoteMS = mediaStream;
             Log.e("SSSSS", "onAddStream " + mediaStream.label());
         }
 
@@ -652,7 +665,46 @@ public class WebRTCClientWebSocket {
         }).start();
     }
 
-    private void startRecording(){
+    private void startRecording() {
         mListener.onStartRecording();
     }
+
+    public void onMute(boolean mutests) {
+        if (mutests) {
+            remoteMS.audioTracks.getFirst().setEnabled(false);
+        } else {
+            remoteMS.audioTracks.getFirst().setEnabled(true);
+        }
+    }
+
+    public void onChangeCamera() {
+        WebRTCClientWebSocket.Peer peer = peers.get(people);
+        peer.pc.removeStream(localMS);
+
+        localMS.dispose();
+        localMS = null;
+        videoSource.dispose();
+        videoSource = null;
+        videoCapturer.dispose();
+        videoCapturer = null;
+        audioSource.dispose();
+        audioSource = null;
+        setCamera();
+
+        peer.pc.addStream(localMS);
+        try {
+            payload = data.getJSONObject("offer2");
+        } catch (JSONException e) {
+
+        }
+    }
+
+    public void onChangeVoice(boolean voicests) {
+        if (voicests) {
+            localMS.videoTracks.getFirst().setEnabled(false);
+        } else {
+            localMS.videoTracks.getFirst().setEnabled(true);
+        }
+    }
+
 }

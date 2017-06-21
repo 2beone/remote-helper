@@ -17,10 +17,11 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
@@ -80,13 +81,17 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private boolean recording = false;
     private String save_name = System.currentTimeMillis() + "";
     private SurfaceHolder sh;
-    private SurfaceView sv;
+
+    private ImageButton mute_button;
+    private ImageButton change_camera;
+    private ImageButton change_voice;
+    private ImageButton change_video;
+    private ImageView voice_img;
+    private boolean mutests = false;
 
     private void setting() {
         cam = Camera.open(1);
         cam.setDisplayOrientation(90);
-//        sv = (SurfaceView) getActivity().findViewById(R.id.preview);
-//        sv.setVisibility(sv.VISIBLE);
         sh = vsv.getHolder();
         sh.addCallback(this);
         sh.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -98,12 +103,11 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         view = inflater.inflate(R.layout.fragment_rtc, container, false);
 
         getActivity().getWindow().addFlags(
-//                LayoutParams.FLAG_FULLSCREEN
-                        LayoutParams.FLAG_KEEP_SCREEN_ON
+                LayoutParams.FLAG_KEEP_SCREEN_ON
                         | LayoutParams.FLAG_DISMISS_KEYGUARD
                         | LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | LayoutParams.FLAG_TURN_SCREEN_ON);
-        mSocketAddress = "wss://remohelper.com:9094";
+        mSocketAddress = "wss://remohelper.com:9090";
         Log.e("SSSSS", "onCreateview");
 
         return view;
@@ -132,14 +136,55 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         localRender = VideoRendererGui.create(
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, true);
+
+        mute_button = (ImageButton) view.findViewById(R.id.mute_button);
+        change_camera = (ImageButton) view.findViewById(R.id.change_camera);
+        change_voice = (ImageButton) view.findViewById(R.id.change_voice);
+        change_video = (ImageButton) view.findViewById(R.id.change_video);
+        voice_img = (ImageView) view.findViewById(R.id.voice_img);
+
+        mute_button.setOnClickListener(onClickListener);
+        change_camera.setOnClickListener(onClickListener);
+        change_voice.setOnClickListener(onClickListener);
+        change_video.setOnClickListener(onClickListener);
+
         Log.e("SSSSS", "onStart");
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.e("SSSSS", "onCreate");
-    }
+    ImageButton.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.mute_button:
+                    if(mutests){
+                        mutests = false;
+                        mute_button.setBackgroundResource(R.drawable.btn_mute_on);
+                    }else{
+                        mutests = true;
+                        mute_button.setBackgroundResource(R.drawable.btn_mute_off);
+                    }
+                    clientWebSocket.onMute(mutests);
+                    break;
+                case R.id.change_camera:
+                    clientWebSocket.onChangeCamera();
+                    break;
+                case R.id.change_voice:
+                    clientWebSocket.onChangeVoice(true);
+                    vsv.setVisibility(vsv.INVISIBLE);
+                    voice_img.setVisibility(voice_img.VISIBLE);
+                    change_voice.setVisibility(change_voice.INVISIBLE);
+                    change_video.setVisibility(change_video.VISIBLE);
+                    break;
+                case R.id.change_video:
+                    clientWebSocket.onChangeVoice(false);
+                    vsv.setVisibility(vsv.VISIBLE);
+                    voice_img.setVisibility(voice_img.INVISIBLE);
+                    change_voice.setVisibility(change_voice.VISIBLE);
+                    change_video.setVisibility(change_video.INVISIBLE);
+                    break;
+            }
+        }
+    };
 
     private void init() {
         Point displaySize = new Point();
@@ -223,50 +268,44 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     public void onStartRecording() {
 //        VideoRendererGui.remove(localRender);
         if (!recording) {
-//            setting();
-//            getActivity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
+            setting();
+            File dir = new File(Save_Path);
 
-                    File dir = new File(Save_Path);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            try {
+                mediaRecorder = new MediaRecorder();
+                cam.lock();
+                cam.unlock();
+                refreshCamera(cam);
+                mediaRecorder.setCamera(cam);
+                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// H264
+                mediaRecorder.setOrientationHint(270);
+                mediaRecorder.setOutputFile(Save_Path + save_name + ".mp4");
+                mediaRecorder.setPreviewDisplay(sh.getSurface());
+                mediaRecorder.prepare();
+                mediaRecorder.start();
+                recording = true;
+                handler.sendEmptyMessage(0);
+            } catch (final Exception ex) {
+                Log.e("JH", ex.toString());
+                mediaRecorder.stop();
+                mediaRecorder.release();
+                mediaRecorder = null;
+                recording = false;
+                try {
+                    cam.stopPreview();
+                    cam.release();
+                } catch (Exception e) {
 
-                    if (!dir.exists()) {
-                        dir.mkdir();
-                    }
-                    try {
-                        mediaRecorder = new MediaRecorder();
-//                        cam.lock();
-//                        cam.unlock();
-//                        refreshCamera(cam);
-//                        mediaRecorder.setCamera(cam);
-                        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-                        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// H264
-                        mediaRecorder.setOrientationHint(270);
-                        mediaRecorder.setOutputFile(Save_Path + save_name + ".mp4");
-//                        mediaRecorder.setPreviewDisplay(sh.getSurface());
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                        recording = true;
-                        handler.sendEmptyMessage(0);
-                    } catch (final Exception ex) {
-                        Log.e("JH", ex.toString());
-                        mediaRecorder.stop();
-                        mediaRecorder.release();
-                        mediaRecorder = null;
-                        recording = false;
-                        try {
-                            cam.stopPreview();
-                            cam.release();
-                        } catch (Exception e) {
-
-                        }
-                        getActivity().onBackPressed();
-                    }
-//                }
-//            });
+                }
+                getActivity().onBackPressed();
+            }
         }
     }
 
@@ -381,13 +420,14 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             cam.stopPreview();
         } catch (Exception e) {
             // ignore: tried to stop a non-existent preview
+            Log.e("SSSSS", "Preview?? " + e.toString());
         }
         setCamera(camera);
         try {
             cam.setPreviewDisplay(sh);
             cam.startPreview();
         } catch (Exception e) {
-            Log.e("SSSSS","Preview?? "+e.toString());
+            Log.e("SSSSS", "Preview?? " + e.toString());
         }
     }
 

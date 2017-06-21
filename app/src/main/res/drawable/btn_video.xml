@@ -2,11 +2,11 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item android:state_pressed="true">
-        <bitmap android:src="@drawable/btn_sound_on"></bitmap>
+        <bitmap android:src="@drawable/btn_moving_on"></bitmap>
     </item>
 
     <item>
-        <bitmap android:src="@drawable/btn_sound_off"></bitmap>
+        <bitmap android:src="@drawable/btn_moving_off"></bitmap>
     </item>
 
 </selector>

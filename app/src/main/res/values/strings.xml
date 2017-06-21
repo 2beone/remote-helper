@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">안전도우미</string>
+    <string name="app_name">오산시청 원격안전도우미</string>
     <string name="main_tab1_title">홈</string>
     <string name="rtc_tab1_title">보관함</string>
     <string name="action_settings">Options</string>
     <string name="title_user_info">내정보</string>
-    <string name="no_data">저장된 자료가 없습니다.</string>
+    <string name="no_data">보관된 자료가 없습니다.</string>
 </resources>

@@ -1,6 +1,7 @@
 package net.twobeone.remotehelper.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -14,15 +15,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
+
+    private TextView mUserName;
+    private RoundImageView mUserImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
         View nav_hear_view = navigationView.getHeaderView(0);
-        RoundImageView imageView = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
-        imageView.setImageResource(R.drawable.user_default);
+        mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
+        mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
+        mUserImage.setImageResource(R.drawable.user_default);
+        Realm.init(this);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         if (mViewPager != null) {
@@ -71,6 +83,28 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.d("SSSSSS", "onResume");
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+        if (userInfo != null) {
+            Log.d("SSSSSS", "userInfo != null");
+            if (userInfo.getImgPath() != null) {
+                mUserImage.setImageResource(R.drawable.user_default);
+                Log.d("SSSSSS", "userInfo.getImgPath() != null");
+                File img = new File(userInfo.getImgPath());
+                Uri uri = Uri.fromFile(img);
+                mUserImage.setImageURI(uri);
+            }
+            if (userInfo.getName() != null) {
+                mUserName.setText(userInfo.getName());
+            }
+        }
     }
 
     @Override

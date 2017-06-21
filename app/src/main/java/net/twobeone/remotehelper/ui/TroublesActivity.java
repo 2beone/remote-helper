@@ -8,11 +8,10 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 
 public class TroublesActivity extends BaseActivity {
-
-    private static final String TEST_URI = "https://test.webrtc.org";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,7 +24,7 @@ public class TroublesActivity extends BaseActivity {
         // 웹뷰를 설정합니다.
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(TEST_URI);
+        webView.loadUrl(Constants.TROUBLES_HTTP_URI);
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {

@@ -7,4 +7,8 @@ public final class Constants {
      */
     public static final String TROUBLES_HTTP_URI = "https://test.webrtc.org";
 
+    /**
+     * 다운로드 디렉토리명
+     */
+    public static final String DONWLOAD_DIRECTORY_NAME = "RemoteHelper_download";
 }

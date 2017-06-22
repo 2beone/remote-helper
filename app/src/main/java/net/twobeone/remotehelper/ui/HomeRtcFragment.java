@@ -273,7 +273,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStartRecording() {
-        hangup.setVisibility(hangup.INVISIBLE);
         VideoRendererGui.remove(localRender);
         handler.sendEmptyMessage(0);
         if (!recording) {
@@ -322,6 +321,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 mute_button.setVisibility(mute_button.INVISIBLE);
                 change_voice.setVisibility(change_voice.INVISIBLE);
                 change_camera.setVisibility(change_camera.INVISIBLE);
+                hangup.setVisibility(hangup.INVISIBLE);
                 sv.setVisibility(sv.VISIBLE);
                 vsv.setVisibility(vsv.INVISIBLE);
             }

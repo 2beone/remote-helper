@@ -329,7 +329,6 @@ public class WebRTCClientWebSocket {
                                 Peer peer = peers.get(people);
 
                                 peer.pc.removeStream(localMS);
-                                peer.pc.removeStream(localMS);
                                 peer.pc.close();
                                 peer.pc = null;
 

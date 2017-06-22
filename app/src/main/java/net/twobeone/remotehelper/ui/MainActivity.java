@@ -86,6 +86,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        mDrawerLayout.closeDrawer(GravityCompat.START, false);
         Realm realm = Realm.getDefaultInstance();
         UserInfo userInfo = realm.where(UserInfo.class).findFirst();
         if (userInfo != null) {
@@ -123,12 +124,14 @@ public class MainActivity extends BaseActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        int id = menuItem.getItemId();
-                        if (id == R.id.nav_safezone) {
-                            Intent intent = new Intent(MainActivity.this, SafetyZoneActivity.class);
-                            startActivity(intent);
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_safezone:
+                                startActivity(new Intent(MainActivity.this, SafetyZoneActivity.class));
+                                break;
+                            case R.id.action_settings:
+                                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                                break;
                         }
-                        mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });

@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.service.GPSInfo;
+import net.twobeone.remotehelper.ui.view.POISearchDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -92,12 +94,11 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
         }
 
         gps = new GPSInfo(SafetyZoneActivity.this);
-        // GPS ������� ��������
+
         if (gps.isGetLocation()) {
             lati = gps.getLatitude();
             longi = gps.getLongitude();
         } else {
-            // GPS �� ����Ҽ� �����Ƿ�
             lati = 0;
             longi = 0;
         }
@@ -149,8 +150,15 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
         distance = (TextView) findViewById(R.id.distance);
         point_icon = (ImageView) findViewById(R.id.point_icon);
 
-//        title_text.setText("��������");
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_safety_search, menu);
+
+//        mOptionsMenu = menu;
+
+        return true;
     }
 
     @Override
@@ -160,6 +168,12 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
                 finish();
+                return true;
+            case R.id.action_search:
+                keyword = "default";
+                Intent i = new Intent(SafetyZoneActivity.this, POISearchDialog.class);
+                startActivityForResult(i, SEARCH_POI_ACTIVITY);
+
                 return true;
         }
 
@@ -182,49 +196,44 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
             switch (v.getId()) {
                 case R.id.police:
                     keyword = "police";
-                    query = "������";
+                    query = "경찰서";
                     police.setSelected(true);
                     break;
                 case R.id.fire:
                     fire.setSelected(true);
-                    query = "�ҹ漭";
+                    query = "소방서";
                     keyword = "fire";
                     break;
                 case R.id.police_box:
-                    query = "������";
+                    query = "지구대";
                     keyword = "police_box";
                     police_box.setSelected(true);
                     break;
                 case R.id.btn_hospital:
-                    query = "����";
+                    query = "병원";
                     keyword = "hospital";
                     hospital.setSelected(true);
                     break;
                 case R.id.pharmacy:
-                    query = "�౹";
+                    query = "약국";
                     keyword = "pharmacy";
                     pharmacy.setSelected(true);
                     break;
                 case R.id.mart:
-                    query = "������";
+                    query = "편의점";
                     keyword = "mart";
                     mart.setSelected(true);
                     break;
                 case R.id.subway:
-                    query = "����ö";
+                    query = "지하철";
                     keyword = "subway";
                     subway.setSelected(true);
                     break;
                 case R.id.school:
-                    query = "�б�";
+                    query = "학교";
                     keyword = "school";
                     school.setSelected(true);
                     break;
-//                case R.id.btnsearch:
-//                    keyword = "default";
-//                    Intent i = new Intent(WebRTC_MapView.this, POI_Search.class);
-//                    startActivityForResult(i, SEARCH_POI_ACTIVITY);
-//                    return;
             }
             //
             MapPolyline existingPolyline = mapView.findPolylineByTag(2000);
@@ -236,19 +245,19 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
             point_icon.setVisibility(point_icon.INVISIBLE);
 
             MapPoint.GeoCoordinate geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
-            double latitude = geoCoordinate.latitude; // ����
-            double longitude = geoCoordinate.longitude; // �浵
-            int radius = 1000; // �߽� ��ǥ������ �ݰ�Ÿ�. Ư�� ������ �߽����� �˻��Ϸ��� �� ��� ���.
-            // meter ���� (0 ~ 10000)
-            int page = 1; // ������ ��ȣ (1 ~ 3). ���������� 15��
+            double latitude = geoCoordinate.latitude;
+            double longitude = geoCoordinate.longitude;
+            int radius = 1000;
+
+            int page = 1;
 
             Searcher searcher = new Searcher(); // net.daum.android.map.openapi.search.Searcher
             searcher.searchKeyword(getApplicationContext(), query, latitude, longitude, radius, page, API_KEY,
                     new OnFinishSearchListener() {
                         @Override
                         public void onSuccess(List<Item> itemList) {
-                            mapView.removeAllPOIItems(); // ���� �˻� ��� ����
-                            showResult(itemList); // �˻� ��� ������
+                            mapView.removeAllPOIItems();
+                            showResult(itemList);
                         }
 
                         @Override
@@ -353,7 +362,7 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
     public void onMapViewInitialized(MapView arg0) {
         // TODO Auto-generated method stub
 
-        mapView.removeAllPOIItems(); // ���� �˻� ��� ����
+        mapView.removeAllPOIItems();
         mapView.removeAllPolylines();
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(lati, longi), true);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
@@ -362,10 +371,8 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
         mapView.setCurrentLocationRadiusFillColor(Color.argb(77, 255, 255, 0));
         mapView.setCurrentLocationRadiusStrokeColor(Color.argb(77, 255, 165, 0));
 
-        MapPOIItem.ImageOffset trackingImageAnchorPointOffset = new MapPOIItem.ImageOffset(33, 0); // ���ϴ�(0,0)
-        // ����
-        // ��Ŀ����Ʈ
-        // ������
+        MapPOIItem.ImageOffset trackingImageAnchorPointOffset = new MapPOIItem.ImageOffset(33, 0);
+
         MapPOIItem.ImageOffset offImageAnchorPointOffset = new MapPOIItem.ImageOffset(0, 13);
 
         mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.icon_now, trackingImageAnchorPointOffset);
@@ -549,19 +556,19 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
                 point_icon.setVisibility(point_icon.INVISIBLE);
 
                 MapPoint.GeoCoordinate geoCoordinate = mapView.getMapCenterPoint().getMapPointGeoCoord();
-                double latitude = geoCoordinate.latitude; // ����
-                double longitude = geoCoordinate.longitude; // �浵
-                int radius = 1000; // �߽� ��ǥ������ �ݰ�Ÿ�. Ư�� ������ �߽����� �˻��Ϸ��� �� ��� ���.
-                // meter ���� (0 ~ 10000)
-                int page = 1; // ������ ��ȣ (1 ~ 3). ���������� 15��
+                double latitude = geoCoordinate.latitude;
+                double longitude = geoCoordinate.longitude;
+                int radius = 1000;
+
+                int page = 1;
 
                 Searcher searcher = new Searcher(); // net.daum.android.map.openapi.search.Searcher
                 searcher.searchKeyword(getApplicationContext(), getData, latitude, longitude, radius, page, API_KEY,
                         new OnFinishSearchListener() {
                             @Override
                             public void onSuccess(List<Item> itemList) {
-                                mapView.removeAllPOIItems(); // ���� �˻� ��� ����
-                                showResult(itemList); // �˻� ��� ������
+                                mapView.removeAllPOIItems();
+                                showResult(itemList);
                             }
 
                             @Override

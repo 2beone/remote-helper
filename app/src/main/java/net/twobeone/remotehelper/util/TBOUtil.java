@@ -17,6 +17,7 @@
 package net.twobeone.remotehelper.util;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.Toast;
@@ -35,6 +36,14 @@ public class TBOUtil {
             return context.getResources().getDrawable(id, context.getTheme());
         } else {
             return context.getResources().getDrawable(id);
+        }
+    }
+
+    public static ColorStateList getColorStateList(Context context, int id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            return context.getResources().getColorStateList(id, context.getTheme());
+        } else {
+            return context.getResources().getColorStateList(id);
         }
     }
 

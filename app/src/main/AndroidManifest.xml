@@ -40,7 +40,9 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".ui.UserInfoActivity" />
+        <activity
+            android:name=".ui.UserInfoActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.SearchAddressActivity"
@@ -48,7 +50,14 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
-        <activity android:name=".ui.SafetyZoneActivity" />
+        <activity
+            android:name=".ui.SafetyZoneActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.view.POISearchDialog"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
         <activity
             android:name=".ui.TroublesActivity"

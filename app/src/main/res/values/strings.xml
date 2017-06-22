@@ -8,6 +8,9 @@
     <string name="title_user_info">내정보</string>
     <string name="title_safety_zone">안전지대</string>
     <string name="no_data">보관된 자료가 없습니다.</string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">ex)편의점</string>
+    <string name="search_text">검색</string>
 
     <!-- 네비게이션 -->
     <string name="nav_safezone">안전지대</string>

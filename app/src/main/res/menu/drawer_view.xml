@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/nav_safezone"
-        android:icon="@drawable/ic_directions_run"
-        android:title="@string/nav_safezone" />
+    <group>
+        <item
+            android:id="@+id/nav_safezone"
+            android:icon="@drawable/ic_directions_run"
+            android:title="@string/nav_safezone" />
 
-    <item android:title="@string/nav_app_title">
-        <menu>
-            <item
-                android:icon="@drawable/ic_settings"
-                android:title="@string/nav_app_settings_title" />
-        </menu>
-    </item>
+        <item
+            android:icon="@drawable/ic_settings"
+            android:title="@string/nav_app_settings_title" />
+    </group>
 
     <item android:title="@string/nav_family_title">
         <menu>

@@ -14,10 +14,9 @@
 
     <!-- 네비게이션 -->
     <string name="nav_safezone">안전지대</string>
-    <string name="nav_app_title">앱정보</string>
     <string name="nav_app_settings_title">설정</string>
     <string name="nav_family_title">패밀리</string>
-    <string name="nav_family1_title">오산시청</string>
+    <string name="nav_family1_title">오산시청 홈페이지</string>
     <string name="nav_family2_title">스마트오산</string>
 
     <!-- 액티비티 타이틀 -->

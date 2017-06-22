@@ -33,9 +33,12 @@
         <item name="textAllCaps">true</item>
     </style>
 
+    <!-- 네비게이션 -->
     <style name="NavDrawerTextStyle">
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">15sp</item>
+        <!--
         <item name="android:textStyle">bold</item>
+        -->
     </style>
 
 </resources>

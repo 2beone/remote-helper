@@ -2,11 +2,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="앱정보">
+    <PreferenceCategory android:title="@string/pref_app_info_title">
         <Preference
-            android:key="pref_user_id"
-            android:summary="0.9.6"
-            android:title="현재 버전" />
+            android:key="app_version_name"
+            android:title="@string/pref_app_version_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

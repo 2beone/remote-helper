@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
                             case R.id.nav_safezone:
                                 startActivity(new Intent(MainActivity.this, SafetyZoneActivity.class));
                                 break;
-                            case R.id.action_settings:
+                            case R.id.nav_settings:
                                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                                 break;
                         }

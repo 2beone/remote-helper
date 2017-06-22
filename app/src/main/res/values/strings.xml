@@ -20,7 +20,6 @@
     <string name="nav_family2_title">스마트오산</string>
 
     <!-- 액티비티 타이틀 -->
-    <string name="troubles_activity_title">디바이스 점검</string>
     <string name="settings_activity_title">설정</string>
 
     <!-- 설정 -->
@@ -29,6 +28,8 @@
     <string name="pref_user_id_summary">로그인이 필요합니다.</string>
     <string name="pref_app_info_title">앱 정보</string>
     <string name="pref_app_version_title">현재 버전</string>
+    <string name="pref_app_troubles_title">디바이스 점검</string>
+    <string name="pref_app_troubles_summary">디바이스 및 네트워크 환경을 점검합니다.</string>
     <string name="pref_app_opensource_license_title">오픈소스 라이센스</string>
     <string name="pref_app_policy_service_title">이용약관</string>
     <string name="pref_app_policy_privacy_title">개인정보처리방침</string>

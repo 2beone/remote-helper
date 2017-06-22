@@ -6,6 +6,10 @@
         <Preference
             android:key="app_version_name"
             android:title="@string/pref_app_version_title" />
+        <Preference
+            android:key="app_troubles"
+            android:summary="@string/pref_app_troubles_summary"
+            android:title="@string/pref_app_troubles_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

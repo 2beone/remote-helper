@@ -8,7 +8,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 
-import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.AppUtils;
 
@@ -29,6 +28,9 @@ public class SettingsActivity extends BaseActivity {
 
     public static class SettingsFragment extends PreferenceFragment {
 
+        private static final String PREF_APP_VERSION_NAME = "app_version_name";
+        private static final String PREF_APP_TROUBLES = "app_troubles";
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -38,14 +40,16 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public void onResume() {
             super.onResume();
-            findPreference(Constants.PREF_APP_VERSION_NAME).setSummary(AppUtils.getPackageInfo(getActivity()).versionName);
+            findPreference(PREF_APP_VERSION_NAME).setSummary(AppUtils.getPackageInfo(getActivity()).versionName);
         }
 
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
             String key = preference.getKey();
-            if (key.equals(Constants.PREF_APP_VERSION_NAME)) {
+            if (key.equals(PREF_APP_VERSION_NAME)) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getActivity().getPackageName())));
+            } else if (key.equals(PREF_APP_TROUBLES)) {
+                startActivity(new Intent(getActivity(), TroublesActivity.class));
             }
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }

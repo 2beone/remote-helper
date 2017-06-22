@@ -11,9 +11,4 @@ public final class Constants {
      * 다운로드 디렉토리명
      */
     public static final String DONWLOAD_DIRECTORY_NAME = "RemoteHelper_download";
-
-    /**
-     * 앱버전명
-     */
-    public static final String PREF_APP_VERSION_NAME = "app_version_name";
 }

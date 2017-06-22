@@ -66,7 +66,7 @@
 
         <activity
             android:name=".ui.TroublesActivity"
-            android:label="@string/troubles_activity_title"
+            android:label="@string/pref_app_troubles_title"
             android:theme="@style/Theme.AppTheme" />
 
     </application>

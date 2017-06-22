@@ -129,7 +129,14 @@ public class MainActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
+//                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+
+                        if (id == R.id.nav_safezone) {
+                            Intent intent = new Intent(MainActivity.this, SafetyZoneActivity.class);
+                            startActivity(intent);
+                        }
+
                         mDrawerLayout.closeDrawers();
                         return true;
                     }

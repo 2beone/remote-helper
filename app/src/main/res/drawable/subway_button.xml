@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:state_selected="true">
+	    <bitmap android:src="@drawable/icon_subway_select"/>
+	</item>
+
+	<item android:state_pressed="true">
+	    <bitmap android:src="@drawable/icon_subway_on"/>
+	</item>
+
+	<item>
+	    <bitmap android:src="@drawable/icon_subway_off"/>
+	</item>
+</selector>

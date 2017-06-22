@@ -33,4 +33,9 @@
         <item name="textAllCaps">true</item>
     </style>
 
+    <style name="NavDrawerTextStyle">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

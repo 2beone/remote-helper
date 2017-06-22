@@ -4,6 +4,7 @@
     <string name="rtc_tab1_title">보관함</string>
     <string name="action_settings">Options</string>
     <string name="title_user_info">내정보</string>
+    <string name="title_safety_zone">안전지대</string>
     <string name="no_data">보관된 자료가 없습니다.</string>
 
     <!-- 네비게이션 -->

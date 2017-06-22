@@ -60,6 +60,11 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
         <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/settings_activity_title"
+            android:theme="@style/Theme.AppTheme" />
+
+        <activity
             android:name=".ui.TroublesActivity"
             android:label="@string/troubles_activity_title"
             android:theme="@style/Theme.AppTheme" />

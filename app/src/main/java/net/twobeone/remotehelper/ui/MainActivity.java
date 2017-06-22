@@ -13,9 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +29,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
@@ -60,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
         View nav_hear_view = navigationView.getHeaderView(0);
-        mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
-        mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
+        mUserName = nav_hear_view.findViewById(R.id.userage_txt);
+        mUserImage = nav_hear_view.findViewById(R.id.user_img);
         mUserImage.setImageResource(R.drawable.user_default);
         Realm.init(this);
 
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        Button userBtn = (Button) nav_hear_view.findViewById(R.id.btn_user);
+        Button userBtn = nav_hear_view.findViewById(R.id.btn_user);
         userBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,15 +86,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.d("SSSSSS", "onResume");
         Realm realm = Realm.getDefaultInstance();
         UserInfo userInfo = realm.where(UserInfo.class).findFirst();
         if (userInfo != null) {
-            Log.d("SSSSSS", "userInfo != null");
             if (userInfo.getImgPath() != null) {
                 mUserImage.setImageResource(R.drawable.user_default);
-                Log.d("SSSSSS", "userInfo.getImgPath() != null");
                 File img = new File(userInfo.getImgPath());
                 Uri uri = Uri.fromFile(img);
                 mUserImage.setImageURI(uri);
@@ -129,14 +123,11 @@ public class MainActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-//                        menuItem.setChecked(true);
                         int id = menuItem.getItemId();
-
                         if (id == R.id.nav_safezone) {
                             Intent intent = new Intent(MainActivity.this, SafetyZoneActivity.class);
                             startActivity(intent);
                         }
-
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
@@ -160,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static class Adapter extends FragmentPagerAdapter {
+
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
 

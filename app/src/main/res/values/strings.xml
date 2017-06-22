@@ -4,7 +4,7 @@
     <string name="app_name">오산시청 원격안전도우미</string>
     <string name="main_tab1_title">홈</string>
     <string name="rtc_tab1_title">보관함</string>
-    <string name="action_settings">Options</string>
+    <string name="action_settings">설정</string>
     <string name="title_user_info">내정보</string>
     <string name="title_safety_zone">안전지대</string>
     <string name="no_data">보관된 자료가 없습니다.</string>
@@ -21,4 +21,5 @@
 
     <!-- 액티비티 타이틀 -->
     <string name="troubles_activity_title">디바이스 점검</string>
+    <string name="settings_activity_title">설정</string>
 </resources>

@@ -1,37 +1,18 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.ui;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -48,12 +29,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.databinding.ActivityUserInfoBinding;
 import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.ui.adapter.Status_Item_Adapter;
-import net.twobeone.remotehelper.util.TBOUtil;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
 import java.io.BufferedOutputStream;
@@ -63,7 +43,7 @@ import java.util.Calendar;
 
 import io.realm.Realm;
 
-public class UserInfoActivity extends AppCompatActivity {
+public class UserInfoActivity extends BaseActivity {
 
     private Context mContext;
 
@@ -128,13 +108,14 @@ public class UserInfoActivity extends AppCompatActivity {
         }
 
         insert = (ImageButton) findViewById(R.id.insert);
-        insert.setBackground(TBOUtil.getDrawable(mContext, R.drawable.btn_insert));
+        insert.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_insert));
+
         cancel = (ImageButton) findViewById(R.id.cancel);
-        cancel.setBackground(TBOUtil.getDrawable(mContext, R.drawable.btn_cancel));
+        cancel.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_cancel));
         edit_basic = (ImageButton) findViewById(R.id.edit_basic);
-        edit_basic.setBackground(TBOUtil.getDrawable(mContext, R.drawable.btn_edit));
+        edit_basic.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_edit));
         edit_mypic = (ImageButton) findViewById(R.id.edit_mypic);
-        edit_mypic.setBackground(TBOUtil.getDrawable(mContext, R.drawable.btn_photo_edit));
+        edit_mypic.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_photo_edit));
         iv_UserPhoto = (RoundImageView) findViewById(R.id.user_img);
         iv_UserPhoto.setScaleType(ImageView.ScaleType.FIT_XY);
         iv_UserPhoto.setImageResource(R.drawable.user_default);
@@ -249,7 +230,7 @@ public class UserInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (name.getText().toString().getBytes().length <= 0) {
-                    TBOUtil.ShowToast(mContext, "이름은 필수입력란입니다.");
+                    Toast.makeText(mContext, "이름은 필수입력란입니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     edit_basic.setVisibility(edit_basic.VISIBLE);
                     insert.setVisibility(insert.INVISIBLE);

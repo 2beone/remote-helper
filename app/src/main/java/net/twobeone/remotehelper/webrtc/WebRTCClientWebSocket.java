@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.webrtc;
 
 import android.content.Context;
@@ -301,8 +285,18 @@ public class WebRTCClientWebSocket {
 
                                     downloadThread(url + filePath, Save_Path + fileName, fileName);
                                 } else if (type.equals("police")) {
-                                    people = "police";
                                     JSONObject message = new JSONObject();
+                                    message.put("type", "leave");
+                                    message.put("name", people);
+                                    mWebSocketClient.send(message.toString());
+
+                                    Peer peer = peers.get(people);
+                                    peer.pc.removeStream(localMS);
+                                    peer.pc.close();
+                                    peer.pc = null;
+                                    endPoints[peer.endPoint] = false;
+
+                                    people = "police";
                                     message.put("type", "call");
                                     message.put("name", people);
                                     message.put("saviorName", "김진혁");
@@ -335,6 +329,9 @@ public class WebRTCClientWebSocket {
                                 Peer peer = peers.get(people);
 
                                 peer.pc.removeStream(localMS);
+                                peer.pc.removeStream(localMS);
+                                peer.pc.close();
+                                peer.pc = null;
 
                                 localMS.dispose();
                                 localMS = null;
@@ -344,7 +341,6 @@ public class WebRTCClientWebSocket {
                                 videoCapturer = null;
                                 audioSource.dispose();
                                 audioSource = null;
-                                peer.pc = null;
 
                                 peers.remove(peer.id);
                                 endPoints[peer.endPoint] = false;
@@ -524,6 +520,8 @@ public class WebRTCClientWebSocket {
         WebRTCClientWebSocket.Peer peer = peers.get(id);
 
         peer.pc.removeStream(localMS);
+        peer.pc.close();
+        peer.pc = null;
 
         localMS.dispose();
         localMS = null;
@@ -533,7 +531,6 @@ public class WebRTCClientWebSocket {
         videoCapturer = null;
         audioSource.dispose();
         audioSource = null;
-        peer.pc = null;
 
         peers.remove(peer.id);
         endPoints[peer.endPoint] = false;

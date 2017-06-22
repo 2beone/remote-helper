@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
     <android.opengl.GLSurfaceView
         android:id="@+id/glview_call"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <android.view.SurfaceView
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
 
     <ImageView
@@ -23,8 +23,7 @@
         android:layout_height="255dp"
         android:layout_centerInParent="true"
         android:background="@drawable/voice_img"
-        android:visibility="invisible" >
-    </ImageView>
+        android:visibility="invisible"></ImageView>
 
     <ImageButton
         android:id="@+id/change_camera"
@@ -63,4 +62,13 @@
         android:layout_margin="10dp"
         android:background="@drawable/btn_video"
         android:visibility="invisible" />
+
+
+    <ImageButton
+        android:id="@+id/hangup"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_hangup" />
 </RelativeLayout>

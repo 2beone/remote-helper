@@ -1,14 +1,20 @@
 package net.twobeone.remotehelper.ui;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -43,6 +49,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkPermissions();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -139,18 +147,25 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        try {
-            fm = getSupportFragmentManager();
-            if (!fm.findFragmentByTag("rtcfragment").isRemoving()) {
-                fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-                fragmentTransaction.commit();
-            } else {
-                super.onBackPressed();
-            }
-        } catch (Exception e) {
-            super.onBackPressed();
-        }
+//        try {
+//            fm = getSupportFragmentManager();
+//            fragmentTransaction = fm.beginTransaction();
+//
+//            if(fm.equals("")){
+//                super.onBackPressed();
+//            }
+//
+//            if (!fm.findFragmentByTag("rtcfragment").isRemoving()) {
+//                fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+//                fragmentTransaction.commit();
+//            } else if (!fm.findFragmentByTag("msginfofragment").isRemoving()){
+//                fragmentTransaction.remove(fm.findFragmentByTag("msginfofragment"));
+//                fragmentTransaction.commit();
+//            }
+//
+//        } catch (Exception e) {
+//
+//        }
     }
 
     static class Adapter extends FragmentPagerAdapter {
@@ -183,4 +198,54 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    public void checkPermissions() {
+
+        int APIVersion = Build.VERSION.SDK_INT;
+        if (APIVersion >= Build.VERSION_CODES.M) {
+
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[] { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.GET_ACCOUNTS },
+                        100);
+
+            }
+
+        }
+    }
+
+    @SuppressLint("Override")
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onResume();
+
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.GET_ACCOUNTS},
+                            100);
+
+                }
+                return;
+            }
+            default: {
+
+                return;
+            }
+        }
+    }
 }

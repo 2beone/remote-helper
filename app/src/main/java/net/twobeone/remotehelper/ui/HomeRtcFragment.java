@@ -1,7 +1,5 @@
 package net.twobeone.remotehelper.ui;
 
-//import android.app.Fragment;
-
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -13,6 +11,8 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -87,10 +87,14 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private ImageButton change_camera;
     private ImageButton change_voice;
     private ImageButton change_video;
+    private ImageButton hangup;
     private ImageView voice_img;
     private boolean mutests = false;
     private Button sos_button;
     private Runnable runnable = null;
+
+    private FragmentManager fm;
+    private FragmentTransaction fragmentTransaction;
 
     private void setting() {
         cam = Camera.open(1);
@@ -142,12 +146,15 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         change_camera = (ImageButton) view.findViewById(R.id.change_camera);
         change_voice = (ImageButton) view.findViewById(R.id.change_voice);
         change_video = (ImageButton) view.findViewById(R.id.change_video);
+        hangup = (ImageButton) view.findViewById(R.id.hangup);
         voice_img = (ImageView) view.findViewById(R.id.voice_img);
 
         mute_button.setOnClickListener(onClickListener);
         change_camera.setOnClickListener(onClickListener);
         change_voice.setOnClickListener(onClickListener);
         change_video.setOnClickListener(onClickListener);
+        hangup.setOnClickListener(onClickListener);
+
 
         Log.e("SSSSS", "onStart");
     }
@@ -182,6 +189,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     voice_img.setVisibility(voice_img.INVISIBLE);
                     change_voice.setVisibility(change_voice.VISIBLE);
                     change_video.setVisibility(change_video.INVISIBLE);
+                    break;
+                case R.id.hangup:
+                    fm = getFragmentManager();
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+                    fragmentTransaction.commit();
                     break;
             }
         }
@@ -243,7 +256,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onClose() {
-        getActivity().onBackPressed();
+        fm = getFragmentManager();
+        fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -257,6 +273,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStartRecording() {
+        hangup.setVisibility(hangup.INVISIBLE);
         VideoRendererGui.remove(localRender);
         handler.sendEmptyMessage(0);
         if (!recording) {
@@ -336,9 +353,11 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                                 @Override
                                 public void run() {
                                     fileUpload();
+                                    File file = new File(Save_Path + save_name + ".mp4");
+                                    file.delete();
                                 }
                             }).start();
-                            getActivity().onBackPressed();
+                            onClose();
                         }
                     }
                 }.start();

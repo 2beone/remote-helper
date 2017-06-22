@@ -16,6 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.FileUtils;
@@ -31,10 +35,16 @@ public final class DownloadDataFragment extends BaseFragment {
     private RecyclerViewAdapter mRecyclerViewAdapter;
     private TextView mTvNoData;
 
+    private static Fragment fragment;
+    private static FragmentManager fm;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRecyclerViewAdapter = new RecyclerViewAdapter(getContext());
+
+        fragment = new MsgInfoFragment();
+        fm = getFragmentManager();
     }
 
     @Override
@@ -59,7 +69,7 @@ public final class DownloadDataFragment extends BaseFragment {
         mTvNoData.setVisibility(mRecyclerView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+    public static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
         private final Context mContext;
         private final File mDirectory;
@@ -107,7 +117,7 @@ public final class DownloadDataFragment extends BaseFragment {
             return mFiles == null ? 0 : mFiles.size();
         }
 
-        private void selectItems() {
+        public void selectItems() {
             mFiles = new LinkedList<>(Arrays.asList(mDirectory.listFiles()));
             for (int i = mFiles.size() - 1; i >= 0; i--) {
                 File file = mFiles.get(i);
@@ -135,6 +145,7 @@ public final class DownloadDataFragment extends BaseFragment {
             TextView tvFileName;
             TextView tvFileSize;
             TextView tvFileDuration;
+            FragmentTransaction fragmentTransaction;
 
             public ViewHolder(View view) {
                 super(view);
@@ -145,14 +156,23 @@ public final class DownloadDataFragment extends BaseFragment {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //                MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
-//                String msg_name = item.getTitle();
-//                String msg_extend = item.getExtend();
-
-                // Intent intent = new Intent(view.getContext(), MSG_Info_View.class);
-////                intent.putExtra("msg", msg_name);
-////                intent.putExtra("extend", msg_extend);
-////                startActivity(intent);
+//                        MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
+//                        String msg_name = item.getTitle();
+//                        String msg_extend = item.getExtend();
+//
+//                        Intent intent = new Intent(view.getContext(), MSG_Info_View.class);
+//                        intent.putExtra("msg", msg_name);
+//                        intent.putExtra("extend", msg_extend);
+//                        startActivity(intent);
+//
+                        Bundle args = new Bundle();
+                        int sub = tvFileName.getText().toString().indexOf(".");
+                        args.putString("name", tvFileName.getText().toString().substring(0,sub));
+                        args.putString("extend", tvFileName.getText().toString().substring(sub));
+                        fragment.setArguments(args);
+                        fragmentTransaction = fm.beginTransaction();
+                        fragmentTransaction.replace(R.id.download_data, fragment, "msginfofragment");
+                        fragmentTransaction.commit();
                     }
                 });
             }

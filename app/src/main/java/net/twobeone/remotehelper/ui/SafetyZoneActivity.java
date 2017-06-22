@@ -40,11 +40,7 @@ public class SafetyZoneActivity extends BaseActivity implements MapView.MapViewE
     private TextView point_name;
     private TextView distance;
     private GPSInfo gps;
-    private double lati;
-    private double longi;
-    private double poilat;
-    private double poilong;
-    private double distanceKiloMeter;
+    private double lati, longi, poilat, poilong, distanceKiloMeter;
     private MapPoint[] mPolyline;
     private String keyword = "";
     private ImageView point_icon;

@@ -7,11 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class DownloadDataFragment extends Fragment {
+public final class DownloadDataFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;
@@ -150,13 +148,11 @@ public final class DownloadDataFragment extends Fragment {
                         //                MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
 //                String msg_name = item.getTitle();
 //                String msg_extend = item.getExtend();
-//
-////                Intent intent = new Intent(getActivity().getApplicationContext(), MSG_Info_View.class);
+
+                // Intent intent = new Intent(view.getContext(), MSG_Info_View.class);
 ////                intent.putExtra("msg", msg_name);
 ////                intent.putExtra("extend", msg_extend);
 ////                startActivity(intent);
-
-                        Log.d("TEST", "CLICK");
                     }
                 });
             }

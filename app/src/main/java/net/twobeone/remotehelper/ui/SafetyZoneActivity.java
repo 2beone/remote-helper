@@ -1,41 +1,19 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import daum.android.map.openapi.search.Item;
-import daum.android.map.openapi.search.OnFinishSearchListener;
-import daum.android.map.openapi.search.Searcher;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -49,22 +27,16 @@ import net.twobeone.remotehelper.ui.view.POISearchDialog;
 import java.util.HashMap;
 import java.util.List;
 
-public class SafetyZoneActivity extends AppCompatActivity implements MapView.MapViewEventListener, MapView.POIItemEventListener, MapView.CurrentLocationEventListener {
+import daum.android.map.openapi.search.Item;
+import daum.android.map.openapi.search.OnFinishSearchListener;
+import daum.android.map.openapi.search.Searcher;
 
-    private ImageButton back;
-    private TextView title_text;
+public class SafetyZoneActivity extends BaseActivity implements MapView.MapViewEventListener, MapView.POIItemEventListener, MapView.CurrentLocationEventListener {
+
     private String API_KEY = "61026b71ae7bd08e62c008367f213d25";
     private MapView mapView;
-    private HashMap<Integer, Item> mTagItemMap = new HashMap<Integer, Item>();
-    private ImageButton police;
-    private ImageButton fire;
-    private ImageButton police_box;
-    private ImageButton hospital;
-    private ImageButton pharmacy;
-    private ImageButton mart;
-    private ImageButton subway;
-    private ImageButton school;
-    private ImageButton search_poi;
+    private HashMap<Integer, Item> mTagItemMap = new HashMap<>();
+    private ImageButton police, fire, police_box, hospital, pharmacy, mart, subway, school;
     private TextView point_name;
     private TextView distance;
     private GPSInfo gps;
@@ -80,7 +52,6 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safety_zone);
 
@@ -447,8 +418,8 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
         poilat = arg1.getMapPoint().getMapPointGeoCoord().latitude;
         poilong = arg1.getMapPoint().getMapPointGeoCoord().longitude;
 
-        mPolyline = new MapPoint[] { MapPoint.mapPointWithGeoCoord(lati, longi),
-                MapPoint.mapPointWithGeoCoord(poilat, poilong) };
+        mPolyline = new MapPoint[]{MapPoint.mapPointWithGeoCoord(lati, longi),
+                MapPoint.mapPointWithGeoCoord(poilat, poilong)};
 
         MapPolyline polyline2 = new MapPolyline(21);
         polyline2.setTag(2000);
@@ -478,8 +449,8 @@ public class SafetyZoneActivity extends AppCompatActivity implements MapView.Map
             lati = arg1.getMapPointGeoCoord().latitude;
             longi = arg1.getMapPointGeoCoord().longitude;
 
-            mPolyline = new MapPoint[] { MapPoint.mapPointWithGeoCoord(lati, longi),
-                    MapPoint.mapPointWithGeoCoord(poilat, poilong) };
+            mPolyline = new MapPoint[]{MapPoint.mapPointWithGeoCoord(lati, longi),
+                    MapPoint.mapPointWithGeoCoord(poilat, poilong)};
 
             MapPolyline polyline2 = new MapPolyline(21);
             polyline2.setTag(2000);

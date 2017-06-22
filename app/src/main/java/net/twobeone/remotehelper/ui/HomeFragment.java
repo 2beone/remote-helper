@@ -12,7 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 import net.twobeone.remotehelper.R;
 
@@ -23,7 +23,7 @@ import net.twobeone.remotehelper.R;
 public class HomeFragment extends Fragment {
 
     private View view;
-    private ImageButton sos_button;
+    private Button sos_button;
     private Fragment fragment;
     private FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        sos_button = (ImageButton) getActivity().findViewById(R.id.sos);
+        sos_button = (Button) view.findViewById(R.id.btn_call);
         sos_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

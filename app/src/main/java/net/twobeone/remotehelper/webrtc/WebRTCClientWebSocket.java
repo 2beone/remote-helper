@@ -172,6 +172,7 @@ public class WebRTCClientWebSocket {
     }
 
     public WebRTCClientWebSocket(Context context, WebRTCClientWebSocket.RtcListener listener, String host, PeerConnectionParameters params, EGLContext mEGLcontext) {
+
         Log.e("SSSSS", "WebRTCClientWebSocket Init");
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
         mContext = context;
@@ -251,8 +252,12 @@ public class WebRTCClientWebSocket {
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
-//                                        people = data.getJSONArray("people").getString(0);
-                                        people = "chae";//임의 2beone1로만 연결
+                                        people = data.getJSONArray("people").getString(0);
+                                        if(people.equals("police")){
+                                            people = "";
+                                            people = data.getJSONArray("people").getString(1);
+                                        }
+//                                        people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
                                         message.put("name", people);
@@ -267,7 +272,6 @@ public class WebRTCClientWebSocket {
                                         videoCapturer = null;
                                         audioSource.dispose();
                                         audioSource = null;
-//                                        mWebSocketClient.close();
                                         startRecording();
                                     }
                                 } else if (type.equals("candidate")) {
@@ -275,7 +279,7 @@ public class WebRTCClientWebSocket {
                                 } else if (type.equals("callAnswer")) {
                                     people = data.getString("name");
                                 } else if (type.equals("cameraClick")) {
-                                    WebRTCClientWebSocket.Peer peer = peers.get(people);
+                                    Peer peer = peers.get(people);
                                     peer.pc.removeStream(localMS);
 
                                     localMS.dispose();
@@ -297,7 +301,6 @@ public class WebRTCClientWebSocket {
 
                                     downloadThread(url + filePath, Save_Path + fileName, fileName);
                                 } else if (type.equals("police")) {
-                                    payload = data.getJSONObject("offer");
                                     people = "police";
                                     JSONObject message = new JSONObject();
                                     message.put("type", "call");
@@ -307,17 +310,17 @@ public class WebRTCClientWebSocket {
                                 }
                                 // if peer is unknown, try to add him
                                 if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call")
-                                        && !type.equals("cameraClick") && !type.equals("file") && !people.equals("")) {
+                                        && !type.equals("cameraClick") && !type.equals("file") && !type.equals("police") && !people.equals("")) {
                                     // if MAX_PEER is reach, ignore the call
 
                                     int endPoint = findEndPoint();
                                     if (endPoint != MAX_PEER) {
-                                        WebRTCClientWebSocket.Peer peer = addPeer(people, endPoint);
+                                        Peer peer = addPeer(people, endPoint);
                                         peer.pc.addStream(localMS);
                                         Log.e("SSSSS", "TYPE!!!!!!" + type);
                                         commandMap.get(type).execute(people, payload);
                                     }
-                                } else if (!type.equals("leave") && !type.equals("login") && !type.equals("file") && !people.equals("")) {
+                                } else if (!type.equals("leave") && !type.equals("login") && !type.equals("file") && !people.equals("") && !type.equals("police")) {
                                     Log.e("SSSSS", "TYPE!!!!!!" + type);
                                     commandMap.get(type).execute(people, payload);
                                 }
@@ -329,7 +332,7 @@ public class WebRTCClientWebSocket {
                         @Override
                         public void onClose(int code, String reason, boolean remote) {
                             if (localMS != null) {
-                                WebRTCClientWebSocket.Peer peer = peers.get(people);
+                                Peer peer = peers.get(people);
 
                                 peer.pc.removeStream(localMS);
 
@@ -473,8 +476,12 @@ public class WebRTCClientWebSocket {
 
         @Override
         public void onAddStream(MediaStream mediaStream) {
-            remoteMS = mediaStream;
-            Log.e("SSSSS", "onAddStream " + mediaStream.label());
+            try {
+                remoteMS = mediaStream;
+                Log.e("SSSSS", "onAddStream " + mediaStream.label());
+            }catch (Exception e){
+                Log.e("SSSSS", "onAddStream " + e.toString());
+            }
         }
 
         @Override

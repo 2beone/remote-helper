@@ -1,4 +1,6 @@
 <resources>
+
+    <!-- 전역 -->
     <string name="app_name">오산시청 원격안전도우미</string>
     <string name="main_tab1_title">홈</string>
     <string name="rtc_tab1_title">보관함</string>
@@ -14,4 +16,7 @@
     <string name="nav_family_title">패밀리</string>
     <string name="nav_family1_title">오산시청</string>
     <string name="nav_family2_title">스마트오산</string>
+
+    <!-- 액티비티 타이틀 -->
+    <string name="troubles_activity_title">디바이스 점검</string>
 </resources>

@@ -2,7 +2,6 @@ package net.twobeone.remotehelper.ui;
 
 //import android.app.Fragment;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -17,9 +16,11 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -77,10 +78,11 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private String Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
 
     private Camera cam = null;
-    private MediaRecorder mediaRecorder;
+    private MediaRecorder mediaRecorder = null;
     private boolean recording = false;
     private String save_name = System.currentTimeMillis() + "";
     private SurfaceHolder sh;
+    private SurfaceView sv;
 
     private ImageButton mute_button;
     private ImageButton change_camera;
@@ -88,11 +90,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private ImageButton change_video;
     private ImageView voice_img;
     private boolean mutests = false;
+    private Button sos_button;
 
     private void setting() {
         cam = Camera.open(1);
         cam.setDisplayOrientation(90);
-        sh = vsv.getHolder();
+        sh = sv.getHolder();
         sh.addCallback(this);
         sh.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
@@ -110,21 +113,13 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         mSocketAddress = "wss://remohelper.com:9090";
         Log.e("SSSSS", "onCreateview");
 
-        return view;
-    }
+        sos_button = (Button) getActivity().findViewById(R.id.btn_call);
+        sos_button.setVisibility(sos_button.INVISIBLE);
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.e("SSSSS", "onAttach");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         vsv = (GLSurfaceView) view.findViewById(R.id.glview_call);
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
+        sv = (SurfaceView) view.findViewById(R.id.preview);
 
         VideoRendererGui.setView(vsv, new Runnable() {
             @Override
@@ -136,6 +131,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         localRender = VideoRendererGui.create(
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, true);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         mute_button = (ImageButton) view.findViewById(R.id.mute_button);
         change_camera = (ImageButton) view.findViewById(R.id.change_camera);
@@ -215,21 +216,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     }
 
     @Override
-    public void onDestroy() {
-        Log.e("SSSSS", "Here5");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
     public void onDetach() {
         Log.e("SSSSS", "Here6");
         VideoRendererGui.remove(localRender);
+        sos_button.setVisibility(sos_button.VISIBLE);
         if (!clientWebSocket.mWebSocketClient.isClosed()) {
             Log.e("SSSSS", "clientWebSocket disconnect");
             clientWebSocket.clearSocket();
@@ -266,7 +256,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStartRecording() {
-//        VideoRendererGui.remove(localRender);
+        VideoRendererGui.remove(localRender);
+        handler.sendEmptyMessage(0);
         if (!recording) {
             setting();
             File dir = new File(Save_Path);
@@ -280,10 +271,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 cam.unlock();
                 refreshCamera(cam);
                 mediaRecorder.setCamera(cam);
-                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                 mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// H264
                 mediaRecorder.setOrientationHint(270);
                 mediaRecorder.setOutputFile(Save_Path + save_name + ".mp4");
@@ -291,7 +280,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 mediaRecorder.prepare();
                 mediaRecorder.start();
                 recording = true;
-                handler.sendEmptyMessage(0);
+                handler.sendEmptyMessage(1);
             } catch (final Exception ex) {
                 Log.e("JH", ex.toString());
                 mediaRecorder.stop();
@@ -312,6 +301,13 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     public Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == 0) {
+                mute_button.setVisibility(mute_button.INVISIBLE);
+                change_voice.setVisibility(change_voice.INVISIBLE);
+                change_camera.setVisibility(change_camera.INVISIBLE);
+                sv.setVisibility(sv.VISIBLE);
+                vsv.setVisibility(vsv.INVISIBLE);
+            }
+            if(msg.what == 1){
                 new CountDownTimer(5000, 500) {
 
                     @Override
@@ -323,15 +319,15 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     public void onFinish() {
                         // TODO Auto-generated method stub
                         if (recording) {
-                            mediaRecorder.stop();
-                            mediaRecorder.release();
-                            mediaRecorder = null;
-                            recording = false;
                             try {
+                                mediaRecorder.stop();
+                                mediaRecorder.release();
+                                mediaRecorder = null;
+                                recording = false;
                                 cam.stopPreview();
                                 cam.release();
                             } catch (Exception e) {
-
+                                Log.e("JH","CAM " + e.toString());
                             }
 
                             // 서버로 녹화한 영상 전송
@@ -420,7 +416,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             cam.stopPreview();
         } catch (Exception e) {
             // ignore: tried to stop a non-existent preview
-            Log.e("SSSSS", "Preview?? " + e.toString());
+            Log.e("SSSSS", "Preview?!? " + e.toString());
         }
         setCamera(camera);
         try {

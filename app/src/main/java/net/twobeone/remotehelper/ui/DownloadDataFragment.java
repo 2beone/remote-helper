@@ -1,100 +1,165 @@
 package net.twobeone.remotehelper.ui;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.ui.adapter.MSG_Item;
-import net.twobeone.remotehelper.ui.adapter.MSG_Item_Adapter;
-import net.twobeone.remotehelper.util.StringUtils;
+import net.twobeone.remotehelper.util.FileUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-public class DownloadDataFragment extends Fragment {
+public final class DownloadDataFragment extends Fragment {
 
-    private ListView mListview;
-    private MSG_Item_Adapter mAdapter;
-
-    private static final String[] VIDEO_EXTENSIONS = {"MP4"};
-    private static final String[] IMAGE_EXTENSIONS = {"JPG", "GIF", "PNG", "BMP"};
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private TextView mTvNoData;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new MSG_Item_Adapter();
+        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_download_data, container, false);
+        return inflater.inflate(R.layout.fragment_download_data, container, false);
+    }
 
-        for (File file : makeDirectoryIfNotExists(String.format("%s/%s/", Environment.getExternalStorageDirectory().getAbsolutePath(), Constants.DONWLOAD_DIRECTORY_NAME)).listFiles()) {
-            String extension = getExtension(file);
-            if (!StringUtils.isNullOrEmpty(extension)) {
-                mAdapter.addItem(ContextCompat.getDrawable(getActivity(), getIcon(extension)), file.getName(), extension);
-            }
-        }
-
-        mListview = view.findViewById(R.id.msg_list);
-        mListview.setAdapter(mAdapter);
-        mListview.setVisibility(mAdapter.getCount() != 0 ? View.VISIBLE : View.INVISIBLE);
-        mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
-                String msg_name = item.getTitle();
-                String msg_extend = item.getExtend();
-
-//                Intent intent = new Intent(getActivity().getApplicationContext(), MSG_Info_View.class);
-//                intent.putExtra("msg", msg_name);
-//                intent.putExtra("extend", msg_extend);
-//                startActivity(intent);
-            }
-        });
-
-        view.findViewById(R.id.msg_text).setVisibility(mListview.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-
-        return view;
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mTvNoData = view.findViewById(R.id.msg_text);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        mRecyclerViewAdapter.selectItems();
+        mRecyclerView.setVisibility(mRecyclerViewAdapter.getItemCount() == 0 ? View.INVISIBLE : View.VISIBLE);
+        mTvNoData.setVisibility(mRecyclerView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private int getIcon(String extension) {
-        if (Arrays.asList(VIDEO_EXTENSIONS).contains(extension)) {
-            return R.drawable.ico_moving;
-        } else if (Arrays.asList(IMAGE_EXTENSIONS).contains(extension)) {
-            return R.drawable.ico_picture;
-        }
-        return R.drawable.ico_text;
-    }
+    private static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private String getExtension(File file) {
-        String fileName = file.getName();
-        if (file.isDirectory() || !fileName.contains(".")) {
-            return null;
-        }
-        return fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-    }
+        private final Context mContext;
+        private final File mDirectory;
+        private List<File> mFiles;
 
-    private File makeDirectoryIfNotExists(String path) {
-        File dir = new File(path);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        public RecyclerViewAdapter(Context context) {
+            mContext = context;
+            mDirectory = FileUtils.makeDirectoryIfNotExists(String.format("%s/%s/", Environment.getExternalStorageDirectory().getAbsolutePath(), Constants.DONWLOAD_DIRECTORY_NAME));
         }
-        return dir;
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            final File file = mFiles.get(position);
+            holder.ivFileType.setImageDrawable(getFileTypeDrawble(file));
+            holder.tvFileName.setText(file.getName());
+            holder.tvFileSize.setText(FileUtils.getSizeName(file));
+            holder.tvFileDuration.setVisibility(FileUtils.isVideoFile(file) ? View.VISIBLE : View.GONE);
+            if (holder.tvFileDuration.getVisibility() == View.VISIBLE) {
+                holder.tvFileDuration.setText(String.format("재생 시간 %d초", getMediaDuration(file)));
+            }
+        }
+
+        public long getMediaDuration(File file) {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            try {
+                retriever.setDataSource(mContext, Uri.fromFile(file));
+                return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (retriever != null) {
+                    retriever.release();
+                }
+            }
+            return 0;
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFiles == null ? 0 : mFiles.size();
+        }
+
+        private void selectItems() {
+            mFiles = new LinkedList<>(Arrays.asList(mDirectory.listFiles()));
+            for (int i = mFiles.size() - 1; i >= 0; i--) {
+                File file = mFiles.get(i);
+                if (file.isDirectory() || file.length() == 0) {
+                    mFiles.remove(file);
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        private Drawable getFileTypeDrawble(File file) {
+            if ("PDF".equals(FileUtils.getExtension(file))) {
+                return ContextCompat.getDrawable(mContext, R.drawable.file_pdf);
+            } else if (FileUtils.isVideoFile(file)) {
+                return ContextCompat.getDrawable(mContext, R.drawable.file_video);
+            } else if (FileUtils.isImageFile(file)) {
+                return ContextCompat.getDrawable(mContext, R.drawable.file_picture);
+            }
+            return ContextCompat.getDrawable(mContext, R.drawable.file_text);
+        }
+
+        static final class ViewHolder extends RecyclerView.ViewHolder {
+
+            ImageView ivFileType;
+            TextView tvFileName;
+            TextView tvFileSize;
+            TextView tvFileDuration;
+
+            public ViewHolder(View view) {
+                super(view);
+                ivFileType = view.findViewById(R.id.iv_file_type);
+                tvFileName = view.findViewById(R.id.tv_file_name);
+                tvFileSize = view.findViewById(R.id.tv_file_size);
+                tvFileDuration = view.findViewById(R.id.tv_file_deration);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //                MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
+//                String msg_name = item.getTitle();
+//                String msg_extend = item.getExtend();
+//
+////                Intent intent = new Intent(getActivity().getApplicationContext(), MSG_Info_View.class);
+////                intent.putExtra("msg", msg_name);
+////                intent.putExtra("extend", msg_extend);
+////                startActivity(intent);
+
+                        Log.d("TEST", "CLICK");
+                    }
+                });
+            }
+        }
     }
 }

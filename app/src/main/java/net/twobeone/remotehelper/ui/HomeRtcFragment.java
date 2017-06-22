@@ -73,7 +73,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private String callerId;
     private WebRTCClientWebSocket clientWebSocket = null;
     private View view;
-    private Runnable runnable;
 
     private String Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
 
@@ -91,6 +90,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private ImageView voice_img;
     private boolean mutests = false;
     private Button sos_button;
+    private Runnable runnable = null;
 
     private void setting() {
         cam = Camera.open(1);
@@ -121,7 +121,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         vsv.setKeepScreenOn(true);
         sv = (SurfaceView) view.findViewById(R.id.preview);
 
-        VideoRendererGui.setView(vsv, new Runnable() {
+        VideoRendererGui.setView(vsv, runnable = new Runnable() {
             @Override
             public void run() {
                 init();
@@ -130,7 +130,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
         localRender = VideoRendererGui.create(
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
-                LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, true);
+                LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, false);
         return view;
     }
 
@@ -218,6 +218,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     @Override
     public void onDetach() {
         Log.e("SSSSS", "Here6");
+        localRender = null;
         VideoRendererGui.remove(localRender);
         sos_button.setVisibility(sos_button.VISIBLE);
         if (!clientWebSocket.mWebSocketClient.isClosed()) {
@@ -226,6 +227,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             clientWebSocket.mWebSocketClient.close();
         }
         clientWebSocket = null;
+        handler.removeCallbacks(runnable);
         super.onDetach();
     }
 
@@ -241,7 +243,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onClose() {
-//        getActivity().finish();
         getActivity().onBackPressed();
     }
 
@@ -251,7 +252,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         VideoRendererGui.update(localRender,
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING,
-                scalingType);
+                scalingType, false);
     }
 
     @Override

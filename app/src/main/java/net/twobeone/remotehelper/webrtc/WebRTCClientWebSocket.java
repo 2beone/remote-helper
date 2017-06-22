@@ -560,6 +560,8 @@ public class WebRTCClientWebSocket {
     public void onDestroy() {
         Log.e("SSSSS", "onDestroy");
         mWebSocketClient.close();
+        PeerConnectionFactory.initializeAndroidGlobals(null, false, false, false, null);
+        factory = null;
         mListener.onClose();
     }
 

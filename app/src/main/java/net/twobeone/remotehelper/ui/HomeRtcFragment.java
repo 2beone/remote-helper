@@ -175,6 +175,14 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         UserInfo userInfo = realm.where(UserInfo.class).findFirst();
         userName = userInfo.getName();
 
+        if(getArguments().getString("isMute").equals("false")){
+            mutests = false;
+            mute_button.setBackgroundResource(R.drawable.btn_mute_on);
+        }else{
+            mutests = true;
+            mute_button.setBackgroundResource(R.drawable.btn_mute_off);
+        }
+
         Log.e("SSSSS", "onStart");
     }
 
@@ -210,10 +218,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     change_video.setVisibility(change_video.INVISIBLE);
                     break;
                 case R.id.hangup:
-                    fm = getFragmentManager();
-                    fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-                    fragmentTransaction.commit();
+                    getActivity().onBackPressed();
                     break;
             }
         }
@@ -266,22 +271,16 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStatusChanged(final String newStatus) {
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(getActivity().getApplicationContext(), newStatus, Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        if(newStatus.equals("CONNECTING")){
+            handler.sendEmptyMessage(3);
+        }
         iceStatus = newStatus;
         handler.sendEmptyMessage(2);
     }
 
     @Override
     public void onClose() {
-        fm = getFragmentManager();
-        fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-        fragmentTransaction.commit();
+        handler.sendEmptyMessage(4);
     }
 
     @Override
@@ -386,6 +385,22 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             }
             if(msg.what == 2){
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
+            }
+            if(msg.what == 3){
+                new CountDownTimer(500, 500) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        // TODO Auto-generated method stub
+                    }
+                    @Override
+                    public void onFinish() {
+                        // TODO Auto-generated method stub
+                        clientWebSocket.onMute(mutests);
+                    }
+                }.start();
+            }
+            if(msg.what == 4){
+                getActivity().onBackPressed();
             }
         }
     };

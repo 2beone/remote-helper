@@ -107,10 +107,7 @@ public class MsgInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                fm = getFragmentManager();
-                fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.remove(fm.findFragmentByTag("msginfofragment"));
-                fragmentTransaction.commit();
+                getActivity().onBackPressed();
             }
         });
     }

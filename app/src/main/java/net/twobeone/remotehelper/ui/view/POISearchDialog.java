@@ -1,5 +1,6 @@
 package net.twobeone.remotehelper.ui.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -13,9 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.ui.BaseActivity;
 
-public class POISearchDialog extends BaseActivity {
+public class POISearchDialog extends Activity {
 
     private EditText poi_name;
     private Button search;

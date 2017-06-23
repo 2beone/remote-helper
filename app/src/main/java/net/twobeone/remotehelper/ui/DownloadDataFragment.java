@@ -172,6 +172,7 @@ public final class DownloadDataFragment extends BaseFragment {
                         fragment.setArguments(args);
                         fragmentTransaction = fm.beginTransaction();
                         fragmentTransaction.replace(R.id.download_data, fragment, "msginfofragment");
+                        fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     }
                 });

@@ -47,6 +47,8 @@ public class MainActivity extends BaseActivity {
     private RoundImageView mUserImage;
     private GPSInfo gps;
 
+    private long backKeyPressedTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +130,18 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+//            backKeyPressedTime = System.currentTimeMillis();
+//            Toast.makeText(this,"한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+//            super.onBackPressed();
+//        }
+//    }
+
     public void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
@@ -142,6 +156,7 @@ public class MainActivity extends BaseActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.nav_safezone:
+                                gps = new GPSInfo(MainActivity.this);
                                 if (!gps.isGetLocation()) {
                                     gps.showSettingsAlert();
                                 } else{
@@ -155,29 +170,6 @@ public class MainActivity extends BaseActivity {
                         return true;
                     }
                 });
-    }
-
-    @Override
-    public void onBackPressed() {
-//        try {
-//            fm = getSupportFragmentManager();
-//            fragmentTransaction = fm.beginTransaction();
-//
-//            if(fm.equals("")){
-//                super.onBackPressed();
-//            }
-//
-//            if (!fm.findFragmentByTag("rtcfragment").isRemoving()) {
-//                fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-//                fragmentTransaction.commit();
-//            } else if (!fm.findFragmentByTag("msginfofragment").isRemoving()){
-//                fragmentTransaction.remove(fm.findFragmentByTag("msginfofragment"));
-//                fragmentTransaction.commit();
-//            }
-//
-//        } catch (Exception e) {
-//
-//        }
     }
 
     static class Adapter extends FragmentPagerAdapter {

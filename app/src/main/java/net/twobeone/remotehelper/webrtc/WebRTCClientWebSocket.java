@@ -75,6 +75,10 @@ public class WebRTCClientWebSocket {
     private String url = "https://remohelper.com:440/download/";
     private JSONObject payload = null;
     private JSONObject data = null;
+    private double latitude = 0;
+    private double longitude = 0;
+    private String userName = "";
+    private String nowAddr = "";
 
     public interface RtcListener {
 
@@ -145,23 +149,29 @@ public class WebRTCClientWebSocket {
         message.put("type", type);
         message.put(type, payload);
         if (type.equals("offer")) {
-            message.put("latitude", "37.485305");
-            message.put("longitude", "127.119737");
-            message.put("saviorName", "김진혁");
-            message.put("nowAddress", "서울시 송파구 문정동");
+            message.put("latitude", latitude);
+            message.put("longitude", longitude);
+            message.put("saviorName", userName);
+            message.put("nowAddress", nowAddr);
             message.put("regId", "ABCDEFGHIJKLMNOP");
         }
         Log.e("SSSSS", to + " ::::: " + type + " ::::: " + payload.toString());
         mWebSocketClient.send(message.toString());
     }
 
-    public WebRTCClientWebSocket(Context context, WebRTCClientWebSocket.RtcListener listener, String host, PeerConnectionParameters params, EGLContext mEGLcontext) {
+    public WebRTCClientWebSocket(Context context, WebRTCClientWebSocket.RtcListener listener, String host, PeerConnectionParameters params,
+                                 EGLContext mEGLcontext, String nowAddress , double lati, double longi, String name) {
 
         Log.e("SSSSS", "WebRTCClientWebSocket Init");
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
         mContext = context;
         mListener = listener;
         pcParams = params;
+
+        nowAddr = nowAddress;
+        latitude = lati;
+        longitude = longi;
+        userName = name;
 
         PeerConnectionFactory.initializeAndroidGlobals(mContext, true, true, params.videoCodecHwAcceleration, mEGLcontext);
 
@@ -209,7 +219,7 @@ public class WebRTCClientWebSocket {
                             try {
                                 JSONObject message = new JSONObject();
                                 message.put("type", "login");
-                                message.put("name", "김진혁");
+                                message.put("name", userName);
                                 mWebSocketClient.send(message.toString());
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -228,11 +238,21 @@ public class WebRTCClientWebSocket {
                                 } else if (type.equals("answer")) {
                                     payload = data.getJSONObject("answer");
                                 } else if (type.equals("leave")) {
-                                    JSONObject message = new JSONObject();
-                                    message.put("type", "leave");
-                                    message.put("name", people);
-                                    mWebSocketClient.send(message.toString());
-                                    removePeer(people);
+                                    try {
+                                        if(people == data.getString("name")){
+                                            JSONObject message = new JSONObject();
+                                            message.put("type", "leave");
+                                            message.put("name", people);
+                                            mWebSocketClient.send(message.toString());
+                                            removePeer(people);
+                                        }
+                                    }catch (Exception e){
+                                        JSONObject message = new JSONObject();
+                                        message.put("type", "leave");
+                                        message.put("name", people);
+                                        mWebSocketClient.send(message.toString());
+                                        removePeer(people);
+                                    }
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
@@ -245,7 +265,7 @@ public class WebRTCClientWebSocket {
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
                                         message.put("name", people);
-                                        message.put("saviorName", "김진혁");
+                                        message.put("saviorName", userName);
                                         mWebSocketClient.send(message.toString());
                                     } else {
                                         localMS.dispose();
@@ -296,10 +316,12 @@ public class WebRTCClientWebSocket {
                                     peer.pc = null;
                                     endPoints[peer.endPoint] = false;
 
+                                    remoteMS.audioTracks.removeFirst();
+
                                     people = "police";
                                     message.put("type", "call");
                                     message.put("name", people);
-                                    message.put("saviorName", "김진혁");
+                                    message.put("saviorName", userName);
                                     mWebSocketClient.send(message.toString());
                                 }
                                 // if peer is unknown, try to add him

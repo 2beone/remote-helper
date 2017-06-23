@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.db.model.UserInfo;
+import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity {
 
     private TextView mUserName;
     private RoundImageView mUserImage;
+    private GPSInfo gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,12 @@ public class MainActivity extends BaseActivity {
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+
+        gps = new GPSInfo(MainActivity.this);
+        // GPS 사용유무 가져오기
+        if (!gps.isGetLocation()) {
+            gps.showSettingsAlert();
+        }
     }
 
     @Override
@@ -134,7 +142,11 @@ public class MainActivity extends BaseActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.nav_safezone:
-                                startActivity(new Intent(MainActivity.this, SafetyZoneActivity.class));
+                                if (!gps.isGetLocation()) {
+                                    gps.showSettingsAlert();
+                                } else{
+                                    startActivity(new Intent(MainActivity.this, SafetyZoneActivity.class));
+                                }
                                 break;
                             case R.id.nav_settings:
                                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));

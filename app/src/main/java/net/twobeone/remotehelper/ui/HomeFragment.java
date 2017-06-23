@@ -1,9 +1,5 @@
 package net.twobeone.remotehelper.ui;
 
-//import android.app.Fragment;
-//import android.app.FragmentManager;
-//import android.app.FragmentTransaction;
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

@@ -1,7 +1,10 @@
 package net.twobeone.remotehelper.ui;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -23,8 +26,11 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.db.model.UserInfo;
+import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
 import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
 
@@ -35,7 +41,11 @@ import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
+import io.realm.Realm;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -46,7 +56,6 @@ import okhttp3.Response;
 
 public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.RtcListener, SurfaceHolder.Callback {
 
-    private final static int VIDEO_CALL_SENT = 666;
     private static final String VIDEO_CODEC_VP8 = "VP8";
     private static final String VIDEO_CODEC_VP9 = "VP9";
     private static final String AUDIO_CODEC_OPUS = "opus";
@@ -55,22 +64,11 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private static final int LOCAL_Y_CONNECTING = 0;
     private static final int LOCAL_WIDTH_CONNECTING = 100;
     private static final int LOCAL_HEIGHT_CONNECTING = 100;
-    // Local preview screen position after call is connected.
-    private static final int LOCAL_X_CONNECTED = 72;
-    private static final int LOCAL_Y_CONNECTED = 72;
-    private static final int LOCAL_WIDTH_CONNECTED = 25;
-    private static final int LOCAL_HEIGHT_CONNECTED = 25;
-    // Remote video screen position
-    private static final int REMOTE_X = 0;
-    private static final int REMOTE_Y = 0;
-    private static final int REMOTE_WIDTH = 100;
-    private static final int REMOTE_HEIGHT = 100;
     private VideoRendererGui.ScalingType scalingType = VideoRendererGui.ScalingType.SCALE_ASPECT_FILL;
     private GLSurfaceView vsv = null;
     private VideoRenderer.Callbacks localRender = null;
     //    private VideoRenderer.Callbacks remoteRender;
     private String mSocketAddress;
-    private String callerId;
     private WebRTCClientWebSocket clientWebSocket = null;
     private View view;
 
@@ -95,6 +93,13 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     private FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
+
+    private String iceStatus = "";
+
+    private GPSInfo gps;
+    private double latitude;
+    private double longitude;
+    private String userName;
 
     private void setting() {
         cam = Camera.open(1);
@@ -155,6 +160,20 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         change_video.setOnClickListener(onClickListener);
         hangup.setOnClickListener(onClickListener);
 
+        gps = new GPSInfo(getContext());
+        // GPS 사용유무 가져오기
+        if (gps.isGetLocation()) {
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+        } else {
+            // GPS 를 사용할수 없으므로 좌표 0
+            latitude = 0;
+            longitude = 0;
+        }
+
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+        userName = userInfo.getName();
 
         Log.e("SSSSS", "onStart");
     }
@@ -206,7 +225,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         PeerConnectionParameters params = new PeerConnectionParameters(
                 true, false, 640, 360, 30, 1, VIDEO_CODEC_VP9, true, 1, AUDIO_CODEC_OPUS, true);
 
-        clientWebSocket = new WebRTCClientWebSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext());
+        clientWebSocket = new WebRTCClientWebSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
+                getAddress(getContext(), latitude, longitude), latitude, longitude, userName);
     }
 
     @Override
@@ -252,6 +272,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 //                Toast.makeText(getActivity().getApplicationContext(), newStatus, Toast.LENGTH_SHORT).show();
 //            }
 //        });
+        iceStatus = newStatus;
+        handler.sendEmptyMessage(2);
     }
 
     @Override
@@ -362,6 +384,9 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                 }.start();
             }
+            if(msg.what == 2){
+                Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
@@ -383,7 +408,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             try {
                 obj.put("fileName", pathToOurFile);
                 obj.put("date", save_name);
-                obj.put("userName", "김진혁");
+                obj.put("userName", userName);
                 obj.put("getRegId", "123456789");
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -450,5 +475,32 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     public void setCamera(Camera camera) {
         // method to set a camera instance
         cam = camera;
+    }
+
+    public static String getAddress(Context mContext, double lat, double lng) {
+        String nowAddress = "현재 위치를 확인 할 수 없습니다.";
+        Geocoder geocoder = new Geocoder(mContext, Locale.KOREA);
+        List<Address> address;
+        try {
+            if (lat == 0 && lng == 0) {
+            } else {
+                if (geocoder != null) {
+                    address = geocoder.getFromLocation(lat, lng, 1);
+                    // 세번째 파라미터는 좌표에 대해 주소를 리턴 받는 갯수로 한좌표에 대해 두개이상의 이름이 존재할수있기에
+                    // 주소배열을 리턴받기 위해 최대갯수 설정
+
+                    if (address != null && address.size() > 0) {
+                        // 주소 받아오기
+                        String currentLocationAddress = address.get(0).getAddressLine(0).toString();
+                        int sub = currentLocationAddress.indexOf(" ");// 대한민국 제거
+                        nowAddress = currentLocationAddress.substring(sub + 1);
+                    }
+                }
+            }
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        return nowAddress;
     }
 }

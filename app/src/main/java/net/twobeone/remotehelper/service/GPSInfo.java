@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.service;
 
 import android.app.AlertDialog;
@@ -147,16 +131,16 @@ public class GPSInfo extends Service implements LocationListener {
 	public void showSettingsAlert() {
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext, AlertDialog.THEME_HOLO_LIGHT);
 
-		alertDialog.setMessage("��ġ���񽺸� �̿��� �� �ֵ��� ������ �ֽñ� �ٶ��ϴ�.");
+		alertDialog.setMessage("위치서비스를 이용할 수 있도록 설정해 주시기 바랍니다.");
 
-		alertDialog.setPositiveButton("����", new DialogInterface.OnClickListener() {
+		alertDialog.setPositiveButton("설정", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 				mContext.startActivity(intent);
 			}
 		});
 
-		alertDialog.setNegativeButton("���", new DialogInterface.OnClickListener() {
+		alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}

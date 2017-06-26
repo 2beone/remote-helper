@@ -56,7 +56,7 @@ public final class PermissionUtils {
                 neverAskAgainCount++;
             }
         }
-        return neverAskAgainCount == permissions.length;
+        return neverAskAgainCount > 0 && neverAskAgainCount == permissions.length;
     }
 
     public static void requestPermission(final Activity activity, String message, final int requestCode) {

@@ -13,11 +13,6 @@ import net.twobeone.remotehelper.util.PermissionUtils;
 
 public class PermissionActivity extends BaseActivity {
 
-    private interface RequestCode {
-        int NORMAL = 1;
-        int NEVER_ASK_AGAIN = 2;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +22,7 @@ public class PermissionActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 String[] permissions = PermissionUtils.getRequiredPermissions(PermissionActivity.this);
-                boolean isNeverAskAgainAll = PermissionUtils.isNeverAskAgainAll(PermissionActivity.this, permissions);
-                ActivityCompat.requestPermissions(PermissionActivity.this, permissions, isNeverAskAgainAll ? RequestCode.NEVER_ASK_AGAIN : RequestCode.NORMAL);
+                ActivityCompat.requestPermissions(PermissionActivity.this, permissions, 0);
             }
         });
     }
@@ -44,8 +38,7 @@ public class PermissionActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == RequestCode.NEVER_ASK_AGAIN) {
-            // PermissionUtils.requestPermission(this, "권한필요", 1);
+        if (PermissionUtils.isNeverAskAgainAll(this, PermissionUtils.getRequiredPermissions(PermissionActivity.this))) {
             startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getPackageName())));
         }
     }

@@ -66,9 +66,8 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }
+        navigationView.setNavigationItemSelectedListener(new MainNavigationListener(this));
+
         View nav_hear_view = navigationView.getHeaderView(0);
         mUserName = nav_hear_view.findViewById(R.id.userage_txt);
         mUserImage = nav_hear_view.findViewById(R.id.user_img);
@@ -149,29 +148,6 @@ public class MainActivity extends BaseActivity {
         viewPager.setAdapter(adapter);
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.nav_safezone:
-                                gps = new GPSInfo(MainActivity.this);
-                                if (!gps.isGetLocation()) {
-                                    gps.showSettingsAlert();
-                                } else{
-                                    startActivity(new Intent(MainActivity.this, SafetyZoneActivity.class));
-                                }
-                                break;
-                            case R.id.nav_settings:
-                                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                                break;
-                        }
-                        return true;
-                    }
-                });
-    }
-
     static class Adapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragments = new ArrayList<>();
@@ -219,9 +195,9 @@ public class MainActivity extends BaseActivity {
                     Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
-                        new String[] { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
                                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.GET_ACCOUNTS },
+                                Manifest.permission.GET_ACCOUNTS},
                         100);
 
             }

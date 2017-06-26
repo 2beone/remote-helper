@@ -61,6 +61,8 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
+        <activity android:name=".ui.PermissionActivity" />
+
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_activity_title"

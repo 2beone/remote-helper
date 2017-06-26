@@ -1,32 +1,55 @@
 package net.twobeone.remotehelper.ui;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.databinding.ActivityIntroBinding;
+import net.twobeone.remotehelper.util.PermissionUtils;
 
-public class IntroActivity extends AppCompatActivity {
+public class IntroActivity extends BaseActivity {
 
-    private ActivityIntroBinding mIntroBinding;
+    private static final int REQUEST_CODE_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIntroBinding = DataBindingUtil.setContentView(this, R.layout.activity_intro);
 
-        new Handler().postDelayed(new Runnable() {
+        if (hasAllPermissions()) {
+            startIntroActivity();
+        } else {
+            startActivityForResult(new Intent(this, PermissionActivity.class), REQUEST_CODE_PERMISSION);
+        }
+    }
 
-            @Override
-            public void run() {
-                Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-                startActivity(intent);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PERMISSION) {
+            if (hasAllPermissions()) {
+                startMainActivity();
+            } else {
                 finish();
             }
-        }, 1500);
+        }
+    }
 
+    private void startIntroActivity() {
+        setContentView(R.layout.activity_intro);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startMainActivity();
+            }
+        }, 1500);
+    }
+
+    private void startMainActivity() {
+        startActivity(new Intent(IntroActivity.this, MainActivity.class));
+        finish();
+    }
+
+    private boolean hasAllPermissions() {
+        return PermissionUtils.getRequiredPermissions(this).length == 0;
     }
 }

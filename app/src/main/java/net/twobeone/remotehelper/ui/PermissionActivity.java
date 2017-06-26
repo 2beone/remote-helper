@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
+import android.view.WindowManager;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.PermissionUtils;
@@ -17,6 +18,8 @@ public class PermissionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         findViewById(R.id.btn_permission).setOnClickListener(new View.OnClickListener() {
             @Override

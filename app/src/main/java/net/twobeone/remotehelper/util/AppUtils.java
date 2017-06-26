@@ -1,8 +1,10 @@
 package net.twobeone.remotehelper.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 
 public final class AppUtils {
 
@@ -11,6 +13,15 @@ public final class AppUtils {
             return context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             throw new IllegalArgumentException(String.format("package(%s) was not found", context.getPackageName()));
+        }
+    }
+
+    public static void launchOrMarket(Context context, String uri) {
+        if (isInstalled(context, uri)) {
+            Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage(uri);
+            context.startActivity(LaunchIntent);
+        } else {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + uri)));
         }
     }
 

@@ -16,9 +16,11 @@
     <item android:title="@string/nav_family_title">
         <menu>
             <item
+                android:id="@+id/nav_osan_homepage"
                 android:icon="@drawable/ic_open_in_browser"
                 android:title="@string/nav_family1_title" />
             <item
+                android:id="@+id/nav_osan_smart"
                 android:icon="@drawable/ic_get_app"
                 android:title="@string/nav_family2_title" />
         </menu>

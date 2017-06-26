@@ -2,12 +2,14 @@ package net.twobeone.remotehelper.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.view.MenuItem;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.service.GPSInfo;
+import net.twobeone.remotehelper.util.AppUtils;
 
 public final class MainNavigationListener implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,6 +32,12 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
                 break;
             case R.id.nav_settings:
                 mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+                break;
+            case R.id.nav_osan_homepage:
+                mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.osan.go.kr/m/main.do")));
+                break;
+            case R.id.nav_osan_smart:
+                AppUtils.launchOrMarket(mActivity, "kr.go.mosan");
                 break;
         }
         return true;

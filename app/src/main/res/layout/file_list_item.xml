@@ -29,7 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_file_type"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:paddingBottom="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="16dp">
 
             <TextView
                 android:id="@+id/tv_file_name"

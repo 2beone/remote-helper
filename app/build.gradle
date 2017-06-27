@@ -2,22 +2,20 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 25
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "net.twobeone.remotehelper"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
         versionName "0.9.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     dataBinding {
         enabled = true
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -27,7 +25,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = '26.0.0-alpha1'
+    supportLibraryVersion = '25.3.1'
 }
 
 dependencies {

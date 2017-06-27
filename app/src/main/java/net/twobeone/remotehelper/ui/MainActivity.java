@@ -69,8 +69,8 @@ public class MainActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(new MainNavigationListener(this));
 
         View nav_hear_view = navigationView.getHeaderView(0);
-        mUserName = nav_hear_view.findViewById(R.id.userage_txt);
-        mUserImage = nav_hear_view.findViewById(R.id.user_img);
+        mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
+        mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
         mUserImage.setImageResource(R.drawable.user_default);
         Realm.init(this);
 
@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        Button userBtn = nav_hear_view.findViewById(R.id.btn_user);
+        Button userBtn = (Button) nav_hear_view.findViewById(R.id.btn_user);
         userBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -55,10 +55,10 @@ public final class DownloadDataFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        mTvNoData = view.findViewById(R.id.msg_text);
+        mTvNoData = (TextView) view.findViewById(R.id.msg_text);
     }
 
     @Override
@@ -149,10 +149,10 @@ public final class DownloadDataFragment extends BaseFragment {
 
             public ViewHolder(View view) {
                 super(view);
-                ivFileType = view.findViewById(R.id.iv_file_type);
-                tvFileName = view.findViewById(R.id.tv_file_name);
-                tvFileSize = view.findViewById(R.id.tv_file_size);
-                tvFileDuration = view.findViewById(R.id.tv_file_deration);
+                ivFileType = (ImageView) view.findViewById(R.id.iv_file_type);
+                tvFileName = (TextView) view.findViewById(R.id.tv_file_name);
+                tvFileSize = (TextView) view.findViewById(R.id.tv_file_size);
+                tvFileDuration = (TextView) view.findViewById(R.id.tv_file_deration);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

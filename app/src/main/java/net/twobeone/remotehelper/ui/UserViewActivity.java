@@ -1,5 +1,7 @@
 package net.twobeone.remotehelper.ui;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -8,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -20,6 +23,30 @@ public class UserViewActivity extends BaseActivity {
 
     private ActivityUserViewBinding mBinding;
 
+    private Animator.AnimatorListener mCollapseListener = new Animator.AnimatorListener() {
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mBinding.contentOptional.setVisibility(View.GONE);
+            hideSoftInputFromWindow();
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +58,24 @@ public class UserViewActivity extends BaseActivity {
         mBinding.etUserMobile.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         mBinding.etEmergencyContact.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
+        // 선택정보
+        mBinding.tvOptional.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBinding.contentOptional.getVisibility() == View.VISIBLE) {
+                    collapse(mBinding.contentOptional);
+                } else {
+                    expand(mBinding.contentOptional);
+                }
+            }
+        });
+
+        // 저장버튼
         mBinding.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveData();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mBinding.getRoot().getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                hideSoftInputFromWindow();
             }
         });
 
@@ -64,6 +103,40 @@ public class UserViewActivity extends BaseActivity {
                 break;
         }
         return true;
+    }
+
+    private void hideSoftInputFromWindow() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mBinding.getRoot().getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    private void expand(View view) {
+        view.setVisibility(View.VISIBLE);
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(widthSpec, heightSpec);
+        slideAnimator(view, 0, view.getMeasuredHeight()).start();
+    }
+
+    private void collapse(final View view) {
+        int finalHeight = view.getHeight();
+        ValueAnimator animator = slideAnimator(view, finalHeight, 0);
+        animator.addListener(mCollapseListener);
+        animator.start();
+    }
+
+    private ValueAnimator slideAnimator(final View view, int start, int end) {
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int value = (Integer) valueAnimator.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.height = value;
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        return animator;
     }
 
     private void selectData() {

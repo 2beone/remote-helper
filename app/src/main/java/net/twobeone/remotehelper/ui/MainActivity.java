@@ -62,9 +62,9 @@ public class MainActivity extends BaseActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new MainNavigationListener(this));
 
-        View nav_hear_view = navigationView.getHeaderView(0);
-        mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
-        mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
+        View nav_header_view = navigationView.getHeaderView(0);
+        mUserName = (TextView) nav_header_view.findViewById(R.id.userage_txt);
+        mUserImage = (RoundImageView) nav_header_view.findViewById(R.id.user_img);
         mUserImage.setImageResource(R.drawable.user_default);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -75,10 +75,10 @@ public class MainActivity extends BaseActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        nav_hear_view.findViewById(R.id.btn_user).setOnClickListener(new View.OnClickListener() {
+        nav_header_view.findViewById(R.id.btn_user).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, UserInfoActivity.class));
+                startActivity(new Intent(MainActivity.this, UserViewActivity.class));
             }
         });
 

@@ -6,6 +6,7 @@
     android:background="#FFFFFF"
     android:orientation="vertical">
 
+
     <android.opengl.GLSurfaceView
         android:id="@+id/glview_call"
         android:layout_width="match_parent"

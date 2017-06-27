@@ -1,6 +1,8 @@
 package net.twobeone.remotehelper.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.location.Address;
@@ -29,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
 import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
@@ -41,11 +42,15 @@ import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
-import io.realm.Realm;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -91,7 +96,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private Button sos_button;
     private Runnable runnable = null;
 
-    private FragmentManager fm;
+    private static Fragment fragment;
+    private static FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
 
     private String iceStatus = "";
@@ -99,7 +105,13 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private GPSInfo gps;
     private double latitude;
     private double longitude;
-    private String userName;
+    private String userName = "홍";
+
+    private String ServerUrl = "";
+    private String FileName = "";
+    private int sub;
+    private String FileExtend = "";
+    private String LocalPath = "";
 
     private void setting() {
         cam = Camera.open(1);
@@ -170,10 +182,6 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             latitude = 0;
             longitude = 0;
         }
-
-        Realm realm = Realm.getDefaultInstance();
-        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
-        userName = userInfo.getName();
 
         if(getArguments().getString("isMute").equals("false")){
             mutests = false;
@@ -336,6 +344,54 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         }
     }
 
+        @Override
+        public void downloadThread(String serverPath, String localPath, String filename) {
+        ServerUrl = serverPath;
+        FileName = filename;
+        sub = serverPath.lastIndexOf(".");
+        FileExtend = serverPath.substring(sub);
+        LocalPath = localPath + FileExtend;
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                Log.e("SSSSS", "filedownload");
+
+                URL fileurl;
+                int Read;
+                try {
+                    fileurl = new URL(ServerUrl);
+                    HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
+                    byte[] tmpByte = new byte[1024];
+                    InputStream is = conn.getInputStream();
+                    File file = new File(LocalPath);
+
+                    if (!file.exists())
+                        file.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(file);
+                    for (; ; ) {
+                        Read = is.read(tmpByte);
+                        if (Read <= 0) {
+                            break;
+                        }
+                        fos.write(tmpByte, 0, Read);
+                    }
+                    is.close();
+                    fos.close();
+                    conn.disconnect();
+
+                    handler.sendEmptyMessage(5);
+                } catch (MalformedURLException e) {
+                    Log.e("ERROR1", e.getMessage());
+                } catch (IOException e) {
+                    Log.e("ERROR2", e.getMessage());
+                }
+            }
+        }).start();
+    }
+
     public Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == 0) {
@@ -387,7 +443,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
             }
             if(msg.what == 3){
-                new CountDownTimer(500, 500) {
+                new CountDownTimer(1500, 500) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         // TODO Auto-generated method stub
@@ -401,6 +457,35 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             }
             if(msg.what == 4){
                 getActivity().onBackPressed();
+            }
+            if(msg.what == 5){
+                DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        Bundle args = new Bundle();
+                        args.putString("name", FileName);
+                        args.putString("extend", FileExtend);
+                        fragment.setArguments(args);
+                        fragmentTransaction = fm.beginTransaction();
+                        fragmentTransaction.replace(R.id.rtc_fragment, fragment, "msginfofragment");
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                };
+                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        dialog.dismiss();
+                    }
+                };
+
+                new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT)
+                        .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
+                        .setNegativeButton("취소", cancelListener).show();
             }
         }
     };

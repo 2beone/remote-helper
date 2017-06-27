@@ -156,15 +156,6 @@ public final class DownloadDataFragment extends BaseFragment {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        MSG_Item item = (MSG_Item) parent.getItemAtPosition(position);
-//                        String msg_name = item.getTitle();
-//                        String msg_extend = item.getExtend();
-//
-//                        Intent intent = new Intent(view.getContext(), MSG_Info_View.class);
-//                        intent.putExtra("msg", msg_name);
-//                        intent.putExtra("extend", msg_extend);
-//                        startActivity(intent);
-//
                         Bundle args = new Bundle();
                         int sub = tvFileName.getText().toString().indexOf(".");
                         args.putString("name", tvFileName.getText().toString().substring(0,sub));

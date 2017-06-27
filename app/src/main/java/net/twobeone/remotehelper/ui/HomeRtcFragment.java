@@ -464,6 +464,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
+                        fragment = new MsgInfoFragment();
+                        fm = getFragmentManager();
                         Bundle args = new Bundle();
                         args.putString("name", FileName);
                         args.putString("extend", FileExtend);

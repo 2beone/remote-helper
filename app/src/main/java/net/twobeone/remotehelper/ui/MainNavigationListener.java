@@ -30,6 +30,9 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
                     mActivity.startActivity(new Intent(mActivity, SafetyZoneActivity.class));
                 }
                 break;
+            case R.id.nav_app_info:
+                mActivity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + mActivity.getPackageName())));
+                break;
             case R.id.nav_settings:
                 mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
                 break;

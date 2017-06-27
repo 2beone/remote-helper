@@ -11,4 +11,10 @@ public final class Constants {
      * 다운로드 디렉토리명
      */
     public static final String DONWLOAD_DIRECTORY_NAME = "RemoteHelper_download";
+
+    /**
+     * 데이터베이스
+     */
+    public static final String DATABASE_FILE_NAME = "default.sqlite";
+    public static final int DATABASE_VERSION_CODE = 1;
 }

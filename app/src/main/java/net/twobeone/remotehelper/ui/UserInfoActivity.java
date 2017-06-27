@@ -6,14 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -32,9 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.databinding.ActivityUserInfoBinding;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
+import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.ui.adapter.Status_Item_Adapter;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
@@ -42,6 +40,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+
+import io.realm.Realm;
 
 public class UserInfoActivity extends BaseActivity {
 
@@ -67,6 +67,9 @@ public class UserInfoActivity extends BaseActivity {
     private EditText doctor;
     private EditText etc;
 
+    SQLiteDatabase db;
+//    SQLiteHelper helper;
+
     private static final int PIC_FROM_CAMERA = 0;
     private static final int PIC_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
@@ -86,16 +89,23 @@ public class UserInfoActivity extends BaseActivity {
     private Status_Item_Adapter health_adapter;
     private LinearLayout basic_edit;
     private LinearLayout health_edit;
-    private ActivityUserInfoBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_info);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_user_info);
 
         mContext = this;
+
+        Toolbar toobar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toobar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.title_user_info);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         insert = (ImageButton) findViewById(R.id.insert);
         insert.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_insert));
@@ -122,6 +132,17 @@ public class UserInfoActivity extends BaseActivity {
         basic_listview.setAdapter(basic_adapter);
         health_listview.setAdapter(health_adapter);
 
+        Realm.init(this);
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+        if (userInfo != null) {
+            if (userInfo.getImgPath() != null) {
+                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
+                File img = new File(userInfo.getImgPath());
+                mImageCaptureUri = Uri.fromFile(img);
+                iv_UserPhoto.setImageURI(mImageCaptureUri);
+            }
+        }
 
         name = (EditText) findViewById(R.id.edit_name);
         age = (EditText) findViewById(R.id.edit_age);
@@ -138,10 +159,9 @@ public class UserInfoActivity extends BaseActivity {
         doctor = (EditText) findViewById(R.id.edit_doctor);
         etc = (EditText) findViewById(R.id.edit_etc);
 
-        selectItem();
+        fillUserInfoValue();
 
         setList();
-
         listViewHeightSet(basic_adapter, basic_listview);
         listViewHeightSet(health_adapter, health_listview);
 
@@ -235,6 +255,43 @@ public class UserInfoActivity extends BaseActivity {
                     doctor.setEnabled(false);
                     etc.setEnabled(false);
 
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm bgRealm) {
+                            UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+                            if (userInfo == null) {
+                                userInfo = new UserInfo();
+                            }
+                            userInfo.setName(name.getText().toString());
+                            userInfo.setAge(age.getText().toString());
+                            userInfo.setBirth(birth.getText().toString());
+                            userInfo.setSex(sex.getText().toString());
+                            userInfo.setMobile(mobile.getText().toString());
+                            userInfo.setEmergency(emergency.getText().toString());
+                            userInfo.setAddress(addr.getText().toString());
+                            userInfo.setAddressDetail(detail_addr.getText().toString());
+                            userInfo.setBloodType(blood_type.getText().toString());
+                            userInfo.setSickness(sickness.getText().toString());
+                            userInfo.setHospital(hospital.getText().toString());
+                            userInfo.setDoctor(doctor.getText().toString());
+                            userInfo.setEtc(etc.getText().toString());
+                            bgRealm.copyToRealm(userInfo);
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            setList();
+
+                            basic_adapter.notifyDataSetChanged();
+                            basic_listview.invalidate();
+                            basic_listview.refreshDrawableState();
+
+                            health_adapter.notifyDataSetChanged();
+                            health_listview.invalidate();
+                            health_listview.refreshDrawableState();
+                        }
+                    });
                 }
             }
         });
@@ -243,6 +300,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (birth.isEnabled() == true) {
                         UserInfoActivity.this.DialogDatePicker();
@@ -256,6 +314,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (sex.isEnabled() == true) {
                         UserInfoActivity.this.DialogSexPicker();
@@ -269,6 +328,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (blood_type.isEnabled() == true) {
                         UserInfoActivity.this.DialogBloodPicker();
@@ -282,6 +342,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (addr.isEnabled() == true) {
                         Intent i = new Intent(UserInfoActivity.this, SearchAddressActivity.class);
@@ -324,12 +385,6 @@ public class UserInfoActivity extends BaseActivity {
                         .setNegativeButton("취소", cancelListener).show();
             }
         });
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
     }
 
     @Override
@@ -435,6 +490,24 @@ public class UserInfoActivity extends BaseActivity {
         File copyFile = new File(filePath);
         BufferedOutputStream out = null;
 
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+                if (userInfo == null) {
+                    userInfo = new UserInfo();
+                }
+                userInfo.setImgPath(filePath);
+                bgRealm.copyToRealm(userInfo);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+            }
+        });
+
         try {
             copyFile.createNewFile();
             out = new BufferedOutputStream(new FileOutputStream(copyFile));
@@ -450,6 +523,47 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void setList() {
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+
+        if (userInfo != null) {
+            basic_adapter.deleteItem();
+            basic_adapter.addItem("이름 : ", userInfo.getName());
+            basic_adapter.addItem("나이 : ", userInfo.getAge());
+            basic_adapter.addItem("생년월일 : ", userInfo.getBirth());
+            basic_adapter.addItem("성별 : ", userInfo.getSex());
+            basic_adapter.addItem("연락처 : ", userInfo.getMobile());
+            basic_adapter.addItem("긴급연락처 : ", userInfo.getEmergency());
+            if (userInfo.getAddress() != null) {
+                basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
+            } else {
+                basic_adapter.addItem("거주지주소 : ", "");
+            }
+
+
+            health_adapter.deleteItem();
+            health_adapter.addItem("혈액형 : ", userInfo.getBloodType());
+            health_adapter.addItem("질환 : ", userInfo.getSickness());
+            health_adapter.addItem("주치병원 : ", userInfo.getHospital());
+            health_adapter.addItem("주치의 : ", userInfo.getDoctor());
+            health_adapter.addItem("기타사항 : ", userInfo.getEtc());
+        } else {
+            basic_adapter.deleteItem();
+            basic_adapter.addItem("이름 : ", "");
+            basic_adapter.addItem("나이 : ", "");
+            basic_adapter.addItem("생년월일 : ", "");
+            basic_adapter.addItem("성별 : ", "");
+            basic_adapter.addItem("연락처 : ", "");
+            basic_adapter.addItem("긴급연락처 : ", "");
+            basic_adapter.addItem("거주지주소 : ", "");
+
+            health_adapter.deleteItem();
+            health_adapter.addItem("혈액형 : ", "");
+            health_adapter.addItem("질환 : ", "");
+            health_adapter.addItem("주치병원 : ", "");
+            health_adapter.addItem("주치의 : ", "");
+            health_adapter.addItem("기타사항 : ", "");
+        }
 
     }
 
@@ -466,32 +580,27 @@ public class UserInfoActivity extends BaseActivity {
         listView.setLayoutParams(params);
     }
 
-    private void selectItem() {
-        User user = UserDao.getInstance().select();
-        if (user != null) {
-            mBinding.name.setText(user.name);
-            mBinding.age.setText(user.age);
-            mBinding.birth.setText(user.birth);
-            mBinding.sex.setText(user.sex);
-            mBinding.mobile.setText(user.mobile);
-            mBinding.emergency.setText(user.emergency);
-            mBinding.addr.setText(user.address);
-            mBinding.detailAddr.setText(user.addressDetail);
+    private void fillUserInfoValue() {
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
 
-//            blood_type.setText(userInfo.getBloodType());
-//            sickness.setText(userInfo.getSickness());
+        if (userInfo != null) {
+            name.setText(userInfo.getName());
+            age.setText(userInfo.getAge());
+            birth.setText(userInfo.getBirth());
+            sex.setText(userInfo.getSex());
+            mobile.setText(userInfo.getMobile());
+            emergency.setText(userInfo.getEmergency());
+            addr.setText(userInfo.getAddress());
+            detail_addr.setText(userInfo.getAddressDetail());
 
-            mBinding.hospital.setText(user.hospital);
-            mBinding.doctor.setText(user.doctor);
-            mBinding.etc.setText(user.etc);
-
-            if (!TextUtils.isEmpty(user.imgPath)) {
-                mImageCaptureUri = Uri.fromFile(new File(user.imgPath));
-                iv_UserPhoto.setImageURI(mImageCaptureUri);
-            }
+            blood_type.setText(userInfo.getBloodType());
+            sickness.setText(userInfo.getSickness());
+            hospital.setText(userInfo.getHospital());
+            doctor.setText(userInfo.getDoctor());
+            etc.setText(userInfo.getEtc());
         }
     }
-
 
     public void doTakePhotoAction() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -533,7 +642,7 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void DialogSexPicker() {
-        CharSequence info[] = new CharSequence[]{"남자", "여자"};
+        CharSequence info[] = new CharSequence[] { "남자", "여자" };
         AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("성별");
 
@@ -555,8 +664,8 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void DialogBloodPicker() {
-        CharSequence info[] = new CharSequence[]{"RH+ A", "RH+ B", "RH+ AB", "RH+ O", "RH- A", "RH- B", "RH- AB",
-                "RH- O"};
+        CharSequence info[] = new CharSequence[] { "RH+ A", "RH+ B", "RH+ AB", "RH+ O", "RH- A", "RH- B", "RH- AB",
+                "RH- O" };
         AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("혈액형");
 

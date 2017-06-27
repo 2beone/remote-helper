@@ -23,15 +23,8 @@ import org.webrtc.VideoCapturer;
 import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoSource;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -87,6 +80,8 @@ public class WebRTCClientWebSocket {
         void onLocalStream(MediaStream localStream);
 
         void onStartRecording();
+
+        void downloadThread(String serverPath, String localPath, String filename);
 
         void onClose();
     }
@@ -303,7 +298,7 @@ public class WebRTCClientWebSocket {
                                     filePath = data.getString("filepath");
                                     Log.e("SSSSS", "fileName ::: " + fileName + " filePath ::: " + filePath);
 
-                                    downloadThread(url + filePath, Save_Path + fileName, fileName);
+                                    mListener.downloadThread(url + filePath, Save_Path + fileName, fileName);
                                 } else if (type.equals("police")) {
                                     JSONObject message = new JSONObject();
                                     message.put("type", "leave");
@@ -646,51 +641,51 @@ public class WebRTCClientWebSocket {
         }
     }
 
-    private void downloadThread(String serverPath, String localPath, String filename) {
-        final String ServerUrl = serverPath;
-        final String FileName = filename;
-        final int sub = serverPath.lastIndexOf(".");
-        final String FileExtend = serverPath.substring(sub);
-        final String LocalPath = localPath + FileExtend;
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Log.e("SSSSS", "filedownload");
-
-                URL fileurl;
-                int Read;
-                try {
-                    fileurl = new URL(ServerUrl);
-                    HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
-                    byte[] tmpByte = new byte[1024];
-                    InputStream is = conn.getInputStream();
-                    File file = new File(LocalPath);
-
-                    if (!file.exists())
-                        file.createNewFile();
-                    FileOutputStream fos = new FileOutputStream(file);
-                    for (; ; ) {
-                        Read = is.read(tmpByte);
-                        if (Read <= 0) {
-                            break;
-                        }
-                        fos.write(tmpByte, 0, Read);
-                    }
-                    is.close();
-                    fos.close();
-                    conn.disconnect();
-
-                } catch (MalformedURLException e) {
-                    Log.e("ERROR1", e.getMessage());
-                } catch (IOException e) {
-                    Log.e("ERROR2", e.getMessage());
-                }
-            }
-        }).start();
-    }
+//    private void downloadThread(String serverPath, String localPath, String filename) {
+//        final String ServerUrl = serverPath;
+//        final String FileName = filename;
+//        final int sub = serverPath.lastIndexOf(".");
+//        final String FileExtend = serverPath.substring(sub);
+//        final String LocalPath = localPath + FileExtend;
+//
+//        new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                // TODO Auto-generated method stub
+//                Log.e("SSSSS", "filedownload");
+//
+//                URL fileurl;
+//                int Read;
+//                try {
+//                    fileurl = new URL(ServerUrl);
+//                    HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
+//                    byte[] tmpByte = new byte[1024];
+//                    InputStream is = conn.getInputStream();
+//                    File file = new File(LocalPath);
+//
+//                    if (!file.exists())
+//                        file.createNewFile();
+//                    FileOutputStream fos = new FileOutputStream(file);
+//                    for (; ; ) {
+//                        Read = is.read(tmpByte);
+//                        if (Read <= 0) {
+//                            break;
+//                        }
+//                        fos.write(tmpByte, 0, Read);
+//                    }
+//                    is.close();
+//                    fos.close();
+//                    conn.disconnect();
+//
+//                } catch (MalformedURLException e) {
+//                    Log.e("ERROR1", e.getMessage());
+//                } catch (IOException e) {
+//                    Log.e("ERROR2", e.getMessage());
+//                }
+//            }
+//        }).start();
+//    }
 
     private void startRecording() {
         mListener.onStartRecording();

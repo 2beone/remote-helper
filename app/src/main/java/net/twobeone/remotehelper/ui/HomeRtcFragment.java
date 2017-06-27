@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -30,8 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
+import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
 import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
@@ -47,6 +45,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import io.realm.Realm;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -172,17 +171,14 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             longitude = 0;
         }
 
-        User user = UserDao.getInstance().select();
-        if (user != null) {
-            if (!TextUtils.isEmpty(user.name)) {
-                userName = user.name;
-            }
-        }
+        Realm realm = Realm.getDefaultInstance();
+        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+        userName = userInfo.getName();
 
-        if (getArguments().getString("isMute").equals("false")) {
+        if(getArguments().getString("isMute").equals("false")){
             mutests = false;
             mute_button.setBackgroundResource(R.drawable.btn_mute_on);
-        } else {
+        }else{
             mutests = true;
             mute_button.setBackgroundResource(R.drawable.btn_mute_off);
         }
@@ -193,12 +189,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     ImageButton.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            switch (view.getId()) {
+            switch (view.getId()){
                 case R.id.mute_button:
-                    if (mutests) {
+                    if(mutests){
                         mutests = false;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_on);
-                    } else {
+                    }else{
                         mutests = true;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_off);
                     }
@@ -275,7 +271,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStatusChanged(final String newStatus) {
-        if (newStatus.equals("CONNECTING")) {
+        if(newStatus.equals("CONNECTING")){
             handler.sendEmptyMessage(3);
         }
         iceStatus = newStatus;
@@ -350,7 +346,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 sv.setVisibility(sv.VISIBLE);
                 vsv.setVisibility(vsv.INVISIBLE);
             }
-            if (msg.what == 1) {
+            if(msg.what == 1){
                 new CountDownTimer(5000, 500) {
 
                     @Override
@@ -370,7 +366,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                                 cam.stopPreview();
                                 cam.release();
                             } catch (Exception e) {
-                                Log.e("JH", "CAM " + e.toString());
+                                Log.e("JH","CAM " + e.toString());
                             }
 
                             // 서버로 녹화한 영상 전송
@@ -387,16 +383,15 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                 }.start();
             }
-            if (msg.what == 2) {
+            if(msg.what == 2){
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
             }
-            if (msg.what == 3) {
+            if(msg.what == 3){
                 new CountDownTimer(500, 500) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         // TODO Auto-generated method stub
                     }
-
                     @Override
                     public void onFinish() {
                         // TODO Auto-generated method stub
@@ -404,7 +399,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                 }.start();
             }
-            if (msg.what == 4) {
+            if(msg.what == 4){
                 getActivity().onBackPressed();
             }
         }

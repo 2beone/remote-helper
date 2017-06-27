@@ -34,6 +34,14 @@
                 android:textSize="15sp"
                 android:visibility="gone" />
 
+            <WebView
+                android:id="@+id/google_doc"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_gravity="center"
+                android:visibility="gone" >
+            </WebView>
+
             <ImageView
                 android:id="@+id/recv_img"
                 android:layout_width="match_parent"

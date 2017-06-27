@@ -18,11 +18,9 @@ package net.twobeone.remotehelper.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +28,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,13 +65,9 @@ public class MsgInfoFragment extends Fragment {
     private String strPath = null;
     private BufferedReader bufferedReader = null;
     private Uri fileUri;
+    private WebView google_doc;
     private String ServerUrl;
     private PhotoViewAttacher mAttacher;
-
-    private int REQ_WIDTH = 1;
-    private int REQ_HEIGHT = 1;
-    private int currentPage = 0;
-    private PdfRenderer renderer;
 
     private FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
@@ -85,6 +82,16 @@ public class MsgInfoFragment extends Fragment {
         recv_vid = (VideoView) view.findViewById(R.id.recv_vid);
         recv_back = (Button) view.findViewById(R.id.recv_back);
         recv_title = (TextView) view.findViewById(R.id.recv_title);
+        google_doc = (WebView) view.findViewById(R.id.google_doc);
+
+        WebSettings webSettings = google_doc.getSettings();
+
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setBuiltInZoomControls(true);
+
+        google_doc.setWebChromeClient(new WebChromeClient());
 
         recv_img.setScaleType(ImageView.ScaleType.FIT_XY);
 
@@ -107,6 +114,7 @@ public class MsgInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                google_doc.destroy();
                 getActivity().onBackPressed();
             }
         });
@@ -149,35 +157,8 @@ public class MsgInfoFragment extends Fragment {
                 // TODO: handle exception
             }
         } else if (name_extend.equals(".pdf")) {
-            try{
-                recv_img.setVisibility(recv_img.VISIBLE);
-
-                REQ_WIDTH = 5000;
-                REQ_HEIGHT = 5000;
-
-                renderer = new PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY));
-                PdfRenderer.Page page = renderer.openPage(0);
-
-                int pageWidth = page.getWidth();
-                int pageHeight = page.getHeight();
-
-                float scale = Math.min((float) REQ_WIDTH / pageWidth, (float) REQ_HEIGHT / pageHeight);
-                Bitmap bitmap = Bitmap.createBitmap((int) (pageWidth * scale), (int) (pageHeight * scale), Bitmap.Config.ARGB_8888);
-
-                if(currentPage < 0){
-                    currentPage = 0;
-                } else if (currentPage > renderer.getPageCount()){
-                    currentPage = renderer.getPageCount() - 1;
-                }
-
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-
-                recv_img.setImageBitmap(bitmap);
-                recv_img.invalidate();
-                mAttacher = new PhotoViewAttacher(recv_img);
-            }catch(Exception e){
-
-            }
+            google_doc.setVisibility(google_doc.VISIBLE);
+            google_doc.loadUrl("file:///android_asset/pdfjs/web/viewer.html?file=" + file.getAbsolutePath() + "#zoom=page-width");
         }
     }
 }

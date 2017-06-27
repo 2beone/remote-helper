@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.ui.adapter.Status_Item_Adapter;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
@@ -132,7 +131,7 @@ public class UserInfoActivity extends BaseActivity {
 
 //        Realm.init(this);
 //        Realm realm = Realm.getDefaultInstance();
-//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        User userInfo = realm.where(User.class).findFirst();
 //        if (userInfo != null) {
 //            if (userInfo.getImgPath() != null) {
 //                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
@@ -257,9 +256,9 @@ public class UserInfoActivity extends BaseActivity {
 //                    realm.executeTransactionAsync(new Realm.Transaction() {
 //                        @Override
 //                        public void execute(Realm bgRealm) {
-//                            UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+//                            User userInfo = bgRealm.where(User.class).findFirst();
 //                            if (userInfo == null) {
-//                                userInfo = new UserInfo();
+//                                userInfo = new User();
 //                            }
 //                            userInfo.setName(name.getText().toString());
 //                            userInfo.setAge(age.getText().toString());
@@ -492,9 +491,9 @@ public class UserInfoActivity extends BaseActivity {
 //        realm.executeTransactionAsync(new Realm.Transaction() {
 //            @Override
 //            public void execute(Realm bgRealm) {
-//                UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+//                User userInfo = bgRealm.where(User.class).findFirst();
 //                if (userInfo == null) {
-//                    userInfo = new UserInfo();
+//                    userInfo = new User();
 //                }
 //                userInfo.setImgPath(filePath);
 //                bgRealm.copyToRealm(userInfo);
@@ -522,7 +521,7 @@ public class UserInfoActivity extends BaseActivity {
 
     private void setList() {
 //        Realm realm = Realm.getDefaultInstance();
-//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        User userInfo = realm.where(User.class).findFirst();
 //
 //        if (userInfo != null) {
 //            basic_adapter.deleteItem();
@@ -580,7 +579,7 @@ public class UserInfoActivity extends BaseActivity {
 
     private void fillUserInfoValue() {
 //        Realm realm = Realm.getDefaultInstance();
-//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        User userInfo = realm.where(User.class).findFirst();
 //
 //        if (userInfo != null) {
 //            name.setText(userInfo.getName());

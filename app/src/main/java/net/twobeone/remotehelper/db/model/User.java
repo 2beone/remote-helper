@@ -1,21 +1,21 @@
 package net.twobeone.remotehelper.db.model;
 
-public class UserInfo {
+public class User {
 
-    private String name;
-    private String age;
-    private String birth;
-    private String sex;
-    private String mobile;
-    private String emergency;
-    private String address;
-    private String addressDetail;
-    private String bloodType;
-    private String sickness;
-    private String hospital;
-    private String doctor;
-    private String etc;
-    private String imgPath;
+    public String name;
+    public String age;
+    public String birth;
+    public String sex;
+    public String mobile;
+    public String emergency;
+    public String address;
+    public String addressDetail;
+    public String bloodType;
+    public String sickness;
+    public String hospital;
+    public String doctor;
+    public String etc;
+    public String imgPath;
 
     public String getImgPath() {
         return imgPath;

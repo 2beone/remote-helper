@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         mDrawerLayout.closeDrawer(GravityCompat.START, false);
 //        Realm realm = Realm.getDefaultInstance();
-//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        User userInfo = realm.where(User.class).findFirst();
 //        if (userInfo != null) {
 //            if (userInfo.getImgPath() != null) {
 //                mUserImage.setImageResource(R.drawable.user_default);

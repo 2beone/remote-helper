@@ -170,7 +170,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         }
 
 //        Realm realm = Realm.getDefaultInstance();
-//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        User userInfo = realm.where(User.class).findFirst();
 //        userName = userInfo.getName();
 
         if (getArguments().getString("isMute").equals("false")) {

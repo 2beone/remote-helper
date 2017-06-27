@@ -44,6 +44,10 @@
 
         <!-- 내정보 -->
         <activity
+            android:name=".ui.UserViewActivity"
+            android:label="@string/title_user_info"
+            android:theme="@style/Theme.AppTheme" />
+        <activity
             android:name=".ui.UserInfoActivity"
             android:label="@string/title_user_info"
             android:theme="@style/Theme.AppTheme" />

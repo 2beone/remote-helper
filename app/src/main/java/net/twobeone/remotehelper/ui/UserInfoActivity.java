@@ -67,8 +67,6 @@ public class UserInfoActivity extends BaseActivity {
     private EditText doctor;
     private EditText etc;
 
-    SQLiteDatabase db;
-
     private static final int PIC_FROM_CAMERA = 0;
     private static final int PIC_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;

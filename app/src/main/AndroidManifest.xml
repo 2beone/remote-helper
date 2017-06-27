@@ -46,7 +46,8 @@
         <activity
             android:name=".ui.UserViewActivity"
             android:label="@string/title_user_info"
-            android:theme="@style/Theme.AppTheme.NoActionBar" />
+            android:theme="@style/Theme.AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.UserInfoActivity"
             android:label="@string/title_user_info"

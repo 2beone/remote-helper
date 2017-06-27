@@ -36,4 +36,7 @@
     <string name="pref_app_policy_privacy_title">개인정보처리방침</string>
     <string name="pref_app_policy_youth_title">청소년보호정책</string>
 
+    <!-- 액션 -->
+    <string name="action_save">저장하기</string>
+
 </resources>

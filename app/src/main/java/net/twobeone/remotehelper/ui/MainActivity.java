@@ -67,7 +67,6 @@ public class MainActivity extends BaseActivity {
         mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
         mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
         mUserImage.setImageResource(R.drawable.user_default);
-//        Realm.init(this);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         if (mViewPager != null) {

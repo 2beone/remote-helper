@@ -42,9 +42,11 @@
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait" />
 
+        <!-- 내정보 -->
         <activity
             android:name=".ui.UserInfoActivity"
-            android:screenOrientation="portrait" />
+            android:label="@string/title_user_info"
+            android:theme="@style/Theme.AppTheme" />
 
         <activity
             android:name=".ui.SearchAddressActivity"

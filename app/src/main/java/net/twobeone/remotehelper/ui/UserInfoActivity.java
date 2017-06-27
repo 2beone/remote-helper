@@ -6,14 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -32,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.databinding.ActivityUserInfoBinding;
+import net.twobeone.remotehelper.db.UserDao;
+import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.ui.adapter.Status_Item_Adapter;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
@@ -65,7 +68,6 @@ public class UserInfoActivity extends BaseActivity {
     private EditText etc;
 
     SQLiteDatabase db;
-//    SQLiteHelper helper;
 
     private static final int PIC_FROM_CAMERA = 0;
     private static final int PIC_FROM_ALBUM = 1;
@@ -86,23 +88,16 @@ public class UserInfoActivity extends BaseActivity {
     private Status_Item_Adapter health_adapter;
     private LinearLayout basic_edit;
     private LinearLayout health_edit;
+    private ActivityUserInfoBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_info);
 
-        setContentView(R.layout.activity_user_info);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mContext = this;
-
-        Toolbar toobar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toobar);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.title_user_info);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         insert = (ImageButton) findViewById(R.id.insert);
         insert.setBackground(ContextCompat.getDrawable(mContext, R.drawable.btn_insert));
@@ -129,17 +124,6 @@ public class UserInfoActivity extends BaseActivity {
         basic_listview.setAdapter(basic_adapter);
         health_listview.setAdapter(health_adapter);
 
-//        Realm.init(this);
-//        Realm realm = Realm.getDefaultInstance();
-//        User userInfo = realm.where(User.class).findFirst();
-//        if (userInfo != null) {
-//            if (userInfo.getImgPath() != null) {
-//                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
-//                File img = new File(userInfo.getImgPath());
-//                mImageCaptureUri = Uri.fromFile(img);
-//                iv_UserPhoto.setImageURI(mImageCaptureUri);
-//            }
-//        }
 
         name = (EditText) findViewById(R.id.edit_name);
         age = (EditText) findViewById(R.id.edit_age);
@@ -156,9 +140,10 @@ public class UserInfoActivity extends BaseActivity {
         doctor = (EditText) findViewById(R.id.edit_doctor);
         etc = (EditText) findViewById(R.id.edit_etc);
 
-        fillUserInfoValue();
+        selectItem();
 
         setList();
+
         listViewHeightSet(basic_adapter, basic_listview);
         listViewHeightSet(health_adapter, health_listview);
 
@@ -297,7 +282,6 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (birth.isEnabled() == true) {
                         UserInfoActivity.this.DialogDatePicker();
@@ -311,7 +295,6 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (sex.isEnabled() == true) {
                         UserInfoActivity.this.DialogSexPicker();
@@ -325,7 +308,6 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (blood_type.isEnabled() == true) {
                         UserInfoActivity.this.DialogBloodPicker();
@@ -339,7 +321,6 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (addr.isEnabled() == true) {
                         Intent i = new Intent(UserInfoActivity.this, SearchAddressActivity.class);
@@ -382,6 +363,12 @@ public class UserInfoActivity extends BaseActivity {
                         .setNegativeButton("취소", cancelListener).show();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     @Override
@@ -577,27 +564,32 @@ public class UserInfoActivity extends BaseActivity {
         listView.setLayoutParams(params);
     }
 
-    private void fillUserInfoValue() {
-//        Realm realm = Realm.getDefaultInstance();
-//        User userInfo = realm.where(User.class).findFirst();
-//
-//        if (userInfo != null) {
-//            name.setText(userInfo.getName());
-//            age.setText(userInfo.getAge());
-//            birth.setText(userInfo.getBirth());
-//            sex.setText(userInfo.getSex());
-//            mobile.setText(userInfo.getMobile());
-//            emergency.setText(userInfo.getEmergency());
-//            addr.setText(userInfo.getAddress());
-//            detail_addr.setText(userInfo.getAddressDetail());
-//
+    private void selectItem() {
+        User user = UserDao.getInstance().select();
+        if (user != null) {
+            mBinding.name.setText(user.name);
+            mBinding.age.setText(user.age);
+            mBinding.birth.setText(user.birth);
+            mBinding.sex.setText(user.sex);
+            mBinding.mobile.setText(user.mobile);
+            mBinding.emergency.setText(user.emergency);
+            mBinding.addr.setText(user.address);
+            mBinding.detailAddr.setText(user.addressDetail);
+
 //            blood_type.setText(userInfo.getBloodType());
 //            sickness.setText(userInfo.getSickness());
-//            hospital.setText(userInfo.getHospital());
-//            doctor.setText(userInfo.getDoctor());
-//            etc.setText(userInfo.getEtc());
-//        }
+
+            mBinding.hospital.setText(user.hospital);
+            mBinding.doctor.setText(user.doctor);
+            mBinding.etc.setText(user.etc);
+
+            if (!TextUtils.isEmpty(user.imgPath)) {
+                mImageCaptureUri = Uri.fromFile(new File(user.imgPath));
+                iv_UserPhoto.setImageURI(mImageCaptureUri);
+            }
+        }
     }
+
 
     public void doTakePhotoAction() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

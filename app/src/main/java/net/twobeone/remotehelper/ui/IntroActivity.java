@@ -46,6 +46,7 @@ public class IntroActivity extends BaseActivity {
 
     private void startMainActivity() {
         startActivity(new Intent(IntroActivity.this, MainActivity.class));
+        overridePendingTransition(R.transition.slide_fade_in, R.transition.slide_fade_out);
         finish();
     }
 

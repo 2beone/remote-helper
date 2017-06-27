@@ -8,7 +8,6 @@
         android:focusableInTouchMode="true">
 
         <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="100dp">
@@ -16,7 +15,7 @@
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/appbar"
                 android:layout_width="match_parent"
-                android:layout_height="256dp"
+                android:layout_height="200dp"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
                 <android.support.design.widget.CollapsingToolbarLayout
@@ -59,15 +58,58 @@
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="0dp">
+                        android:layout_marginTop="10dp">
 
                         <EditText
                             android:id="@+id/et_user_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="성명"
+                            android:inputType="text"
                             android:maxLength="20"
                             android:maxLines="1" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <EditText
+                            android:id="@+id/et_user_age"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="나이"
+                            android:inputType="number"
+                            android:maxLength="3" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <EditText
+                            android:id="@+id/et_user_mobile"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="휴대전화"
+                            android:inputType="phone"
+                            android:maxLength="14" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <EditText
+                            android:id="@+id/et_emergency_contact"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="긴급연락처"
+                            android:inputType="phone"
+                            android:maxLength="14" />
                     </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>

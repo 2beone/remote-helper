@@ -26,8 +26,8 @@
 
     <!-- 설정 -->
     <string name="pref_user_info_title">내 정보</string>
-    <string name="pref_user_id_title">아이디</string>
-    <string name="pref_user_id_summary">로그인이 필요합니다.</string>
+    <string name="pref_user_name_title">성명</string>
+    <string name="pref_user_name_summary">사용자 정보를 관리합니다.</string>
     <string name="pref_app_info_title">앱 정보</string>
     <string name="pref_app_version_title">현재 버전</string>
     <string name="pref_app_troubles_title">디바이스 점검</string>

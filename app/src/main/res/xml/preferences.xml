@@ -2,6 +2,13 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="@string/pref_user_info_title">
+        <Preference
+            android:key="user_name"
+            android:summary="@string/pref_user_name_summary"
+            android:title="@string/pref_user_name_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_app_info_title">
         <Preference
             android:key="app_version_name"

@@ -28,6 +28,6 @@ public class UserViewActivity extends BaseActivity {
     @Override
     public boolean onSupportNavigateUp() {
         finish();
-        return true;
+        return super.onSupportNavigateUp();
     }
 }

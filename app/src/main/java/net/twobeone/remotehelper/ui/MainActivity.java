@@ -21,7 +21,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
@@ -76,14 +75,10 @@ public class MainActivity extends BaseActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        Button userBtn = (Button) nav_hear_view.findViewById(R.id.btn_user);
-        userBtn.setOnClickListener(new View.OnClickListener() {
+        nav_hear_view.findViewById(R.id.btn_user).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
-                startActivity(intent);
-
-                mDrawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(MainActivity.this, UserInfoActivity.class));
             }
         });
 

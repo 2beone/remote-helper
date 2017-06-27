@@ -146,6 +146,8 @@ public class UserViewActivity extends BaseActivity {
             mBinding.etUserAge.setText(user.age);
             mBinding.etUserMobile.setText(user.mobile);
             mBinding.etEmergencyContact.setText(user.emergency);
+            mBinding.etBloodType.setText(user.bloodType);
+            mBinding.etEtc.setText(user.etc);
         }
     }
 
@@ -155,6 +157,8 @@ public class UserViewActivity extends BaseActivity {
         user.age = mBinding.etUserAge.getText().toString();
         user.mobile = mBinding.etUserMobile.getText().toString();
         user.emergency = mBinding.etEmergencyContact.getText().toString();
+        user.bloodType = mBinding.etBloodType.getText().toString();
+        user.etc = mBinding.etEtc.getText().toString().trim();
         if (UserDao.getInstance().update(user) == 0) {
             UserDao.getInstance().insert(user);
         }

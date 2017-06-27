@@ -108,12 +108,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:paddingBottom="16dp"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp">
 
                             <TextView
                                 android:id="@+id/tv_optional"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:paddingTop="16dp"
                                 android:text="선택정보"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -144,6 +147,19 @@
                                     android:layout_marginTop="10dp">
 
                                     <EditText
+                                        android:id="@+id/et_blood_type"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="혈액형"
+                                        android:inputType="text" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <android.support.design.widget.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp">
+
+                                    <EditText
                                         android:id="@+id/et_user_mobile"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
@@ -164,6 +180,19 @@
                                         android:hint="긴급연락처"
                                         android:inputType="phone"
                                         android:maxLength="14" />
+                                </android.support.design.widget.TextInputLayout>
+
+                                <android.support.design.widget.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp">
+
+                                    <EditText
+                                        android:id="@+id/et_etc"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="기타"
+                                        android:inputType="text" />
                                 </android.support.design.widget.TextInputLayout>
                             </LinearLayout>
                         </LinearLayout>

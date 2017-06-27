@@ -22,7 +22,7 @@ public class UserViewActivity extends BaseActivity {
         setSupportActionBar(mBinding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBinding.fabEdit.setOnClickListener(new View.OnClickListener() {
+        mBinding.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UserViewActivity.this, UserInfoActivity.class));

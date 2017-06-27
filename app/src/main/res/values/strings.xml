@@ -11,6 +11,7 @@
     <string name="action_search">Search</string>
     <string name="search_hint">ex)편의점</string>
     <string name="search_text">검색</string>
+    <string name="save">저장</string>
 
     <!-- 네비게이션 -->
     <string name="nav_safezone">안전지대</string>

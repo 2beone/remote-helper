@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -29,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.db.UserDao;
+import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
 import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
@@ -169,9 +172,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             longitude = 0;
         }
 
-//        Realm realm = Realm.getDefaultInstance();
-//        User userInfo = realm.where(User.class).findFirst();
-//        userName = userInfo.getName();
+        User user = UserDao.getInstance().select();
+        if (user != null) {
+            if (!TextUtils.isEmpty(user.name)) {
+                userName = user.name;
+            }
+        }
 
         if (getArguments().getString("isMute").equals("false")) {
             mutests = false;

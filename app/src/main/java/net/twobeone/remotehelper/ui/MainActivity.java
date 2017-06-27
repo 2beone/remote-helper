@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,14 +20,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.db.UserDao;
+import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,19 +98,17 @@ public class MainActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         mDrawerLayout.closeDrawer(GravityCompat.START, false);
-//        Realm realm = Realm.getDefaultInstance();
-//        User userInfo = realm.where(User.class).findFirst();
-//        if (userInfo != null) {
-//            if (userInfo.getImgPath() != null) {
-//                mUserImage.setImageResource(R.drawable.user_default);
-//                File img = new File(userInfo.getImgPath());
-//                Uri uri = Uri.fromFile(img);
-//                mUserImage.setImageURI(uri);
-//            }
-//            if (userInfo.getName() != null) {
-//                mUserName.setText(userInfo.getName());
-//            }
-//        }
+
+        User user = UserDao.getInstance().select();
+        if (user != null) {
+            if (!TextUtils.isEmpty(user.imgPath)) {
+                mUserImage.setImageResource(R.drawable.user_default);
+                mUserImage.setImageURI(Uri.fromFile(new File(user.imgPath)));
+            }
+            if (!TextUtils.isEmpty(user.name)) {
+                mUserName.setText(user.name);
+            }
+        }
     }
 
     @Override

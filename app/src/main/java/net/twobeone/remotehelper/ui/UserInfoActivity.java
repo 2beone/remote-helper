@@ -235,43 +235,6 @@ public class UserInfoActivity extends BaseActivity {
                     doctor.setEnabled(false);
                     etc.setEnabled(false);
 
-//                    Realm realm = Realm.getDefaultInstance();
-//                    realm.executeTransactionAsync(new Realm.Transaction() {
-//                        @Override
-//                        public void execute(Realm bgRealm) {
-//                            User userInfo = bgRealm.where(User.class).findFirst();
-//                            if (userInfo == null) {
-//                                userInfo = new User();
-//                            }
-//                            userInfo.setName(name.getText().toString());
-//                            userInfo.setAge(age.getText().toString());
-//                            userInfo.setBirth(birth.getText().toString());
-//                            userInfo.setSex(sex.getText().toString());
-//                            userInfo.setMobile(mobile.getText().toString());
-//                            userInfo.setEmergency(emergency.getText().toString());
-//                            userInfo.setAddress(addr.getText().toString());
-//                            userInfo.setAddressDetail(detail_addr.getText().toString());
-//                            userInfo.setBloodType(blood_type.getText().toString());
-//                            userInfo.setSickness(sickness.getText().toString());
-//                            userInfo.setHospital(hospital.getText().toString());
-//                            userInfo.setDoctor(doctor.getText().toString());
-//                            userInfo.setEtc(etc.getText().toString());
-//                            bgRealm.copyToRealm(userInfo);
-//                        }
-//                    }, new Realm.Transaction.OnSuccess() {
-//                        @Override
-//                        public void onSuccess() {
-//                            setList();
-//
-//                            basic_adapter.notifyDataSetChanged();
-//                            basic_listview.invalidate();
-//                            basic_listview.refreshDrawableState();
-//
-//                            health_adapter.notifyDataSetChanged();
-//                            health_listview.invalidate();
-//                            health_listview.refreshDrawableState();
-//                        }
-//                    });
                 }
             }
         });
@@ -472,24 +435,6 @@ public class UserInfoActivity extends BaseActivity {
         File copyFile = new File(filePath);
         BufferedOutputStream out = null;
 
-//        Realm realm = Realm.getDefaultInstance();
-//        realm.executeTransactionAsync(new Realm.Transaction() {
-//            @Override
-//            public void execute(Realm bgRealm) {
-//                User userInfo = bgRealm.where(User.class).findFirst();
-//                if (userInfo == null) {
-//                    userInfo = new User();
-//                }
-//                userInfo.setImgPath(filePath);
-//                bgRealm.copyToRealm(userInfo);
-//            }
-//        }, new Realm.Transaction.OnSuccess() {
-//            @Override
-//            public void onSuccess() {
-//
-//            }
-//        });
-
         try {
             copyFile.createNewFile();
             out = new BufferedOutputStream(new FileOutputStream(copyFile));
@@ -505,47 +450,6 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void setList() {
-//        Realm realm = Realm.getDefaultInstance();
-//        User userInfo = realm.where(User.class).findFirst();
-//
-//        if (userInfo != null) {
-//            basic_adapter.deleteItem();
-//            basic_adapter.addItem("이름 : ", userInfo.getName());
-//            basic_adapter.addItem("나이 : ", userInfo.getAge());
-//            basic_adapter.addItem("생년월일 : ", userInfo.getBirth());
-//            basic_adapter.addItem("성별 : ", userInfo.getSex());
-//            basic_adapter.addItem("연락처 : ", userInfo.getMobile());
-//            basic_adapter.addItem("긴급연락처 : ", userInfo.getEmergency());
-//            if (userInfo.getAddress() != null) {
-//                basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
-//            } else {
-//                basic_adapter.addItem("거주지주소 : ", "");
-//            }
-//
-//
-//            health_adapter.deleteItem();
-//            health_adapter.addItem("혈액형 : ", userInfo.getBloodType());
-//            health_adapter.addItem("질환 : ", userInfo.getSickness());
-//            health_adapter.addItem("주치병원 : ", userInfo.getHospital());
-//            health_adapter.addItem("주치의 : ", userInfo.getDoctor());
-//            health_adapter.addItem("기타사항 : ", userInfo.getEtc());
-//        } else {
-//            basic_adapter.deleteItem();
-//            basic_adapter.addItem("이름 : ", "");
-//            basic_adapter.addItem("나이 : ", "");
-//            basic_adapter.addItem("생년월일 : ", "");
-//            basic_adapter.addItem("성별 : ", "");
-//            basic_adapter.addItem("연락처 : ", "");
-//            basic_adapter.addItem("긴급연락처 : ", "");
-//            basic_adapter.addItem("거주지주소 : ", "");
-//
-//            health_adapter.deleteItem();
-//            health_adapter.addItem("혈액형 : ", "");
-//            health_adapter.addItem("질환 : ", "");
-//            health_adapter.addItem("주치병원 : ", "");
-//            health_adapter.addItem("주치의 : ", "");
-//            health_adapter.addItem("기타사항 : ", "");
-//        }
 
     }
 

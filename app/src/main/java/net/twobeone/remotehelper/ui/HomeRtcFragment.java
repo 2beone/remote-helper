@@ -31,6 +31,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.db.UserDao;
+import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
 import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
@@ -105,7 +107,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     private GPSInfo gps;
     private double latitude;
     private double longitude;
-    private String userName = "홍";
+    private String userName = "";
 
     private String ServerUrl = "";
     private String FileName = "";
@@ -141,6 +143,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
         sv = (SurfaceView) view.findViewById(R.id.preview);
+        User user = UserDao.getInstance().select();
+        userName = user.name;
 
         VideoRendererGui.setView(vsv, runnable = new Runnable() {
             @Override

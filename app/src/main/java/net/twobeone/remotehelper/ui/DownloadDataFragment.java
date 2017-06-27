@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,10 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
@@ -37,6 +36,7 @@ public final class DownloadDataFragment extends BaseFragment {
 
     private static Fragment fragment;
     private static FragmentManager fm;
+    private static long backKeyPressedTime = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -156,15 +156,21 @@ public final class DownloadDataFragment extends BaseFragment {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Bundle args = new Bundle();
-                        int sub = tvFileName.getText().toString().indexOf(".");
-                        args.putString("name", tvFileName.getText().toString().substring(0,sub));
-                        args.putString("extend", tvFileName.getText().toString().substring(sub));
-                        fragment.setArguments(args);
-                        fragmentTransaction = fm.beginTransaction();
-                        fragmentTransaction.replace(R.id.download_data, fragment, "msginfofragment");
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
+                        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+                            backKeyPressedTime = System.currentTimeMillis();
+                            Bundle args = new Bundle();
+                            int sub = tvFileName.getText().toString().indexOf(".");
+                            args.putString("name", tvFileName.getText().toString().substring(0,sub));
+                            args.putString("extend", tvFileName.getText().toString().substring(sub));
+                            fragment.setArguments(args);
+                            fragmentTransaction = fm.beginTransaction();
+                            fragmentTransaction.replace(R.id.download_data, fragment, "msginfofragment");
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        }
+                        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+
+                        }
                     }
                 });
             }

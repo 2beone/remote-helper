@@ -41,8 +41,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
 
-import io.realm.Realm;
-
 public class UserInfoActivity extends BaseActivity {
 
     private Context mContext;
@@ -132,17 +130,17 @@ public class UserInfoActivity extends BaseActivity {
         basic_listview.setAdapter(basic_adapter);
         health_listview.setAdapter(health_adapter);
 
-        Realm.init(this);
-        Realm realm = Realm.getDefaultInstance();
-        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
-        if (userInfo != null) {
-            if (userInfo.getImgPath() != null) {
-                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
-                File img = new File(userInfo.getImgPath());
-                mImageCaptureUri = Uri.fromFile(img);
-                iv_UserPhoto.setImageURI(mImageCaptureUri);
-            }
-        }
+//        Realm.init(this);
+//        Realm realm = Realm.getDefaultInstance();
+//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        if (userInfo != null) {
+//            if (userInfo.getImgPath() != null) {
+//                Log.d("SSSSSS", "mImageCaptureUri : " + mImageCaptureUri);
+//                File img = new File(userInfo.getImgPath());
+//                mImageCaptureUri = Uri.fromFile(img);
+//                iv_UserPhoto.setImageURI(mImageCaptureUri);
+//            }
+//        }
 
         name = (EditText) findViewById(R.id.edit_name);
         age = (EditText) findViewById(R.id.edit_age);
@@ -255,43 +253,43 @@ public class UserInfoActivity extends BaseActivity {
                     doctor.setEnabled(false);
                     etc.setEnabled(false);
 
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm bgRealm) {
-                            UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
-                            if (userInfo == null) {
-                                userInfo = new UserInfo();
-                            }
-                            userInfo.setName(name.getText().toString());
-                            userInfo.setAge(age.getText().toString());
-                            userInfo.setBirth(birth.getText().toString());
-                            userInfo.setSex(sex.getText().toString());
-                            userInfo.setMobile(mobile.getText().toString());
-                            userInfo.setEmergency(emergency.getText().toString());
-                            userInfo.setAddress(addr.getText().toString());
-                            userInfo.setAddressDetail(detail_addr.getText().toString());
-                            userInfo.setBloodType(blood_type.getText().toString());
-                            userInfo.setSickness(sickness.getText().toString());
-                            userInfo.setHospital(hospital.getText().toString());
-                            userInfo.setDoctor(doctor.getText().toString());
-                            userInfo.setEtc(etc.getText().toString());
-                            bgRealm.copyToRealm(userInfo);
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            setList();
-
-                            basic_adapter.notifyDataSetChanged();
-                            basic_listview.invalidate();
-                            basic_listview.refreshDrawableState();
-
-                            health_adapter.notifyDataSetChanged();
-                            health_listview.invalidate();
-                            health_listview.refreshDrawableState();
-                        }
-                    });
+//                    Realm realm = Realm.getDefaultInstance();
+//                    realm.executeTransactionAsync(new Realm.Transaction() {
+//                        @Override
+//                        public void execute(Realm bgRealm) {
+//                            UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+//                            if (userInfo == null) {
+//                                userInfo = new UserInfo();
+//                            }
+//                            userInfo.setName(name.getText().toString());
+//                            userInfo.setAge(age.getText().toString());
+//                            userInfo.setBirth(birth.getText().toString());
+//                            userInfo.setSex(sex.getText().toString());
+//                            userInfo.setMobile(mobile.getText().toString());
+//                            userInfo.setEmergency(emergency.getText().toString());
+//                            userInfo.setAddress(addr.getText().toString());
+//                            userInfo.setAddressDetail(detail_addr.getText().toString());
+//                            userInfo.setBloodType(blood_type.getText().toString());
+//                            userInfo.setSickness(sickness.getText().toString());
+//                            userInfo.setHospital(hospital.getText().toString());
+//                            userInfo.setDoctor(doctor.getText().toString());
+//                            userInfo.setEtc(etc.getText().toString());
+//                            bgRealm.copyToRealm(userInfo);
+//                        }
+//                    }, new Realm.Transaction.OnSuccess() {
+//                        @Override
+//                        public void onSuccess() {
+//                            setList();
+//
+//                            basic_adapter.notifyDataSetChanged();
+//                            basic_listview.invalidate();
+//                            basic_listview.refreshDrawableState();
+//
+//                            health_adapter.notifyDataSetChanged();
+//                            health_listview.invalidate();
+//                            health_listview.refreshDrawableState();
+//                        }
+//                    });
                 }
             }
         });
@@ -490,23 +488,23 @@ public class UserInfoActivity extends BaseActivity {
         File copyFile = new File(filePath);
         BufferedOutputStream out = null;
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm bgRealm) {
-                UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
-                if (userInfo == null) {
-                    userInfo = new UserInfo();
-                }
-                userInfo.setImgPath(filePath);
-                bgRealm.copyToRealm(userInfo);
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-
-            }
-        });
+//        Realm realm = Realm.getDefaultInstance();
+//        realm.executeTransactionAsync(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm bgRealm) {
+//                UserInfo userInfo = bgRealm.where(UserInfo.class).findFirst();
+//                if (userInfo == null) {
+//                    userInfo = new UserInfo();
+//                }
+//                userInfo.setImgPath(filePath);
+//                bgRealm.copyToRealm(userInfo);
+//            }
+//        }, new Realm.Transaction.OnSuccess() {
+//            @Override
+//            public void onSuccess() {
+//
+//            }
+//        });
 
         try {
             copyFile.createNewFile();
@@ -523,47 +521,47 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void setList() {
-        Realm realm = Realm.getDefaultInstance();
-        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
-
-        if (userInfo != null) {
-            basic_adapter.deleteItem();
-            basic_adapter.addItem("이름 : ", userInfo.getName());
-            basic_adapter.addItem("나이 : ", userInfo.getAge());
-            basic_adapter.addItem("생년월일 : ", userInfo.getBirth());
-            basic_adapter.addItem("성별 : ", userInfo.getSex());
-            basic_adapter.addItem("연락처 : ", userInfo.getMobile());
-            basic_adapter.addItem("긴급연락처 : ", userInfo.getEmergency());
-            if (userInfo.getAddress() != null) {
-                basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
-            } else {
-                basic_adapter.addItem("거주지주소 : ", "");
-            }
-
-
-            health_adapter.deleteItem();
-            health_adapter.addItem("혈액형 : ", userInfo.getBloodType());
-            health_adapter.addItem("질환 : ", userInfo.getSickness());
-            health_adapter.addItem("주치병원 : ", userInfo.getHospital());
-            health_adapter.addItem("주치의 : ", userInfo.getDoctor());
-            health_adapter.addItem("기타사항 : ", userInfo.getEtc());
-        } else {
-            basic_adapter.deleteItem();
-            basic_adapter.addItem("이름 : ", "");
-            basic_adapter.addItem("나이 : ", "");
-            basic_adapter.addItem("생년월일 : ", "");
-            basic_adapter.addItem("성별 : ", "");
-            basic_adapter.addItem("연락처 : ", "");
-            basic_adapter.addItem("긴급연락처 : ", "");
-            basic_adapter.addItem("거주지주소 : ", "");
-
-            health_adapter.deleteItem();
-            health_adapter.addItem("혈액형 : ", "");
-            health_adapter.addItem("질환 : ", "");
-            health_adapter.addItem("주치병원 : ", "");
-            health_adapter.addItem("주치의 : ", "");
-            health_adapter.addItem("기타사항 : ", "");
-        }
+//        Realm realm = Realm.getDefaultInstance();
+//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//
+//        if (userInfo != null) {
+//            basic_adapter.deleteItem();
+//            basic_adapter.addItem("이름 : ", userInfo.getName());
+//            basic_adapter.addItem("나이 : ", userInfo.getAge());
+//            basic_adapter.addItem("생년월일 : ", userInfo.getBirth());
+//            basic_adapter.addItem("성별 : ", userInfo.getSex());
+//            basic_adapter.addItem("연락처 : ", userInfo.getMobile());
+//            basic_adapter.addItem("긴급연락처 : ", userInfo.getEmergency());
+//            if (userInfo.getAddress() != null) {
+//                basic_adapter.addItem("거주지주소 : ", userInfo.getAddress() + " " + userInfo.getAddressDetail());
+//            } else {
+//                basic_adapter.addItem("거주지주소 : ", "");
+//            }
+//
+//
+//            health_adapter.deleteItem();
+//            health_adapter.addItem("혈액형 : ", userInfo.getBloodType());
+//            health_adapter.addItem("질환 : ", userInfo.getSickness());
+//            health_adapter.addItem("주치병원 : ", userInfo.getHospital());
+//            health_adapter.addItem("주치의 : ", userInfo.getDoctor());
+//            health_adapter.addItem("기타사항 : ", userInfo.getEtc());
+//        } else {
+//            basic_adapter.deleteItem();
+//            basic_adapter.addItem("이름 : ", "");
+//            basic_adapter.addItem("나이 : ", "");
+//            basic_adapter.addItem("생년월일 : ", "");
+//            basic_adapter.addItem("성별 : ", "");
+//            basic_adapter.addItem("연락처 : ", "");
+//            basic_adapter.addItem("긴급연락처 : ", "");
+//            basic_adapter.addItem("거주지주소 : ", "");
+//
+//            health_adapter.deleteItem();
+//            health_adapter.addItem("혈액형 : ", "");
+//            health_adapter.addItem("질환 : ", "");
+//            health_adapter.addItem("주치병원 : ", "");
+//            health_adapter.addItem("주치의 : ", "");
+//            health_adapter.addItem("기타사항 : ", "");
+//        }
 
     }
 
@@ -581,25 +579,25 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void fillUserInfoValue() {
-        Realm realm = Realm.getDefaultInstance();
-        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
-
-        if (userInfo != null) {
-            name.setText(userInfo.getName());
-            age.setText(userInfo.getAge());
-            birth.setText(userInfo.getBirth());
-            sex.setText(userInfo.getSex());
-            mobile.setText(userInfo.getMobile());
-            emergency.setText(userInfo.getEmergency());
-            addr.setText(userInfo.getAddress());
-            detail_addr.setText(userInfo.getAddressDetail());
-
-            blood_type.setText(userInfo.getBloodType());
-            sickness.setText(userInfo.getSickness());
-            hospital.setText(userInfo.getHospital());
-            doctor.setText(userInfo.getDoctor());
-            etc.setText(userInfo.getEtc());
-        }
+//        Realm realm = Realm.getDefaultInstance();
+//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//
+//        if (userInfo != null) {
+//            name.setText(userInfo.getName());
+//            age.setText(userInfo.getAge());
+//            birth.setText(userInfo.getBirth());
+//            sex.setText(userInfo.getSex());
+//            mobile.setText(userInfo.getMobile());
+//            emergency.setText(userInfo.getEmergency());
+//            addr.setText(userInfo.getAddress());
+//            detail_addr.setText(userInfo.getAddressDetail());
+//
+//            blood_type.setText(userInfo.getBloodType());
+//            sickness.setText(userInfo.getSickness());
+//            hospital.setText(userInfo.getHospital());
+//            doctor.setText(userInfo.getDoctor());
+//            etc.setText(userInfo.getEtc());
+//        }
     }
 
     public void doTakePhotoAction() {
@@ -642,7 +640,7 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void DialogSexPicker() {
-        CharSequence info[] = new CharSequence[] { "남자", "여자" };
+        CharSequence info[] = new CharSequence[]{"남자", "여자"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("성별");
 
@@ -664,8 +662,8 @@ public class UserInfoActivity extends BaseActivity {
     }
 
     private void DialogBloodPicker() {
-        CharSequence info[] = new CharSequence[] { "RH+ A", "RH+ B", "RH+ AB", "RH+ O", "RH- A", "RH- B", "RH- AB",
-                "RH- O" };
+        CharSequence info[] = new CharSequence[]{"RH+ A", "RH+ B", "RH+ AB", "RH+ O", "RH- A", "RH- B", "RH- AB",
+                "RH- O"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("혈액형");
 

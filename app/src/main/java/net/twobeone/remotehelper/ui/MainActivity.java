@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -26,15 +25,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.model.UserInfo;
 import net.twobeone.remotehelper.service.GPSInfo;
 import net.twobeone.remotehelper.widget.RoundImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.Realm;
 
 public class MainActivity extends BaseActivity {
 
@@ -72,7 +67,7 @@ public class MainActivity extends BaseActivity {
         mUserName = (TextView) nav_hear_view.findViewById(R.id.userage_txt);
         mUserImage = (RoundImageView) nav_hear_view.findViewById(R.id.user_img);
         mUserImage.setImageResource(R.drawable.user_default);
-        Realm.init(this);
+//        Realm.init(this);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         if (mViewPager != null) {
@@ -104,19 +99,19 @@ public class MainActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         mDrawerLayout.closeDrawer(GravityCompat.START, false);
-        Realm realm = Realm.getDefaultInstance();
-        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
-        if (userInfo != null) {
-            if (userInfo.getImgPath() != null) {
-                mUserImage.setImageResource(R.drawable.user_default);
-                File img = new File(userInfo.getImgPath());
-                Uri uri = Uri.fromFile(img);
-                mUserImage.setImageURI(uri);
-            }
-            if (userInfo.getName() != null) {
-                mUserName.setText(userInfo.getName());
-            }
-        }
+//        Realm realm = Realm.getDefaultInstance();
+//        UserInfo userInfo = realm.where(UserInfo.class).findFirst();
+//        if (userInfo != null) {
+//            if (userInfo.getImgPath() != null) {
+//                mUserImage.setImageResource(R.drawable.user_default);
+//                File img = new File(userInfo.getImgPath());
+//                Uri uri = Uri.fromFile(img);
+//                mUserImage.setImageURI(uri);
+//            }
+//            if (userInfo.getName() != null) {
+//                mUserName.setText(userInfo.getName());
+//            }
+//        }
     }
 
     @Override

@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity {
     public void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
-        adapter.addFragment(new DownloadDataFragment(), getResources().getString(R.string.rtc_tab1_title));
+        adapter.addFragment(new FileBoxFragment(), getResources().getString(R.string.rtc_tab1_title));
         viewPager.setAdapter(adapter);
     }
 

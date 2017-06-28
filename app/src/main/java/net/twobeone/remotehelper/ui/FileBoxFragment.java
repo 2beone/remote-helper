@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class DownloadDataFragment extends BaseFragment {
+public final class FileBoxFragment extends BaseFragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;

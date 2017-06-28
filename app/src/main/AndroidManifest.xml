@@ -64,7 +64,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.view.POISearchDialog"
+            android:name=".ui.POISearchDialog"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 

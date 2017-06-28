@@ -15,11 +15,7 @@ import android.widget.Button;
 
 import net.twobeone.remotehelper.R;
 
-/**
- * Created by Administrator on 2017-06-16.
- */
-
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
 
     private View view;
     private Button sos_button;
@@ -35,6 +31,11 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         sos_button = (Button) view.findViewById(R.id.btn_call);
@@ -46,7 +47,6 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
                         //중복 클릭 방지
                         sos_button.setEnabled(false);
                         Handler h = new Handler();
@@ -68,7 +68,6 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
                         dialog.dismiss();
                     }
                 };
@@ -104,7 +103,7 @@ public class HomeFragment extends Fragment {
 
     class splashhandler implements Runnable {
         public void run() {
-            sos_button.setEnabled(true); // 클릭 유효화
+            sos_button.setEnabled(true);
         }
     }
 }

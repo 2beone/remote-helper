@@ -61,7 +61,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.RtcListener, SurfaceHolder.Callback {
+public class HomeRtcFragment extends BaseFragment implements WebRTCClientWebSocket.RtcListener, SurfaceHolder.Callback {
 
     private static final String VIDEO_CODEC_VP8 = "VP8";
     private static final String VIDEO_CODEC_VP9 = "VP9";
@@ -187,10 +187,10 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
             longitude = 0;
         }
 
-        if(getArguments().getString("isMute").equals("false")){
+        if (getArguments().getString("isMute").equals("false")) {
             mutests = false;
             mute_button.setBackgroundResource(R.drawable.btn_mute_on);
-        }else{
+        } else {
             mutests = true;
             mute_button.setBackgroundResource(R.drawable.btn_mute_off);
         }
@@ -201,12 +201,12 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
     ImageButton.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.mute_button:
-                    if(mutests){
+                    if (mutests) {
                         mutests = false;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_on);
-                    }else{
+                    } else {
                         mutests = true;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_off);
                     }
@@ -283,7 +283,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
 
     @Override
     public void onStatusChanged(final String newStatus) {
-        if(newStatus.equals("CONNECTING")){
+        if (newStatus.equals("CONNECTING")) {
             handler.sendEmptyMessage(3);
         }
         iceStatus = newStatus;
@@ -348,8 +348,8 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
         }
     }
 
-        @Override
-        public void downloadThread(String serverPath, String localPath, String filename) {
+    @Override
+    public void downloadThread(String serverPath, String localPath, String filename) {
         ServerUrl = serverPath;
         FileName = filename;
         sub = serverPath.lastIndexOf(".");
@@ -406,17 +406,15 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                 sv.setVisibility(sv.VISIBLE);
                 vsv.setVisibility(vsv.INVISIBLE);
             }
-            if(msg.what == 1){
+            if (msg.what == 1) {
                 new CountDownTimer(5000, 500) {
 
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        // TODO Auto-generated method stub
                     }
 
                     @Override
                     public void onFinish() {
-                        // TODO Auto-generated method stub
                         if (recording) {
                             try {
                                 mediaRecorder.stop();
@@ -426,7 +424,7 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                                 cam.stopPreview();
                                 cam.release();
                             } catch (Exception e) {
-                                Log.e("JH","CAM " + e.toString());
+                                Log.e("JH", "CAM " + e.toString());
                             }
 
                             // 서버로 녹화한 영상 전송
@@ -443,26 +441,25 @@ public class HomeRtcFragment extends Fragment implements WebRTCClientWebSocket.R
                     }
                 }.start();
             }
-            if(msg.what == 2){
+            if (msg.what == 2) {
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
             }
-            if(msg.what == 3){
+            if (msg.what == 3) {
                 new CountDownTimer(1500, 500) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        // TODO Auto-generated method stub
                     }
+
                     @Override
                     public void onFinish() {
-                        // TODO Auto-generated method stub
                         clientWebSocket.onMute(mutests);
                     }
                 }.start();
             }
-            if(msg.what == 4){
+            if (msg.what == 4) {
                 getActivity().onBackPressed();
             }
-            if(msg.what == 5){
+            if (msg.what == 5) {
                 DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
 
                     @Override

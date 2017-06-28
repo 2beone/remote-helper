@@ -22,7 +22,6 @@ import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.service.GPSInfo;
-import net.twobeone.remotehelper.ui.view.POISearchDialog;
 
 import java.util.HashMap;
 import java.util.List;

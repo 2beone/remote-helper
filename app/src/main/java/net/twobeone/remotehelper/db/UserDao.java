@@ -45,6 +45,7 @@ public class UserDao extends SQLiteDao {
     public int update(User item) {
 
         ContentValues values = new ContentValues();
+        values.put("name", item.name);
         values.put("age", item.age);
         values.put("birth", item.birth);
         values.put("sex", item.sex);
@@ -59,7 +60,7 @@ public class UserDao extends SQLiteDao {
         values.put("etc", item.etc);
         values.put("photo", item.imgPath);
 
-        return getWritableDatabase().update("user", values, "name = ?", new String[]{item.name});
+        return getWritableDatabase().update("user", values, null, new String[]{});
     }
 
     public User select() {

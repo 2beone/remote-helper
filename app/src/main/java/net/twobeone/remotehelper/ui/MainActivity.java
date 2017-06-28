@@ -4,16 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -28,23 +23,12 @@ import android.widget.TextView;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.db.UserDao;
 import net.twobeone.remotehelper.db.model.User;
-import net.twobeone.remotehelper.service.GPSInfo;
-import net.twobeone.remotehelper.widget.RoundImageView;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends BaseActivity {
+public final class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
-    private FragmentManager fm;
-    private FragmentTransaction fragmentTransaction;
-
     private TextView mUserName;
-    private RoundImageView mUserImage;
-    private GPSInfo gps;
 
     private long backKeyPressedTime = 0;
 
@@ -55,22 +39,29 @@ public class MainActivity extends BaseActivity {
 
         checkPermissions();
 
+        // 툴바
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // 액션바
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        // 네비게이션
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new MainNavigationListener(this));
 
-        View nav_header_view = navigationView.getHeaderView(0);
-        mUserName = (TextView) nav_header_view.findViewById(R.id.userage_txt);
-        mUserImage = (RoundImageView) nav_header_view.findViewById(R.id.user_img);
-        mUserImage.setImageResource(R.drawable.user_default);
+        View navHeaderView = navigationView.getHeaderView(0);
+        navHeaderView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, UserViewActivity.class));
+            }
+        });
+        mUserName = (TextView) navHeaderView.findViewById(R.id.userage_txt);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         if (mViewPager != null) {
@@ -79,31 +70,22 @@ public class MainActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        nav_header_view.findViewById(R.id.btn_user).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, UserViewActivity.class));
-            }
-        });
-
-        gps = new GPSInfo(MainActivity.this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mDrawerLayout.closeDrawer(GravityCompat.START, false);
+        selectUserInfo();
+    }
 
+    private void selectUserInfo() {
         User user = UserDao.getInstance().select();
         if (user != null) {
-            if (!TextUtils.isEmpty(user.imgPath)) {
-                mUserImage.setImageResource(R.drawable.user_default);
-                mUserImage.setImageURI(Uri.fromFile(new File(user.imgPath)));
-            }
-            if (!TextUtils.isEmpty(user.name)) {
-                mUserName.setText(user.name);
-            }
+            mUserName.setText(user.name);
+        }
+        if (TextUtils.isEmpty(mUserName.getText())) {
+            mUserName.setText("성명을 입력해 주세요");
         }
     }
 
@@ -130,40 +112,10 @@ public class MainActivity extends BaseActivity {
 //    }
 
     public void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
-        adapter.addFragment(new FileBoxFragment(), getResources().getString(R.string.rtc_tab1_title));
-        viewPager.setAdapter(adapter);
-    }
-
-    static class Adapter extends FragmentPagerAdapter {
-
-        private final List<Fragment> mFragments = new ArrayList<>();
-        private final List<String> mFragmentTitles = new ArrayList<>();
-
-        public Adapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragments.add(fragment);
-            mFragmentTitles.add(title);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitles.get(position);
-        }
+        MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        mainPagerAdapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
+        mainPagerAdapter.addFragment(new FileBoxFragment(), getResources().getString(R.string.rtc_tab1_title));
+        viewPager.setAdapter(mainPagerAdapter);
     }
 
     public void checkPermissions() {

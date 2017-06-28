@@ -11,7 +11,7 @@ public class CreateUser implements SQLiteHelper.Creator {
 
         StringBuilder sql = new StringBuilder();
         sql.append(" CREATE TABLE IF NOT EXISTS user (                                                                      ");
-        sql.append("      name              TEXT            PRIMARY KEY                                                     ");
+        sql.append("      name              TEXT                                                                            ");
         sql.append("    , age               TEXT                                                                            ");
         sql.append("    , birth             TEXT                                                                            ");
         sql.append("    , sex               TEXT                                                                            ");

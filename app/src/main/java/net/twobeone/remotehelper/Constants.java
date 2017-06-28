@@ -17,4 +17,9 @@ public final class Constants {
      */
     public static final String DATABASE_FILE_NAME = "default.sqlite";
     public static final int DATABASE_VERSION_CODE = 1;
+
+    /**
+     * 설정
+     */
+    public static final String PREF_LOCATION_ENABLED = "location_enabled";
 }

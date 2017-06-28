@@ -80,5 +80,12 @@
             android:label="@string/pref_app_troubles_title"
             android:theme="@style/Theme.AppTheme" />
 
+        <receiver android:name=".receiver.ProvidersChangedReceiver">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

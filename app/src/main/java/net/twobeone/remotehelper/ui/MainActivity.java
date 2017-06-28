@@ -88,10 +88,6 @@ public class MainActivity extends BaseActivity {
         });
 
         gps = new GPSInfo(MainActivity.this);
-        // GPS 사용유무 가져오기
-        if (!gps.isGetLocation()) {
-            gps.showSettingsAlert();
-        }
     }
 
     @Override

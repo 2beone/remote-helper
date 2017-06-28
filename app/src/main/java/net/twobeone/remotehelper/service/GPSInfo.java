@@ -39,13 +39,12 @@ public class GPSInfo extends Service implements LocationListener {
 	}
 
 	public Location getLocation() {
+
 		try {
 			locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
-
 			isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
 			isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-			Log.d("SSSSSS", "1");
+
 			if (!isGPSEnabled && !isNetworkEnabled) {
 				Log.e("SSSSSS", "!isGPSEnabled && !isNetworkEnabled");
 			} else {
@@ -129,8 +128,8 @@ public class GPSInfo extends Service implements LocationListener {
 	}
 
 	public void showSettingsAlert() {
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext, AlertDialog.THEME_HOLO_LIGHT);
 
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext, AlertDialog.THEME_HOLO_LIGHT);
 		alertDialog.setMessage("위치서비스를 이용할 수 있도록 설정해 주시기 바랍니다.");
 
 		alertDialog.setPositiveButton("설정", new DialogInterface.OnClickListener() {

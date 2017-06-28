@@ -1,19 +1,32 @@
 package net.twobeone.remotehelper.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.databinding.FragmentHomeBinding;
+import net.twobeone.remotehelper.db.model.ChatMessage;
+import net.twobeone.remotehelper.util.LocationUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends BaseFragment {
 
@@ -22,17 +35,30 @@ public class HomeFragment extends BaseFragment {
     private Fragment fragment;
     private FragmentManager fm;
     private FragmentTransaction fragmentTransaction;
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private FragmentHomeBinding mBinding;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext());
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_home, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        view = mBinding.getRoot();
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 
     @Override
@@ -101,9 +127,83 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mRecyclerViewAdapter.selectItems();
+    }
+
     class splashhandler implements Runnable {
         public void run() {
             sos_button.setEnabled(true);
+        }
+    }
+
+    public static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+
+        private final Context mContext;
+        private List<ChatMessage> mItems;
+
+        public RecyclerViewAdapter(Context context) {
+            mContext = context;
+            mItems = new ArrayList<>();
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            ChatMessage item = mItems.get(position);
+            holder.tvMessageContent.setText(item.getMessage());
+            holder.intent = item.getIntent();
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems == null ? 0 : mItems.size();
+        }
+
+        public void selectItems() {
+            mItems.clear();
+
+            // 첫인사
+            mItems.add(new ChatMessage("안녕하세요? 원격안전도우미입니다."));
+
+            // 위치서비스
+            if (!LocationUtils.isLocationEnabled(mContext)) {
+                ChatMessage item = new ChatMessage("위치서비스를 '사용'으로 설정하시면 더욱 다양한 서비스를 이용하실 수 있습니다. 여기를 클릭해 주세요.");
+                item.setIntent(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                mItems.add(item);
+            } else {
+                mItems.add(new ChatMessage("위치서비스(안전지대 등)를 이용하실 수 있습니다."));
+            }
+
+            // 상담원연결
+            mItems.add(new ChatMessage("저의 도움이 필요하시면 아래의 '상담원 연결' 버튼을 클릭해 주세요."));
+
+            notifyDataSetChanged();
+        }
+
+        static final class ViewHolder extends RecyclerView.ViewHolder {
+
+            TextView tvMessageContent;
+            Intent intent;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                tvMessageContent = (TextView) itemView.findViewById(R.id.tv_message_content);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (intent != null) {
+                            v.getContext().startActivity(intent);
+                        }
+                    }
+                });
+            }
         }
     }
 }

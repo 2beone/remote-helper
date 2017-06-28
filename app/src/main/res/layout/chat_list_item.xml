@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:orientation="vertical"
+    android:paddingRight="16dp"
+    android:paddingTop="20dp">
+
+    <TextView
+        android:id="@+id/tv_message_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="8dp"
+        android:text="안전도우미"
+        android:textSize="12sp" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_chat_in"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_message_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp" />
+
+    </FrameLayout>
+</LinearLayout>

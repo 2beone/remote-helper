@@ -32,6 +32,7 @@ public class SettingsActivity extends BaseActivity {
     public static class SettingsFragment extends PreferenceFragment {
 
         private static final String PREF_USER_NAME = "user_name";
+        private static final String PREF_APP_INFO = "app_info";
         private static final String PREF_APP_VERSION_NAME = "app_version_name";
         private static final String PREF_APP_TROUBLES = "app_troubles";
 
@@ -56,6 +57,8 @@ public class SettingsActivity extends BaseActivity {
             String key = preference.getKey();
             if (key.equals(PREF_USER_NAME)) {
                 startActivity(new Intent(getActivity(), UserViewActivity.class));
+            } else if (key.equals(PREF_APP_INFO)) {
+                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getActivity().getPackageName())));
             } else if (key.equals(PREF_APP_VERSION_NAME)) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getActivity().getPackageName())));
             } else if (key.equals(PREF_APP_TROUBLES)) {

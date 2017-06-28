@@ -15,7 +15,6 @@
 
     <!-- 네비게이션 -->
     <string name="nav_safezone">안전지대</string>
-    <string name="nav_app_info_title">애플리케이션 정보</string>
     <string name="nav_app_settings_title">설정</string>
     <string name="nav_family_title">패밀리</string>
     <string name="nav_family1_title">오산시청 홈페이지</string>
@@ -28,8 +27,10 @@
     <string name="pref_user_info_title">내 정보</string>
     <string name="pref_user_name_title">성명</string>
     <string name="pref_user_name_summary">사용자 정보를 관리합니다.</string>
-    <string name="pref_app_info_title">앱 정보</string>
+    <string name="pref_app_info2">앱 정보</string>
     <string name="pref_app_version_title">현재 버전</string>
+    <string name="pref_app_info_title">애플리케이션 정보</string>
+    <string name="pref_app_info_summary">사용량, 배터리, 저장공간, 권한 등</string>
     <string name="pref_app_troubles_title">디바이스 점검</string>
     <string name="pref_app_troubles_summary">디바이스 및 네트워크 환경을 점검합니다.</string>
     <string name="pref_app_opensource_license_title">오픈소스 라이센스</string>

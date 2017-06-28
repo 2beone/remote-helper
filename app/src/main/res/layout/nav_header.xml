@@ -2,21 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="192dp"
-    android:background="?attr/colorPrimaryDark"
+    android:background="@drawable/bg_nav_header"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/userage_txt"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="20dp">
-
-        <TextView
-            android:id="@+id/userage_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
 </RelativeLayout>

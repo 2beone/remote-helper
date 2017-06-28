@@ -13,6 +13,11 @@ public final class Constants {
     public static final String DONWLOAD_DIRECTORY_NAME = "RemoteHelper_download";
 
     /**
+     * 에셋
+     */
+    public static final String ASSETS_MANUALS_SAMPLES_DIRECTORY_PATH = "manuals/samples";
+
+    /**
      * 데이터베이스
      */
     public static final String DATABASE_FILE_NAME = "default.sqlite";
@@ -21,5 +26,6 @@ public final class Constants {
     /**
      * 설정
      */
+    public static final String PREF_MANUALS_SAMPLES_COPIED = "manuals_amples_copied";
     public static final String PREF_LOCATION_ENABLED = "location_enabled";
 }

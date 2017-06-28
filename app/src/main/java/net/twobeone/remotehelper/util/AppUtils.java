@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
+
+import net.twobeone.remotehelper.Constants;
+
+import java.io.File;
 
 public final class AppUtils {
 
@@ -32,5 +37,9 @@ public final class AppUtils {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public static File getDownloadDirectory() {
+        return FileUtils.makeDirectoryIfNotExists(String.format("%s/%s/", Environment.getExternalStorageDirectory().getAbsolutePath(), Constants.DONWLOAD_DIRECTORY_NAME));
     }
 }

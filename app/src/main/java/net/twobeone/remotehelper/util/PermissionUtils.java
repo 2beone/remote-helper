@@ -37,14 +37,21 @@ public final class PermissionUtils {
         return getRequiredPermissions(context, getRequestedPermissions(context));
     }
 
+    public static boolean hasPermission(Context context, String permission) {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static boolean hasPermissionGroup(Context context, String permission) {
+        return !TextUtils.isEmpty(getPermissionGroup(context, permission));
+    }
+
     public static String[] getRequiredPermissions(Context context, String[] permissions) {
         List<String> requiredPermissions = new ArrayList<>();
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                if (!TextUtils.isEmpty(getPermissionGroup(context, permission))) {
+            if (!hasPermission(context, permission))
+                if (hasPermissionGroup(context, permission)) {
                     requiredPermissions.add(permission);
                 }
-            }
         }
         return requiredPermissions.toArray(new String[requiredPermissions.size()]);
     }

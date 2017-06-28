@@ -3,9 +3,11 @@ package net.twobeone.remotehelper.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -20,9 +22,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.db.UserDao;
 import net.twobeone.remotehelper.db.model.User;
+import net.twobeone.remotehelper.util.AppUtils;
+import net.twobeone.remotehelper.util.FileUtils;
+import net.twobeone.remotehelper.util.PermissionUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public final class MainActivity extends BaseActivity {
 
@@ -70,6 +82,42 @@ public final class MainActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // 매뉴얼샘플
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, false)) {
+            if (AppUtils.getDownloadDirectory().listFiles().length == 0) {
+                if (PermissionUtils.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    copyManualSamples();
+                    prefs.edit().putBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, true).commit();
+                }
+            }
+        }
+    }
+
+    private void copyManualSamples() {
+        File downloadDirectory = AppUtils.getDownloadDirectory();
+        String[] samples = null;
+        try {
+            samples = getAssets().list(Constants.ASSETS_MANUALS_SAMPLES_DIRECTORY_PATH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (samples != null) {
+            for (String sample : samples) {
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+                try {
+                    inputStream = getAssets().open(Constants.ASSETS_MANUALS_SAMPLES_DIRECTORY_PATH + "/" + sample);
+                    outputStream = new FileOutputStream(new File(downloadDirectory, sample));
+                    FileUtils.copy(inputStream, outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    FileUtils.close(inputStream, outputStream);
+                }
+            }
+        }
     }
 
     @Override

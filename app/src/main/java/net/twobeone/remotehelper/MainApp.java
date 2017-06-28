@@ -16,16 +16,16 @@ public final class MainApp extends Application {
         initPreferences();
     }
 
+    @Override
+    public void onTerminate() {
+        SQLiteHelper.getInstance().close();
+        super.onTerminate();
+    }
+
     private void initPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Constants.PREF_LOCATION_ENABLED, LocationUtils.isLocationEnabled(this));
         editor.commit();
-    }
-
-    @Override
-    public void onTerminate() {
-        SQLiteHelper.getInstance().close();
-        super.onTerminate();
     }
 }

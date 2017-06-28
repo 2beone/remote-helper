@@ -5,4 +5,8 @@
     <color name="colorAccent">#FFC400</color>
     <color name="colorUserPressed">#33000000</color>
     <color name="colorUserNormal">#00000000</color>
+
+    <color name="indicator_inactive_color">#80FFFFFF</color>
+    <color name="indicator_active_color">#FFFFFF</color>
+
 </resources>

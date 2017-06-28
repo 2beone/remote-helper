@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_directions_run"
             android:title="@string/nav_safezone" />
         <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help_black_24dp"
+            android:title="@string/nav_app_help_title" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/nav_app_settings_title" />

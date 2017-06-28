@@ -3,4 +3,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="card_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="indicator_circle_radius">4dp</dimen>
+    <dimen name="indicator_circle_padding">12dp</dimen>
+
 </resources>

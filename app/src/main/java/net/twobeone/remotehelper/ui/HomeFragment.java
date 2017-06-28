@@ -172,6 +172,9 @@ public class HomeFragment extends BaseFragment {
             // 첫인사
             mItems.add(new ChatMessage("안녕하세요? 원격안전도우미입니다."));
 
+            // 상담원연결
+            mItems.add(new ChatMessage("저의 도움이 필요하시면 아래의 '상담원 연결' 버튼을 클릭해 주세요."));
+
             // 위치서비스
             if (!LocationUtils.isLocationEnabled(mContext)) {
                 ChatMessage item = new ChatMessage("위치서비스를 '사용'으로 설정하시면 더욱 다양한 서비스를 이용하실 수 있습니다. 여기를 클릭해 주세요.");
@@ -180,9 +183,6 @@ public class HomeFragment extends BaseFragment {
             } else {
                 mItems.add(new ChatMessage("위치서비스(안전지대 등)를 이용하실 수 있습니다."));
             }
-
-            // 상담원연결
-            mItems.add(new ChatMessage("저의 도움이 필요하시면 아래의 '상담원 연결' 버튼을 클릭해 주세요."));
 
             notifyDataSetChanged();
         }

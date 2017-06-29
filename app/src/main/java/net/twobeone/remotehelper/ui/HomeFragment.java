@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.FragmentHomeBinding;
 import net.twobeone.remotehelper.util.LocationUtils;
+import net.twobeone.remotehelper.util.UserUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,12 @@ public class HomeFragment extends BaseFragment {
         sos_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // 사용자를 체크합니다.
+                if (!UserUtils.isRegisted(getActivity())) {
+                    Toast.makeText(getContext(), "먼저 사용자 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
 

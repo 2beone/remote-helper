@@ -3,6 +3,7 @@ package net.twobeone.remotehelper.ui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.location.Address;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,12 +32,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
-import net.twobeone.remotehelper.service.GPSInfo;
-import net.twobeone.remotehelper.webrtc.PeerConnectionParameters;
-import net.twobeone.remotehelper.webrtc.WebRTCClientWebSocket;
+import net.twobeone.remotehelper.util.GPSInfo;
+import net.twobeone.remotehelper.util.WebRTCParams;
+import net.twobeone.remotehelper.util.WebRTCSocket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class HomeRtcFragment extends BaseFragment implements WebRTCClientWebSocket.RtcListener, SurfaceHolder.Callback {
+public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcListener, SurfaceHolder.Callback {
 
     private static final String VIDEO_CODEC_VP8 = "VP8";
     private static final String VIDEO_CODEC_VP9 = "VP9";
@@ -76,7 +77,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCClientWebSock
     private VideoRenderer.Callbacks localRender = null;
     //    private VideoRenderer.Callbacks remoteRender;
     private String mSocketAddress;
-    private WebRTCClientWebSocket clientWebSocket = null;
+    private WebRTCSocket clientWebSocket = null;
     private View view;
 
     private String Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
@@ -143,8 +144,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCClientWebSock
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
         sv = (SurfaceView) view.findViewById(R.id.preview);
-        User user = UserDao.getInstance().select();
-        userName = user.name;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        userName = prefs.getString(Constants.PREF_USER_NAME, null);
 
         VideoRendererGui.setView(vsv, runnable = new Runnable() {
             @Override
@@ -239,10 +241,10 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCClientWebSock
     private void init() {
         Point displaySize = new Point();
         getActivity().getWindowManager().getDefaultDisplay().getSize(displaySize);
-        PeerConnectionParameters params = new PeerConnectionParameters(
+        WebRTCParams params = new WebRTCParams(
                 true, false, 640, 360, 30, 1, VIDEO_CODEC_VP9, true, 1, AUDIO_CODEC_OPUS, true);
 
-        clientWebSocket = new WebRTCClientWebSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
+        clientWebSocket = new WebRTCSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
                 getAddress(getContext(), latitude, longitude), latitude, longitude, userName);
     }
 

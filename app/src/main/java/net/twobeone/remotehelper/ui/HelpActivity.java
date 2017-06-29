@@ -13,7 +13,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.widget.ViewPagerIndicator;
+import net.twobeone.remotehelper.util.ViewPagerIndicator;
 
 import java.util.ArrayList;
 import java.util.List;

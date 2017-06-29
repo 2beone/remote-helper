@@ -5,13 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.util.AppUtils;
 
 public class SettingsActivity extends BaseActivity {
@@ -45,10 +44,7 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public void onResume() {
             super.onResume();
-            User user = UserDao.getInstance().select();
-            if (user != null && !TextUtils.isEmpty(user.name)) {
-                findPreference(PREF_USER_NAME).setTitle(user.name);
-            }
+            findPreference(PREF_USER_NAME).setTitle(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(Constants.PREF_USER_NAME, getResources().getString(R.string.pref_user_name_title)));
             findPreference(PREF_APP_VERSION_NAME).setSummary(AppUtils.getPackageInfo(getActivity()).versionName);
         }
 

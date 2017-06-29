@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.FragmentHomeBinding;
-import net.twobeone.remotehelper.db.model.ChatMessage;
 import net.twobeone.remotehelper.util.LocationUtils;
 
 import java.util.ArrayList;
@@ -157,8 +156,8 @@ public class HomeFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             ChatMessage item = mItems.get(position);
-            holder.tvMessageContent.setText(item.getMessage());
-            holder.intent = item.getIntent();
+            holder.tvMessageContent.setText(item.message);
+            holder.intent = item.intent;
         }
 
         @Override
@@ -178,7 +177,7 @@ public class HomeFragment extends BaseFragment {
             // 위치서비스
             if (!LocationUtils.isLocationEnabled(mContext)) {
                 ChatMessage item = new ChatMessage("위치서비스를 '사용'으로 설정하시면 더욱 다양한 서비스를 이용하실 수 있습니다. 여기를 클릭해 주세요.");
-                item.setIntent(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                item.intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mItems.add(item);
             } else {
                 mItems.add(new ChatMessage("위치서비스(안전지대 등)를 이용하실 수 있습니다."));
@@ -203,6 +202,16 @@ public class HomeFragment extends BaseFragment {
                         }
                     }
                 });
+            }
+        }
+
+        private class ChatMessage {
+
+            String message;
+            Intent intent;
+
+            ChatMessage(String message) {
+                this.message = message;
             }
         }
     }

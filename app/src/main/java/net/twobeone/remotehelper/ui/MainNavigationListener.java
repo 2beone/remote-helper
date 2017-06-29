@@ -8,7 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.view.MenuItem;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.service.GPSInfo;
+import net.twobeone.remotehelper.util.GPSInfo;
 import net.twobeone.remotehelper.util.AppUtils;
 
 public final class MainNavigationListener implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,7 +27,8 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
                 if (!gps.isGetLocation()) {
                     gps.showSettingsAlert();
                 } else {
-                    mActivity.startActivity(new Intent(mActivity, SafetyZoneActivity.class));
+                    // mActivity.startActivity(new Intent(mActivity, SafetyZoneOldActivity.class));
+                    mActivity.startActivity(new Intent(mActivity, MapActivity.class));
                 }
                 break;
             case R.id.nav_help:

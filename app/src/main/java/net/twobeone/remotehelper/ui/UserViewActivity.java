@@ -3,9 +3,10 @@ package net.twobeone.remotehelper.ui;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.MenuItem;
@@ -14,10 +15,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityUserViewBinding;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
 
 public class UserViewActivity extends BaseActivity {
 
@@ -78,15 +78,6 @@ public class UserViewActivity extends BaseActivity {
                 hideSoftInputFromWindow();
             }
         });
-
-        // TODO
-        mBinding.btnEdit.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                startActivity(new Intent(UserViewActivity.this, UserInfoActivity.class));
-                return false;
-            }
-        });
     }
 
     @Override
@@ -140,28 +131,25 @@ public class UserViewActivity extends BaseActivity {
     }
 
     private void selectData() {
-        User user = UserDao.getInstance().select();
-        if (user != null) {
-            mBinding.etUserName.setText(user.name);
-            mBinding.etUserAge.setText(user.age);
-            mBinding.etUserMobile.setText(user.mobile);
-            mBinding.etEmergencyContact.setText(user.emergency);
-            mBinding.etBloodType.setText(user.bloodType);
-            mBinding.etEtc.setText(user.etc);
-        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mBinding.etUserName.setText(prefs.getString(Constants.PREF_USER_NAME, ""));
+        mBinding.etUserAge.setText(prefs.getString(Constants.PREF_USER_AGE, ""));
+        mBinding.etUserMobile.setText(prefs.getString(Constants.PREF_USER_MOBILE, ""));
+        mBinding.etEmergencyContact.setText(prefs.getString(Constants.PREF_USER_EMERGENCY_CONTACT, ""));
+        mBinding.etBloodType.setText(prefs.getString(Constants.PREF_USER_BLOOD_TYPE, ""));
+        mBinding.etEtc.setText(prefs.getString(Constants.PREF_USER_ETC, ""));
     }
 
     private void saveData() {
-        User user = new User();
-        user.name = mBinding.etUserName.getText().toString().trim();
-        user.age = mBinding.etUserAge.getText().toString();
-        user.mobile = mBinding.etUserMobile.getText().toString();
-        user.emergency = mBinding.etEmergencyContact.getText().toString();
-        user.bloodType = mBinding.etBloodType.getText().toString();
-        user.etc = mBinding.etEtc.getText().toString().trim();
-        if (UserDao.getInstance().update(user) == 0) {
-            UserDao.getInstance().insert(user);
-        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.PREF_USER_NAME, mBinding.etUserName.getText().toString().trim());
+        editor.putString(Constants.PREF_USER_AGE, mBinding.etUserAge.getText().toString().trim());
+        editor.putString(Constants.PREF_USER_MOBILE, mBinding.etUserMobile.getText().toString().trim());
+        editor.putString(Constants.PREF_USER_EMERGENCY_CONTACT, mBinding.etEmergencyContact.getText().toString().trim());
+        editor.putString(Constants.PREF_USER_BLOOD_TYPE, mBinding.etBloodType.getText().toString().trim());
+        editor.putString(Constants.PREF_USER_ETC, mBinding.etEtc.getText().toString().trim());
+        editor.commit();
         Toast.makeText(this, "정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
     }
 }

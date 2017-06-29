@@ -24,8 +24,19 @@ public final class Constants {
     public static final int DATABASE_VERSION_CODE = 1;
 
     /**
+     * 네이버맵
+     */
+    public static final String NAVER_MAP_VIEW_CLIENT_ID = "vaaipy79LqtPJRueO9eJ";
+
+    /**
      * 설정
      */
     public static final String PREF_MANUALS_SAMPLES_COPIED = "manuals_amples_copied";
     public static final String PREF_LOCATION_ENABLED = "location_enabled";
+    public static final String PREF_USER_NAME = "user_name";
+    public static final String PREF_USER_AGE = "user_age";
+    public static final String PREF_USER_MOBILE = "user_mobile";
+    public static final String PREF_USER_EMERGENCY_CONTACT = "user_emergency_contact";
+    public static final String PREF_USER_BLOOD_TYPE = "user_blood_type";
+    public static final String PREF_USER_ETC = "user_etc";
 }

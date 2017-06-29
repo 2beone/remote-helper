@@ -24,8 +24,6 @@ import android.widget.TextView;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.db.UserDao;
-import net.twobeone.remotehelper.db.model.User;
 import net.twobeone.remotehelper.util.AppUtils;
 import net.twobeone.remotehelper.util.FileUtils;
 import net.twobeone.remotehelper.util.PermissionUtils;
@@ -128,10 +126,7 @@ public final class MainActivity extends BaseActivity {
     }
 
     private void selectUserInfo() {
-        User user = UserDao.getInstance().select();
-        if (user != null) {
-            mUserName.setText(user.name);
-        }
+        mUserName.setText(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREF_USER_NAME, ""));
         if (TextUtils.isEmpty(mUserName.getText())) {
             mUserName.setText("성명을 입력해 주세요");
         }

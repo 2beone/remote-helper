@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.nhn.android.maps.NMapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/fire"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/fire_button" />
+
+        <ImageButton
+            android:id="@+id/police"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/police_button" />
+
+        <ImageButton
+            android:id="@+id/police_box"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/police_box_button" />
+
+        <ImageButton
+            android:id="@+id/btn_hospital"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/hospital_button" />
+
+        <ImageButton
+            android:id="@+id/pharmacy"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/pharmacy_button" />
+
+        <ImageButton
+            android:id="@+id/mart"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/mart_button" />
+
+        <ImageButton
+            android:id="@+id/subway"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/subway_button" />
+
+        <ImageButton
+            android:id="@+id/school"
+            android:layout_width="@dimen/map_icon_width"
+            android:layout_height="@dimen/map_icon_height"
+            android:background="@drawable/school_button" />
+
+    </LinearLayout>
+
+</RelativeLayout>

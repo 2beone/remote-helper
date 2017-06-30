@@ -7,4 +7,7 @@
     <dimen name="indicator_circle_radius">4dp</dimen>
     <dimen name="indicator_circle_padding">12dp</dimen>
 
+    <dimen name="map_icon_width">40dp</dimen>
+    <dimen name="map_icon_height">80dp</dimen>
+
 </resources>

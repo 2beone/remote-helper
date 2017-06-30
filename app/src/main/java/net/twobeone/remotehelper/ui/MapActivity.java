@@ -9,10 +9,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
-import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapCompassManager;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapLocationManager;
@@ -30,16 +28,15 @@ import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.map.NMapCalloutCustomOldOverlay;
 import net.twobeone.remotehelper.map.NMapCalloutCustomOverlayView;
 import net.twobeone.remotehelper.map.NMapViewerResourceProvider;
 
-public class MapActivity extends NMapActivity {
+public class MapActivity extends MapActivityParent {
 
     private static final String LOG_TAG = "MapActivity";
-
-    private static final String CLIENT_ID = "vaaipy79LqtPJRueO9eJ";
 
     private MapContainerView mMapContainerView;
 
@@ -77,22 +74,30 @@ public class MapActivity extends NMapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        // TODO
+//        FloatingActionMenu fabMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
+//        FloatingActionButton programFab1 = new FloatingActionButton(this);
+//        // programFab1.setButtonSize(FloatingActionButton.SIZE_MINI);
+//        //programFab1.setLabelText(getString(R.string.lorem_ipsum));
+//        programFab1.setImageResource(R.drawable.icon_119_off);
+//        programFab1.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//        fabMenu.addMenuButton(programFab1);
+
         mMapView = (NMapView) findViewById(R.id.mapView);
-        mMapView.setClientId(CLIENT_ID);
+        mMapView.setClientId(Constants.NAVER_MAP_CLIENT_ID);
         mMapView.setClickable(true);
         mMapView.setEnabled(true);
         mMapView.setFocusable(true);
         mMapView.setFocusableInTouchMode(true);
         mMapView.requestFocus();
-        mMapView.setOnMapStateChangeListener(onMapViewStateChangeListener);
+        mMapView.setScalingFactor(2); // 글씨크기 확대
+
+        mMapView.setOnMapStateChangeListener(this);
         mMapView.setOnMapViewDelegate(onMapViewTouchDelegate);
 
         // use map controller to zoom in/out, pan and set map center, zoom level etc.
         mMapController = mMapView.getMapController();
-
-        // use built in zoom controls
-        NMapView.LayoutParams lp = new NMapView.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, NMapView.LayoutParams.BOTTOM_RIGHT);
-        mMapView.setBuiltInZoomControls(true, lp);
+        mMapController.setZoomLevel(12); // 줌레벨 mMapController.getMaxZoomLevel()
 
         // create resource provider
         mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
@@ -153,9 +158,10 @@ public class MapActivity extends NMapActivity {
         edit.commit();
     }
 
-
     private void startMyLocation() {
 
+        // TODO
+        // 한번만 호출되나??
         Log.d("TEST", "startMyLocation");
 
         if (mMyLocationOverlay != null) {
@@ -243,33 +249,14 @@ public class MapActivity extends NMapActivity {
         }
     };
 
-    private final NMapView.OnMapStateChangeListener onMapViewStateChangeListener = new NMapView.OnMapStateChangeListener() {
-
-        @Override
-        public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
-            if (errorInfo == null) {
-                // startMyLocation();
-                // restoreInstanceState();
-            }
+    @Override
+    public void onMapInitHandler(NMapView nMapView, NMapError nMapError) {
+        super.onMapInitHandler(nMapView, nMapError);
+        if (nMapError == null) {
+            startMyLocation();
+            // restoreInstanceState();
         }
-
-        @Override
-        public void onAnimationStateChange(NMapView mapView, int animType, int animState) {
-        }
-
-        @Override
-        public void onMapCenterChange(NMapView mapView, NGeoPoint center) {
-        }
-
-        @Override
-        public void onZoomLevelChange(NMapView mapView, int level) {
-        }
-
-        @Override
-        public void onMapCenterChangeFine(NMapView mapView) {
-
-        }
-    };
+    }
 
     private final NMapView.OnMapViewDelegate onMapViewTouchDelegate = new NMapView.OnMapViewDelegate() {
 

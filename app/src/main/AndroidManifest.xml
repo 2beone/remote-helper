@@ -46,7 +46,7 @@
 
         <!-- 내정보 -->
         <activity
-            android:name=".ui.UserViewActivity"
+            android:name=".ui.UserInfoActivity"
             android:label="@string/title_user_info"
             android:theme="@style/Theme.AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -56,7 +56,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
-        <!-- 안전지대 -->
+        <!-- 지도(안전지대) -->
         <activity
             android:name=".ui.MapActivity"
             android:label="@string/title_safety_zone"

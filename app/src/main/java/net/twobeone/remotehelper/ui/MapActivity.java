@@ -1,84 +1,433 @@
 package net.twobeone.remotehelper.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Toast;
 
+import com.nhn.android.maps.NMapActivity;
+import com.nhn.android.maps.NMapCompassManager;
+import com.nhn.android.maps.NMapController;
+import com.nhn.android.maps.NMapLocationManager;
+import com.nhn.android.maps.NMapOverlay;
+import com.nhn.android.maps.NMapOverlayItem;
 import com.nhn.android.maps.NMapView;
+import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
 import com.nhn.android.maps.nmapmodel.NMapPlacemark;
+import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
+import com.nhn.android.mapviewer.overlay.NMapCalloutCustomOverlay;
+import com.nhn.android.mapviewer.overlay.NMapCalloutOverlay;
+import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
+import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.util.NMapActivityParent;
+import net.twobeone.remotehelper.map.NMapCalloutCustomOldOverlay;
+import net.twobeone.remotehelper.map.NMapCalloutCustomOverlayView;
+import net.twobeone.remotehelper.map.NMapViewerResourceProvider;
 
-public class MapActivity extends NMapActivityParent {
+public class MapActivity extends NMapActivity {
 
-    private NMapPOIdataOverlay mPOIdataOverlay;
-    private NMapPOIitem mPOIitem;
+    private static final String LOG_TAG = "MapActivity";
+
+    private static final String CLIENT_ID = "vaaipy79LqtPJRueO9eJ";
+
+    private MapContainerView mMapContainerView;
+
+    private NMapView mMapView;
+    private NMapController mMapController;
+
+    private static final NGeoPoint NMAP_LOCATION_DEFAULT = new NGeoPoint(126.978371, 37.5666091);
+    private static final int NMAP_ZOOMLEVEL_DEFAULT = 11;
+    private static final int NMAP_VIEW_MODE_DEFAULT = NMapView.VIEW_MODE_VECTOR;
+    private static final boolean NMAP_TRAFFIC_MODE_DEFAULT = false;
+    private static final boolean NMAP_BICYCLE_MODE_DEFAULT = false;
+
+    private static final String KEY_ZOOM_LEVEL = "MapActivity.zoomLevel";
+    private static final String KEY_CENTER_LONGITUDE = "MapActivity.centerLongitudeE6";
+    private static final String KEY_CENTER_LATITUDE = "MapActivity.centerLatitudeE6";
+    private static final String KEY_VIEW_MODE = "MapActivity.viewMode";
+    private static final String KEY_TRAFFIC_MODE = "MapActivity.trafficMode";
+    private static final String KEY_BICYCLE_MODE = "MapActivity.bicycleMode";
+
+    private SharedPreferences mPreferences;
+
+    private NMapOverlayManager mOverlayManager;
+
+    private NMapMyLocationOverlay mMyLocationOverlay;
+    private NMapLocationManager mMapLocationManager;
+    private NMapCompassManager mMapCompassManager;
+
+    private NMapViewerResourceProvider mMapViewerResourceProvider;
+
+    private NMapPOIdataOverlay mFloatingPOIdataOverlay;
+    private NMapPOIitem mFloatingPOIitem;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        setMapView(R.id.map_view);
 
-//        int markerMe = NMapPOIflagType.PIN;
-//        NMapPOIdata poiData = new NMapPOIdata(1, mMapViewerResourceProvider);
-//        poiData.beginPOIdata(1);
-//
-//        mPOIitem = poiData.addPOIitem(null, "Touch & Drag to Move", markerMe, 0);
-//        mPOIitem.setPoint(mMapController.getMapCenter());
-//
-//        poiData.endPOIdata();
-//        mPOIdataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
-//        mPOIdataOverlay.setOnStateChangeListener(this);
+        mMapView = (NMapView) findViewById(R.id.mapView);
+        mMapView.setClientId(CLIENT_ID);
+        mMapView.setClickable(true);
+        mMapView.setEnabled(true);
+        mMapView.setFocusable(true);
+        mMapView.setFocusableInTouchMode(true);
+        mMapView.requestFocus();
+        mMapView.setOnMapStateChangeListener(onMapViewStateChangeListener);
+        mMapView.setOnMapViewDelegate(onMapViewTouchDelegate);
 
-//        int markerId = NMapPOIflagType.PIN;
-//        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
-//        poiData.beginPOIdata(2);
-//
-//        NMapPOIitem item1 = poiData.addPOIitem(126.872772, 37.546848, "KB국민은행 염창역 지점 앞", markerId, 0); //POI아이템 설정
-//        item1.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW); //마커 선택 시 표시되는 말풍선의 오른쪽 아이콘을 설정한다.
-//        item1.hasRightAccessory(); //마커 선택 시 표시되는 말풍선의 오른쪽 아이콘 설정 여부를 반환한다.
-//        item1.setRightButton(true); //마커 선택 시 표시되는 말풍선의 오른쪽 버튼을 설정한다.
-//        item1.showRightButton(); //마커 선택 시 표시되는 말풍선의 오른쪽 버튼 설정 여부를 반환한다.
-//
-//        NMapPOIitem item2 = poiData.addPOIitem(126.914925, 37.528728, "국회의원회관", markerId, 0);
-//        item2.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW);
-//        item2.hasRightAccessory();
-//        item2.setRightButton(true);
-//        item2.showRightButton();
-//
-//        poiData.endPOIdata(); //POI 아이템 추가를 종료한다.
-//        NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null); //POI 데이터를 인자로 전달하여 NMapPOIdataOverlay 객체를 생성한다.
-//        poiDataOverlay.showAllPOIdata(0); //POI 데이터가 모두 화면에 표시되도록 지도 축척 레벨 및 지도 중심을 변경한다. zoomLevel이 0이 아니면 지정한 지도 축척 레벨에서 지도 중심만 변경한다.
-//        poiDataOverlay.setOnStateChangeListener(this); //POI 아이템의 선택 상태 변경 시 호출되는 콜백 인터페이스를 설정한다.
+        // use map controller to zoom in/out, pan and set map center, zoom level etc.
+        mMapController = mMapView.getMapController();
+
+        // use built in zoom controls
+        NMapView.LayoutParams lp = new NMapView.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, NMapView.LayoutParams.BOTTOM_RIGHT);
+        mMapView.setBuiltInZoomControls(true, lp);
+
+        // create resource provider
+        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
+
+        // set data provider listener
+        super.setMapDataProviderListener(onDataProviderListener);
+
+        // create overlay manager
+        mOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
+        // register callout overlay listener to customize it.
+        mOverlayManager.setOnCalloutOverlayListener(onCalloutOverlayListener);
+        // register callout overlay view listener to customize it.
+        mOverlayManager.setOnCalloutOverlayViewListener(onCalloutOverlayViewListener);
+
+        // location manager
+        mMapLocationManager = new NMapLocationManager(this);
+        mMapLocationManager.setOnLocationChangeListener(onMyLocationChangeListener);
+
+        // compass manager
+        mMapCompassManager = new NMapCompassManager(this);
+
+        // create my location overlay
+        mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, mMapCompassManager);
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        stopMyLocation();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveInstanceState(); // 맵중심, 줌레벨 등을 보관합니다.
+        super.onDestroy();
+    }
+
+    private void saveInstanceState() {
+        if (mPreferences == null) {
+            return;
+        }
+
+        NGeoPoint center = mMapController.getMapCenter();
+        int level = mMapController.getZoomLevel();
+        int viewMode = mMapController.getMapViewMode();
+        boolean trafficMode = mMapController.getMapViewTrafficMode();
+        boolean bicycleMode = mMapController.getMapViewBicycleMode();
+
+        SharedPreferences.Editor edit = mPreferences.edit();
+        edit.putInt(KEY_CENTER_LONGITUDE, center.getLongitudeE6());
+        edit.putInt(KEY_CENTER_LATITUDE, center.getLatitudeE6());
+        edit.putInt(KEY_ZOOM_LEVEL, level);
+        edit.putInt(KEY_VIEW_MODE, viewMode);
+        edit.putBoolean(KEY_TRAFFIC_MODE, trafficMode);
+        edit.putBoolean(KEY_BICYCLE_MODE, bicycleMode);
+        edit.commit();
     }
 
 
-    @Override
-    public void onMapInitHandler(NMapView nMapView, NMapError nMapError) {
-        if (nMapError == null) {
-            if (!mMapLocationManager.enableMyLocation(true)) {
-                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                finish();
+    private void startMyLocation() {
+
+        Log.d("TEST", "startMyLocation");
+
+        if (mMyLocationOverlay != null) {
+            if (!mOverlayManager.hasOverlay(mMyLocationOverlay)) {
+                mOverlayManager.addOverlay(mMyLocationOverlay);
+            }
+            if (mMapLocationManager.isMyLocationEnabled()) {
+                if (!mMapView.isAutoRotateEnabled()) {
+                    mMyLocationOverlay.setCompassHeadingVisible(true);
+                    mMapCompassManager.enableCompass();
+                    mMapView.setAutoRotateEnabled(true, false);
+                    mMapContainerView.requestLayout();
+                } else {
+                    stopMyLocation();
+                }
+                mMapView.postInvalidate();
+            } else {
+                boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(true);
+                if (!isMyLocationEnabled) {
+                    Toast.makeText(MapActivity.this, "Please enable a My Location source in system settings", Toast.LENGTH_LONG).show();
+                    Intent goToSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(goToSettings);
+                    return;
+                }
             }
         }
     }
 
-    @Override
-    public void onReverseGeocoderResponse(NMapPlacemark nMapPlacemark, NMapError nMapError) {
-        Log.d("TEST", "onReverseGeocoderResponse:" + nMapPlacemark);
-        if (nMapError == null) {
+    private void stopMyLocation() {
+        if (mMyLocationOverlay != null) {
+            mMapLocationManager.disableMyLocation();
+            if (mMapView.isAutoRotateEnabled()) {
+                mMyLocationOverlay.setCompassHeadingVisible(false);
+                mMapCompassManager.disableCompass();
+                mMapView.setAutoRotateEnabled(false, false);
+                mMapContainerView.requestLayout();
+            }
+        }
+    }
 
-            // nMapPlacemark.latitude
-//            mPOIitem.setTitle(nMapPlacemark.toString());
-//            mPOIdataOverlay.deselectFocusedPOIitem();
-//            mPOIdataOverlay.selectPOIitem(mPOIitem.getId(), false);
+    private final OnDataProviderListener onDataProviderListener = new OnDataProviderListener() {
+
+        @Override
+        public void onReverseGeocoderResponse(NMapPlacemark placeMark, NMapError errInfo) {
+
+            if (errInfo != null) {
+                Log.e(LOG_TAG, "Failed to findPlacemarkAtLocation: error=" + errInfo.toString());
+                Toast.makeText(MapActivity.this, errInfo.toString(), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (mFloatingPOIitem != null && mFloatingPOIdataOverlay != null) {
+                mFloatingPOIdataOverlay.deselectFocusedPOIitem();
+                if (placeMark != null) {
+                    mFloatingPOIitem.setTitle(placeMark.toString());
+                }
+                mFloatingPOIdataOverlay.selectPOIitemBy(mFloatingPOIitem.getId(), false);
+            }
+        }
+
+    };
+
+    /* MyLocation Listener */
+    private final NMapLocationManager.OnLocationChangeListener onMyLocationChangeListener = new NMapLocationManager.OnLocationChangeListener() {
+
+        @Override
+        public boolean onLocationChanged(NMapLocationManager locationManager, NGeoPoint myLocation) {
+
+            if (mMapController != null) {
+                mMapController.animateTo(myLocation);
+            }
+
+            return true;
+        }
+
+        @Override
+        public void onLocationUpdateTimeout(NMapLocationManager locationManager) {
+            Toast.makeText(MapActivity.this, "Your current location is temporarily unavailable.", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onLocationUnavailableArea(NMapLocationManager locationManager, NGeoPoint myLocation) {
+            Toast.makeText(MapActivity.this, "Your current location is unavailable area.", Toast.LENGTH_LONG).show();
+            stopMyLocation();
+        }
+    };
+
+    private final NMapView.OnMapStateChangeListener onMapViewStateChangeListener = new NMapView.OnMapStateChangeListener() {
+
+        @Override
+        public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
+            if (errorInfo == null) {
+                // startMyLocation();
+                // restoreInstanceState();
+            }
+        }
+
+        @Override
+        public void onAnimationStateChange(NMapView mapView, int animType, int animState) {
+        }
+
+        @Override
+        public void onMapCenterChange(NMapView mapView, NGeoPoint center) {
+        }
+
+        @Override
+        public void onZoomLevelChange(NMapView mapView, int level) {
+        }
+
+        @Override
+        public void onMapCenterChangeFine(NMapView mapView) {
+
+        }
+    };
+
+    private final NMapView.OnMapViewDelegate onMapViewTouchDelegate = new NMapView.OnMapViewDelegate() {
+
+        @Override
+        public boolean isLocationTracking() {
+            if (mMapLocationManager != null) {
+                if (mMapLocationManager.isMyLocationEnabled()) {
+                    return mMapLocationManager.isMyLocationFixed();
+                }
+            }
+            return false;
+        }
+
+    };
+
+    private final NMapOverlayManager.OnCalloutOverlayListener onCalloutOverlayListener = new NMapOverlayManager.OnCalloutOverlayListener() {
+
+        @Override
+        public NMapCalloutOverlay onCreateCalloutOverlay(NMapOverlay itemOverlay, NMapOverlayItem overlayItem,
+                                                         Rect itemBounds) {
+
+            // handle overlapped items
+            if (itemOverlay instanceof NMapPOIdataOverlay) {
+                NMapPOIdataOverlay poiDataOverlay = (NMapPOIdataOverlay) itemOverlay;
+
+                // check if it is selected by touch event
+                if (!poiDataOverlay.isFocusedBySelectItem()) {
+                    int countOfOverlappedItems = 1;
+
+                    NMapPOIdata poiData = poiDataOverlay.getPOIdata();
+                    for (int i = 0; i < poiData.count(); i++) {
+                        NMapPOIitem poiItem = poiData.getPOIitem(i);
+
+                        // skip selected item
+                        if (poiItem == overlayItem) {
+                            continue;
+                        }
+
+                        // check if overlapped or not
+                        if (Rect.intersects(poiItem.getBoundsInScreen(), overlayItem.getBoundsInScreen())) {
+                            countOfOverlappedItems++;
+                        }
+                    }
+
+                    if (countOfOverlappedItems > 1) {
+                        String text = countOfOverlappedItems + " overlapped items for " + overlayItem.getTitle();
+                        Toast.makeText(MapActivity.this, text, Toast.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+            }
+
+            // use custom old callout overlay
+            if (overlayItem instanceof NMapPOIitem) {
+                NMapPOIitem poiItem = (NMapPOIitem) overlayItem;
+
+                if (poiItem.showRightButton()) {
+                    return new NMapCalloutCustomOldOverlay(itemOverlay, overlayItem, itemBounds,
+                            mMapViewerResourceProvider);
+                }
+            }
+
+            // use custom callout overlay
+            return new NMapCalloutCustomOverlay(itemOverlay, overlayItem, itemBounds, mMapViewerResourceProvider);
+        }
+
+    };
+
+    private final NMapOverlayManager.OnCalloutOverlayViewListener onCalloutOverlayViewListener = new NMapOverlayManager.OnCalloutOverlayViewListener() {
+
+        @Override
+        public View onCreateCalloutOverlayView(NMapOverlay itemOverlay, NMapOverlayItem overlayItem, Rect itemBounds) {
+
+            if (overlayItem != null) {
+                // [TEST] 말풍선 오버레이를 뷰로 설정함
+                String title = overlayItem.getTitle();
+                if (title != null && title.length() > 5) {
+                    return new NMapCalloutCustomOverlayView(MapActivity.this, itemOverlay, overlayItem, itemBounds);
+                }
+            }
+
+            // null을 반환하면 말풍선 오버레이를 표시하지 않음
+            return null;
+        }
+
+    };
+
+    /* Local Functions */
+    private static boolean mIsMapEnlared = false;
+
+    private void restoreInstanceState() {
+        mPreferences = getPreferences(MODE_PRIVATE);
+
+        int longitudeE6 = mPreferences.getInt(KEY_CENTER_LONGITUDE, NMAP_LOCATION_DEFAULT.getLongitudeE6());
+        int latitudeE6 = mPreferences.getInt(KEY_CENTER_LATITUDE, NMAP_LOCATION_DEFAULT.getLatitudeE6());
+        int level = mPreferences.getInt(KEY_ZOOM_LEVEL, NMAP_ZOOMLEVEL_DEFAULT);
+        int viewMode = mPreferences.getInt(KEY_VIEW_MODE, NMAP_VIEW_MODE_DEFAULT);
+        boolean trafficMode = mPreferences.getBoolean(KEY_TRAFFIC_MODE, NMAP_TRAFFIC_MODE_DEFAULT);
+        boolean bicycleMode = mPreferences.getBoolean(KEY_BICYCLE_MODE, NMAP_BICYCLE_MODE_DEFAULT);
+
+        mMapController.setMapViewMode(viewMode);
+        mMapController.setMapViewTrafficMode(trafficMode);
+        mMapController.setMapViewBicycleMode(bicycleMode);
+        mMapController.setMapCenter(new NGeoPoint(longitudeE6, latitudeE6), level);
+
+        if (mIsMapEnlared) {
+            mMapView.setScalingFactor(2.0F);
+        } else {
+            mMapView.setScalingFactor(1.0F);
+        }
+    }
+
+    private class MapContainerView extends ViewGroup {
+
+        public MapContainerView(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            final int width = getWidth();
+            final int height = getHeight();
+            final int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                final View view = getChildAt(i);
+                final int childWidth = view.getMeasuredWidth();
+                final int childHeight = view.getMeasuredHeight();
+                final int childLeft = (width - childWidth) / 2;
+                final int childTop = (height - childHeight) / 2;
+                view.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+            }
+
+            if (changed) {
+                mOverlayManager.onSizeChanged(width, height);
+            }
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int w = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+            int h = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+            int sizeSpecWidth = widthMeasureSpec;
+            int sizeSpecHeight = heightMeasureSpec;
+
+            final int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                final View view = getChildAt(i);
+
+                if (view instanceof NMapView) {
+                    if (mMapView.isAutoRotateEnabled()) {
+                        int diag = (((int) (Math.sqrt(w * w + h * h)) + 1) / 2 * 2);
+                        sizeSpecWidth = MeasureSpec.makeMeasureSpec(diag, MeasureSpec.EXACTLY);
+                        sizeSpecHeight = sizeSpecWidth;
+                    }
+                }
+                view.measure(sizeSpecWidth, sizeSpecHeight);
+            }
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
 }

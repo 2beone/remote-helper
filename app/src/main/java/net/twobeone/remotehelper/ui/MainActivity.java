@@ -66,7 +66,7 @@ public final class MainActivity extends BaseActivity {
         navHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, UserViewActivity.class));
+                startActivity(new Intent(MainActivity.this, UserInfoActivity.class));
             }
         });
         mUserName = (TextView) navHeaderView.findViewById(R.id.userage_txt);

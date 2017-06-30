@@ -17,11 +17,11 @@ import android.widget.Toast;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.databinding.ActivityUserViewBinding;
+import net.twobeone.remotehelper.databinding.ActivityUserInfoBinding;
 
-public class UserViewActivity extends BaseActivity {
+public class UserInfoActivity extends BaseActivity {
 
-    private ActivityUserViewBinding mBinding;
+    private ActivityUserInfoBinding mBinding;
 
     private Animator.AnimatorListener mCollapseListener = new Animator.AnimatorListener() {
 
@@ -50,7 +50,7 @@ public class UserViewActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_view);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_info);
 
         setSupportActionBar(mBinding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

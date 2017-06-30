@@ -27,7 +27,6 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
                 if (!gps.isGetLocation()) {
                     gps.showSettingsAlert();
                 } else {
-                    // mActivity.startActivity(new Intent(mActivity, SafetyZoneOldActivity.class));
                     mActivity.startActivity(new Intent(mActivity, MapActivity.class));
                 }
                 break;
@@ -38,7 +37,7 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
                 mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
                 break;
             case R.id.nav_osan_homepage:
-                mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.osan.go.kr/m/main.do")));
+                mActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.osan.go.kr/m/activity_map.do")));
                 break;
             case R.id.nav_osan_smart:
                 AppUtils.launchOrMarket(mActivity, "kr.go.mosan");

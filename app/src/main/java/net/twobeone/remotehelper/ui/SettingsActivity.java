@@ -52,7 +52,7 @@ public class SettingsActivity extends BaseActivity {
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
             String key = preference.getKey();
             if (key.equals(PREF_USER_NAME)) {
-                startActivity(new Intent(getActivity(), UserViewActivity.class));
+                startActivity(new Intent(getActivity(), UserInfoActivity.class));
             } else if (key.equals(PREF_APP_INFO)) {
                 startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getActivity().getPackageName())));
             } else if (key.equals(PREF_APP_VERSION_NAME)) {

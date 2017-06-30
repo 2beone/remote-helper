@@ -20,6 +20,11 @@ import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityMapBinding;
 import net.twobeone.remotehelper.map.NMapPOIflagType;
+import net.twobeone.remotehelper.rest.NaverSearchAPI;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MapActivity extends MapActivityParent {
 
@@ -29,9 +34,19 @@ public class MapActivity extends MapActivityParent {
         @Override
         public void onClick(View v) {
 
-
             Log.d("TEST", v.getTag().toString());
             Log.d("TEST", "getMyLocation:" + mMapLocationManager.getMyLocation());
+
+            NaverSearchAPI.retrofit.create(NaverSearchAPI.class).local("vaaipy79LqtPJRueO9eJ", "y6UNfzsFFK").enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d("TEST", "response:" + response.body());
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+
+                }
+            });
 
             mOverlayManager.clearOverlays();
             testPOIdataOverlay();

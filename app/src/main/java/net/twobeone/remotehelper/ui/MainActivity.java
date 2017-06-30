@@ -2,15 +2,22 @@ package net.twobeone.remotehelper.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -18,9 +25,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
@@ -35,12 +45,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public final class MainActivity extends BaseActivity {
+    private static String SENDER_ID = "186620067699";
+    private static String regid;
+    private GoogleCloudMessaging gcm;
+    private Context context;
 
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TextView mUserName;
 
     private long backKeyPressedTime = 0;
+    private String reCall = "";
+
+    private Fragment fragment;
+    private FragmentManager fm;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +67,16 @@ public final class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         checkPermissions();
+
+        context = getApplicationContext();
+
+        //GCM ID 생성
+        gcm = GoogleCloudMessaging.getInstance(context); // GoogleCloudMessaging
+        // 클래스의 인스턴스를 생성한다
+        regid = getRegistrationId(context); // 기존에 발급받은 등록 아이디를 가져온다
+        if (regid.equals("")) {
+            registerInBackground();
+        }
 
         // 툴바
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -194,7 +223,6 @@ public final class MainActivity extends BaseActivity {
             case 100: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     onResume();
-
                 } else {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
@@ -206,9 +234,84 @@ public final class MainActivity extends BaseActivity {
                 return;
             }
             default: {
-
+                Log.e("SSSSS","TEST");
                 return;
             }
         }
+    }
+
+    private String getRegistrationId(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); // 이전에 저장해둔 등록 아이디를 SharedPreferences에서 가져온다.
+        String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, ""); // 저장해둔 등록 아이디가 없으면 빈 문자열을 반환한다.
+        if (registrationId.isEmpty()) {
+            return "";
+        }
+
+        // 앱이 업데이트 되었는지 확인하고, 업데이트 되었다면 기존 등록 아이디를 제거한다.
+        // 새로운 버전에서도 기존 등록 아이디가 정상적으로 동작하는지를 보장할 수 없기 때문이다.
+        int registeredVersion = prefs.getInt(Constants.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        Log.e("SSSSS", "" + currentVersion + "  " + registeredVersion);
+        if (registeredVersion != currentVersion) { // 이전에 등록 아이디를 저장한 앱의 버전과 현재 버전을 비교해 버전이 변경되었으면 빈 문자열을 반환한다.
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences(Context context) {
+        return getSharedPreferences(MainActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+    }
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    // reg id 발급
+    private void registerInBackground() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    regid = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + regid;
+                    Log.e("SSSSS", msg);
+
+                    // 등록 아이디를 저장해 등록 아이디를 매번 받지 않도록 한다.
+                    storeRegistrationId(context, regid);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    Log.e("SSSSS", msg);
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+            }
+
+        }.execute(null, null, null);
+    }
+
+    // SharedPreferences에 발급받은 등록 아이디를 저장해 등록 아이디를 여러 번 받지 않도록 하는 데 사용
+    private void storeRegistrationId(Context context, String regid) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int appVersion = getAppVersion(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.PROPERTY_REG_ID, regid);
+        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
+        editor.commit();
     }
 }

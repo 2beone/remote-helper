@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,12 @@ import android.widget.Toast;
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityUserInfoBinding;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class UserInfoActivity extends BaseActivity {
 
@@ -76,6 +84,13 @@ public class UserInfoActivity extends BaseActivity {
             public void onClick(View v) {
                 saveData();
                 hideSoftInputFromWindow();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userInfoUpload();
+                    }
+                }).start();
             }
         });
     }
@@ -151,5 +166,42 @@ public class UserInfoActivity extends BaseActivity {
         editor.putString(Constants.PREF_USER_ETC, mBinding.etEtc.getText().toString().trim());
         editor.commit();
         Toast.makeText(this, "정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void userInfoUpload() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String urlServer = "https://remohelper.com:440/m/reqInsertSaviorInfo.ajax";
+
+        String device_ID = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+
+            RequestBody requestBody = builder
+                    .add("deviceId", device_ID)
+                    .add("saviorId", device_ID)
+                    .add("saviorName", prefs.getString(Constants.PREF_USER_NAME, ""))
+                    .add("age", prefs.getString(Constants.PREF_USER_AGE, ""))
+                    .add("birth", "")
+                    .add("sex", "")
+                    .add("mobileNumber", prefs.getString(Constants.PREF_USER_MOBILE, ""))
+                    .add("emergencyNumber", prefs.getString(Constants.PREF_USER_EMERGENCY_CONTACT, ""))
+                    .add("address", "")
+                    .add("bloodgroups", prefs.getString(Constants.PREF_USER_BLOOD_TYPE, ""))
+                    .add("sickness", "")
+                    .add("hospital", "")
+                    .add("doctor", "")
+                    .add("etc", prefs.getString(Constants.PREF_USER_ETC, ""))
+                    .add("regId", prefs.getString(Constants.PROPERTY_REG_ID, "")).build();
+
+            Request request = new Request.Builder().url(urlServer).post(requestBody).build();
+            Response response = client.newCall(request).execute();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Log.e("Error Http connect ::: ", ex.toString());
+        }
     }
 }

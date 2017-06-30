@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "267976797878",
+    "firebase_url": "https://remotehelper-88ef0.firebaseio.com",
+    "project_id": "remotehelper-88ef0",
+    "storage_bucket": "remotehelper-88ef0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267976797878:android:fefc2582dd74067a",
+        "android_client_info": {
+          "package_name": "net.twobeone.remotehelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267976797878-raiqv39d2p79jjq4tjopomidv3j8o3kj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6Ub7h7rY9bpJ1_zA4cWOBQtAK5jzpOC4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

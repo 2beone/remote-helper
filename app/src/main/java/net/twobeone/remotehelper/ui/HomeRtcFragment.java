@@ -244,8 +244,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         WebRTCParams params = new WebRTCParams(
                 true, false, 640, 360, 30, 1, VIDEO_CODEC_VP9, true, 1, AUDIO_CODEC_OPUS, true);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String device_ID = Settings.Secure.getString(getActivity().getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
         clientWebSocket = new WebRTCSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
-                getAddress(getContext(), latitude, longitude), latitude, longitude, userName);
+                getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), device_ID);
     }
 
     @Override
@@ -447,16 +450,20 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
             }
             if (msg.what == 3) {
-                new CountDownTimer(1500, 500) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
+                try{
+                    new CountDownTimer(2000, 500) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        clientWebSocket.onMute(mutests);
-                    }
-                }.start();
+                        @Override
+                        public void onFinish() {
+                            clientWebSocket.onMute(mutests);
+                        }
+                    }.start();
+                }catch (Exception e){
+                    Log.e("SSSSS",e.toString());
+                }
             }
             if (msg.what == 4) {
                 getActivity().onBackPressed();
@@ -503,6 +510,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         String device_ID = Settings.Secure.getString(getActivity().getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             MediaType media_type_video = MediaType.parse("video/mp4");
             File file = new File(Save_Path + pathToOurFile);
             OkHttpClient client = new OkHttpClient();
@@ -514,7 +522,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 obj.put("fileName", pathToOurFile);
                 obj.put("date", save_name);
                 obj.put("userName", userName);
-                obj.put("getRegId", "123456789");
+                obj.put("getRegId", prefs.getString(Constants.PROPERTY_REG_ID, ""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

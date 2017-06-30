@@ -84,6 +84,8 @@ public class WebRTCSocket {
     private double longitude = 0;
     private String userName = "";
     private String nowAddr = "";
+    private String regId = "";
+    private String device_ID = "";
 
     public interface RtcListener {
 
@@ -160,14 +162,14 @@ public class WebRTCSocket {
             message.put("longitude", longitude);
             message.put("saviorName", userName);
             message.put("nowAddress", nowAddr);
-            message.put("regId", "ABCDEFGHIJKLMNOP");
+            message.put("regId", regId);
         }
         Log.e("SSSSS", to + " ::::: " + type + " ::::: " + payload.toString());
         mWebSocketClient.send(message.toString());
     }
 
     public WebRTCSocket(Context context, WebRTCSocket.RtcListener listener, String host, WebRTCParams params,
-                        EGLContext mEGLcontext, String nowAddress , double lati, double longi, String name) {
+                        EGLContext mEGLcontext, String nowAddress , double lati, double longi, String name, String regid, String deviceID) {
 
         Log.e("SSSSS", "WebRTCSocket Init");
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
@@ -179,6 +181,8 @@ public class WebRTCSocket {
         latitude = lati;
         longitude = longi;
         userName = name;
+        regId = regid;
+        device_ID = deviceID;
 
         PeerConnectionFactory.initializeAndroidGlobals(mContext, true, true, params.videoCodecHwAcceleration, mEGLcontext);
 
@@ -226,7 +230,7 @@ public class WebRTCSocket {
                             try {
                                 JSONObject message = new JSONObject();
                                 message.put("type", "login");
-                                message.put("name", userName);
+                                message.put("name", device_ID);
                                 mWebSocketClient.send(message.toString());
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -264,10 +268,12 @@ public class WebRTCSocket {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
                                         people = data.getJSONArray("people").getString(0);
+
                                         if(people.equals("police")){
                                             people = "";
                                             people = data.getJSONArray("people").getString(1);
                                         }
+
 //                                        people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");

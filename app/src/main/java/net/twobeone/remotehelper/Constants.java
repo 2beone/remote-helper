@@ -39,4 +39,10 @@ public final class Constants {
     public static final String PREF_USER_EMERGENCY_CONTACT = "user_emergency_contact";
     public static final String PREF_USER_BLOOD_TYPE = "user_blood_type";
     public static final String PREF_USER_ETC = "user_etc";
+
+    /**
+     * GCM
+     */
+    public static final String PROPERTY_REG_ID = "registration_id";
+    public static final String PROPERTY_APP_VERSION = "appver";
 }

@@ -119,6 +119,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private String LocalPath = "";
     private MediaPlayer music;
     private String mDeviceID;
+    private ViewGroup viewGroupParent;
 
     private void setting() {
         cam = Camera.open(1);
@@ -138,6 +139,8 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_rtc, container, false);
+
+        viewGroupParent = container;
 
         getActivity().getWindow().addFlags(
                 LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -551,7 +554,13 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                                 if (music.isPlaying()) {
                                     music.stop();
 
-                                    getActivity().onBackPressed();
+                                    sos_button.setVisibility(sos_button.VISIBLE);
+                                    viewGroupParent.removeView(view);
+                                    fm = getFragmentManager();
+                                    fragmentTransaction = fm.beginTransaction();
+                                    fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+                                    fragmentTransaction.commitAllowingStateLoss();
+//                                    getActivity().onBackPressed();
                                 }
                             }
                         });

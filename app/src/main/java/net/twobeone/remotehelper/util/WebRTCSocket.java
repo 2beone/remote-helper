@@ -579,7 +579,7 @@ public class WebRTCSocket {
         Log.e("SSSSS","onPause");
         if (videoSource != null){
             localMS.videoTracks.getFirst().setEnabled(false);
-            videoSource.stop();
+//            videoSource.stop();
         }
     }
 
@@ -590,7 +590,7 @@ public class WebRTCSocket {
         Log.e("SSSSS","onResume");
         if (videoSource != null) {
             localMS.videoTracks.getFirst().setEnabled(true);
-            videoSource.restart();
+//            videoSource.restart();
         }
     }
 

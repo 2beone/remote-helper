@@ -95,12 +95,7 @@ public class GCMIntentService extends IntentService {
             if (URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").contains("&")) {
 
                 sub = URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").indexOf("&");
-//                intent = new Intent(this, MainActivity.class);
 
-//                intent = new Intent(this, WebRTC_WebView.class);
-//                intent.putExtra("helper_id", URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8"));
-//                intent.putExtra("regid", regid);
-//                intent.putExtra("isMute", "false");
                 intent = new Intent(this, MainActivity.class);
 
                 mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.ic_launcher_round)

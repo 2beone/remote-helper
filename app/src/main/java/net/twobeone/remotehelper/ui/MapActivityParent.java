@@ -15,7 +15,7 @@ import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 
 import net.twobeone.remotehelper.Constants;
-import net.twobeone.remotehelper.map.NMapViewerResourceProvider;
+import net.twobeone.remotehelper.nmap.NMapViewerResourceProvider;
 
 public class MapActivityParent extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapLocationManager.OnLocationChangeListener, NMapActivity.OnDataProviderListener {
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.twobeone.remotehelper.map;
+package net.twobeone.remotehelper.nmap;
 
 /**
  * Wrapper class representing POI flag types on map view.

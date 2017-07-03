@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 
 import com.nhn.android.maps.overlay.NMapPOIdata;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityMapBinding;
 import net.twobeone.remotehelper.nmap.NMapActivityParent;
@@ -46,7 +47,7 @@ public class MapActivity extends NMapActivityParent {
     }
 
     private void search(String keyword) {
-        NMapAPI.retrofit.create(NMapAPI.class).geocode(keyword).enqueue(new Callback<NMap>() {
+        NMapAPI.retrofit.create(NMapAPI.class).local(Constants.NAVER_MAP_CLIENT_ID, Constants.NAVER_MAP_CLIENT_SECRET, keyword).enqueue(new Callback<NMap>() {
             @Override
             public void onResponse(Call<NMap> call, Response<NMap> response) {
                 showSearchResults(response.body());

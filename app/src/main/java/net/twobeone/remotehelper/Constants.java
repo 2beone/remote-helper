@@ -27,6 +27,7 @@ public final class Constants {
      * 네이버맵
      */
     public static final String NAVER_MAP_CLIENT_ID = "vaaipy79LqtPJRueO9eJ";
+    public static final String NAVER_MAP_CLIENT_SECRET = "y6UNfzsFFK";
 
     /**
      * 설정

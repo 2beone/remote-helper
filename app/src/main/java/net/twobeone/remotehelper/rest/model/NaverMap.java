@@ -8,7 +8,7 @@ public class NaverMap {
     private int total;
     private int start;
     private int display;
-    private List<NaverMap> items;
+    private List<NaverMapItem> items;
 
     public String getLastBuildDate() {
         return lastBuildDate;
@@ -42,11 +42,11 @@ public class NaverMap {
         this.display = display;
     }
 
-    public List<NaverMap> getItems() {
+    public List<NaverMapItem> getItems() {
         return items;
     }
 
-    public void setItems(List<NaverMap> items) {
+    public void setItems(List<NaverMapItem> items) {
         this.items = items;
     }
 }

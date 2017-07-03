@@ -1,6 +1,7 @@
 package net.twobeone.remotehelper.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
@@ -86,6 +87,9 @@ public class MapActivityParent extends NMapActivity implements NMapView.OnMapSta
     @Override
     public boolean onLocationChanged(NMapLocationManager nMapLocationManager, NGeoPoint nGeoPoint) {
         if (mMapController != null) {
+
+            // TODO
+            Log.d("TEST", "현위치:" + nGeoPoint.longitude + ", " + nGeoPoint.latitude);
             mMapController.animateTo(nGeoPoint);
             findPlacemarkAtLocation(nGeoPoint.longitude, nGeoPoint.latitude);
         }

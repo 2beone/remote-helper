@@ -10,8 +10,8 @@ public class NaverMapItem {
     private String telephone;
     private String address;
     private String roadAddress;
-    private String mapx;
-    private String mapy;
+    private int mapx;
+    private int mapy;
 
     public String getTitle() {
         return title;
@@ -69,19 +69,19 @@ public class NaverMapItem {
         this.roadAddress = roadAddress;
     }
 
-    public String getMapx() {
+    public int getMapx() {
         return mapx;
     }
 
-    public void setMapx(String mapx) {
+    public void setMapx(int mapx) {
         this.mapx = mapx;
     }
 
-    public String getMapy() {
+    public int getMapy() {
         return mapy;
     }
 
-    public void setMapy(String mapy) {
+    public void setMapy(int mapy) {
         this.mapy = mapy;
     }
 }

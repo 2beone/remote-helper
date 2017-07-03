@@ -22,6 +22,9 @@ import net.twobeone.remotehelper.databinding.ActivityMapBinding;
 import net.twobeone.remotehelper.map.NMapPOIflagType;
 import net.twobeone.remotehelper.rest.NaverMapAPI;
 import net.twobeone.remotehelper.rest.model.NaverMap;
+import net.twobeone.remotehelper.rest.model.NaverMapItem;
+import net.twobeone.remotehelper.util.GeoTrans;
+import net.twobeone.remotehelper.util.GeoTransPoint;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +47,7 @@ public class MapActivity extends MapActivityParent {
                     Log.d("TEST", "getLastBuildDate:" + naverMap.getLastBuildDate());
 
                     mOverlayManager.clearOverlays();
-                    testPOIdataOverlay();
+                    testPOIdataOverlay(naverMap);
                 }
 
                 @Override
@@ -75,23 +78,27 @@ public class MapActivity extends MapActivityParent {
         super.onStop();
     }
 
-    private void testPOIdataOverlay() {
+    private void testPOIdataOverlay(NaverMap naverMap) {
 
-        // Markers for POI item
         int markerId = NMapPOIflagType.PIN;
 
-        ////////////////////////////
-// new NGeoPoint()
-        // Geocoder
-        //////////////////////////////
-
         // set POI data
-        NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
-        poiData.beginPOIdata(2);
-        NMapPOIitem item = poiData.addPOIitem(127.0630205, 37.5091300, "Pizza 777-111", markerId, 0);
-        item.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW);
+        NMapPOIdata poiData = new NMapPOIdata(naverMap.getDisplay(), mMapViewerResourceProvider);
+        poiData.beginPOIdata(naverMap.getDisplay());
+        NMapPOIitem poiItem = poiData.addPOIitem(127.0630205, 37.5091300, "Pizza 777-111", markerId, 0);
+        // poiItem.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW);
+
+        for (NaverMapItem item : naverMap.getItems()) {
+            GeoTransPoint in_pt = new GeoTransPoint(item.getMapx(), item.getMapy());
+            GeoTransPoint tm_pt = GeoTrans.convert(GeoTrans.KATEC, GeoTrans.GEO, in_pt);
+            Double lat = tm_pt.getY() * 1E6;
+            Double lng = tm_pt.getX() * 1E6;
+            // GeoPoint oLatLng = new GeoPoint(lat.intValue(), lng.intValue());  // 맵뷰에서 사용가능한 좌표계
+            poiData.addPOIitem(tm_pt.getX(), tm_pt.getY(), item.getTitle(), markerId, 0);
+            // Log.d("TEST", "item:" + item.getTitle() + ", " + item.getMapx() + ", " + item.getMapy() + "..." + tm_pt.getX() + ", " + tm_pt.getY());
+        }
+
         // poiData.addPOIitem(127.061, 37.51, "Pizza 123-456", markerId, 0);
-        // poiData.addPOIitem(lng.intValue(), lat.intValue(), "Pizza 123-456", markerId, 1);
         poiData.endPOIdata();
 
         // create POI data overlay
@@ -105,11 +112,6 @@ public class MapActivity extends MapActivityParent {
     }
 
     private void startMyLocation() {
-
-        // TODO
-        // 한번만 호출되나??
-        Log.d("TEST", "startMyLocation");
-
         if (!mOverlayManager.hasOverlay(mMyLocationOverlay)) {
             mOverlayManager.addOverlay(mMyLocationOverlay);
         }
@@ -137,7 +139,6 @@ public class MapActivity extends MapActivityParent {
         super.onMapInitHandler(nMapView, nMapError);
         if (nMapError == null) {
             startMyLocation();
-            // restoreInstanceState();
         }
     }
 }

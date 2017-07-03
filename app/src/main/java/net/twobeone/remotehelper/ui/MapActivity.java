@@ -17,6 +17,7 @@ import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityMapBinding;
+import net.twobeone.remotehelper.nmap.NMapActivityParent;
 import net.twobeone.remotehelper.nmap.NMapPOIflagType;
 import net.twobeone.remotehelper.rest.NMap;
 import net.twobeone.remotehelper.rest.NMapAPI;
@@ -27,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapActivity extends MapActivityParent {
+public class MapActivity extends NMapActivityParent {
 
     private ActivityMapBinding mBinding;
 

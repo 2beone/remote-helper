@@ -1,6 +1,8 @@
 package net.twobeone.remotehelper.nmap;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
@@ -58,8 +60,16 @@ public class NMapActivityParent extends NMapActivity implements NMapView.OnMapSt
     }
 
     @Override
-    public void onMapInitHandler(NMapView nMapView, NMapError nMapError) {
+    protected void onStop() {
+        stopMyLocation();
+        super.onStop();
+    }
 
+    @Override
+    public void onMapInitHandler(NMapView nMapView, NMapError nMapError) {
+        if (nMapError == null) {
+            startMyLocation();
+        }
     }
 
     @Override
@@ -98,7 +108,25 @@ public class NMapActivityParent extends NMapActivity implements NMapView.OnMapSt
 
     @Override
     public void onLocationUnavailableArea(NMapLocationManager nMapLocationManager, NGeoPoint nGeoPoint) {
+        Toast.makeText(this, "알 수 없는 위치입니다.", Toast.LENGTH_LONG).show();
+        stopMyLocation();
+    }
 
+    private void startMyLocation() {
+        if (!mOverlayManager.hasOverlay(mMyLocationOverlay)) {
+            mOverlayManager.addOverlay(mMyLocationOverlay);
+        }
+        boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(true);
+        if (!isMyLocationEnabled) {
+            Toast.makeText(this, "Please enable a My Location source in system settings", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        }
+    }
+
+    private void stopMyLocation() {
+        if (mMyLocationOverlay != null) {
+            mMapLocationManager.disableMyLocation();
+        }
     }
 
     private final NMapView.OnMapViewDelegate onMapViewTouchDelegate = new NMapView.OnMapViewDelegate() {

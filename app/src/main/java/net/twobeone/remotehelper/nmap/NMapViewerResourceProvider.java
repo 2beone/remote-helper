@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -21,16 +20,12 @@ import net.twobeone.remotehelper.R;
 
 public class NMapViewerResourceProvider extends NMapResourceProvider implements NMapCalloutCustomOldOverlay.ResourceProvider {
 
-    private static final String LOG_TAG = "NMapViewerResourceProvider";
-    private static final boolean DEBUG = false;
-
     private static final Bitmap.Config BITMAP_CONFIG_DEFAULT = Bitmap.Config.ARGB_8888;
 
     private static final int POI_FONT_COLOR_NUMBER = 0xFF909090;
     private static final float POI_FONT_SIZE_NUMBER = 10.0F;
 
     private static final int POI_FONT_COLOR_ALPHABET = 0xFFFFFFFF;
-    private static final float POI_FONT_OFFSET_ALPHABET = 6.0F;
     private static final Typeface POI_FONT_TYPEFACE = null;//Typeface.DEFAULT_BOLD;
 
     private static final int CALLOUT_TEXT_COLOR_NORMAL = 0xFFFFFFFF;
@@ -45,47 +40,6 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
         super(context);
 
         mTextPaint.setAntiAlias(true);
-    }
-
-    /**
-     * Get drawable for markerId at focused state
-     *
-     * @param markerId unique id for POI or Number icons.
-     * @param focused  true for focused state, false otherwise.
-     * @return
-     */
-    public Drawable getDrawable(int markerId, boolean focused, NMapOverlayItem item) {
-        Drawable marker = null;
-
-        int resourceId = findResourceIdForMarker(markerId, focused);
-        if (resourceId > 0) {
-            marker = mContext.getResources().getDrawable(resourceId);
-        } else {
-            resourceId = 4 * markerId;
-            if (focused) {
-                resourceId += 1;
-            }
-
-            marker = getDrawableForMarker(markerId, focused, item);
-        }
-
-        // set bounds
-        if (marker != null) {
-            setBounds(marker, markerId, item);
-        }
-
-        return marker;
-    }
-
-    public Bitmap getBitmap(int markerId, boolean focused, NMapOverlayItem item) {
-        Bitmap bitmap = null;
-
-        Drawable marker = getDrawable(markerId, focused, item);
-        if (marker != null) {
-            bitmap = getBitmap(marker);
-        }
-
-        return bitmap;
     }
 
     public Bitmap getBitmap(Drawable marker) {
@@ -107,41 +61,11 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
         return bitmap;
     }
 
-    public Bitmap getBitmap(int resourceId) {
-        Bitmap bitmap = null;
-
-        Drawable marker = null;
-        if (resourceId > 0) {
-            marker = mContext.getResources().getDrawable(resourceId);
-        }
-
-        if (marker != null) {
-            bitmap = getBitmap(marker);
-        }
-
-        return bitmap;
-    }
-
-    public Bitmap getBitmapWithNumber(int resourceId, String strNumber, float offsetY, int fontColor, float fontSize) {
-        Bitmap bitmap = null;
-
-        Drawable marker = getDrawableWithNumber(resourceId, strNumber, offsetY, fontColor, fontSize);
-
-        if (marker != null) {
-            bitmap = getBitmap(marker);
-        }
-
-        return bitmap;
-    }
-
     @Override
     public Drawable getDrawableForInfoLayer(NMapOverlayItem item) {
         return null;
     }
 
-    /**
-     * Class to find resource Ids on map view
-     */
     private class ResourceIdsOnMap {
 
         int markerId;
@@ -166,35 +90,15 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
             new ResourceIdsOnMap(NMapPOIflagType.TO, R.drawable.ic_map_arrive, R.drawable.ic_map_arrive_over),
     };
 
-    /**
-     * Find resource id corresponding to the markerId.
-     *
-     * @param markerId marker id for a NMapPOIitem.
-     * @param focused  flag to indicated focused or normal state of this marker.
-     * @return resource id for the given markerId.
-     * @see NMapPOIflagType
-     */
     @Override
     protected int findResourceIdForMarker(int markerId, boolean focused) {
         int resourceId = 0;
-
-        if (DEBUG) {
-            Log.i(LOG_TAG, "getResourceIdForMarker: markerId=" + markerId + ", focused=" + focused);
-        }
-
         if (markerId < NMapPOIflagType.SINGLE_MARKER_END) {
             resourceId = getResourceIdOnMapView(markerId, focused, mResourceIdsForMarkerOnMap);
             if (resourceId > 0) {
                 return resourceId;
             }
         }
-
-        if (markerId >= NMapPOIflagType.NUMBER_BASE && markerId < NMapPOIflagType.NUMBER_END) { // Direction Number icons
-
-        } else if (markerId >= NMapPOIflagType.CUSTOM_BASE && markerId < NMapPOIflagType.CUSTOM_END) { // Custom POI icons
-
-        }
-
         return resourceId;
     }
 
@@ -244,64 +148,35 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
 
     @Override
     public Drawable getDirectionArrow() {
-
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_angle);
-
         if (drawable != null) {
             int w = drawable.getIntrinsicWidth() / 2;
             int h = drawable.getIntrinsicHeight() / 2;
-
             drawable.setBounds(-w, -h, w, h);
         }
-
         return drawable;
     }
 
     public Drawable getDrawableWithNumber(int resourceId, String strNumber, float offsetY, int fontColor, float fontSize) {
-
         Bitmap textBitmap = getBitmapWithText(resourceId, strNumber, fontColor, fontSize, offsetY);
-
-        //Log.i(LOG_TAG, "getDrawableWithNumber: width=" + textBitmap.getWidth() + ", height=" + textBitmap.getHeight() + ", density=" + textBitmap.getDensity());
-
-        // set bounds
         Drawable marker = new BitmapDrawable(mContext.getResources(), textBitmap);
         if (marker != null) {
             NMapOverlayItem.boundCenter(marker);
         }
-
-        //Log.i(LOG_TAG, "getDrawableWithNumber: width=" + marker.getIntrinsicWidth() + ", height=" + marker.getIntrinsicHeight());
-
-        return marker;
-    }
-
-    public Drawable getDrawableWithAlphabet(int resourceId, String strAlphabet, int fontColor, float fontSize) {
-
-        Bitmap textBitmap = getBitmapWithText(resourceId, strAlphabet, fontColor, fontSize, POI_FONT_OFFSET_ALPHABET);
-
-        // set bounds
-        Drawable marker = new BitmapDrawable(mContext.getResources(), textBitmap);
-        if (marker != null) {
-            NMapOverlayItem.boundCenterBottom(marker);
-        }
-
         return marker;
     }
 
     @Override
     protected Drawable getDrawableForMarker(int markerId, boolean focused, NMapOverlayItem item) {
         Drawable drawable = null;
-
         if (markerId >= NMapPOIflagType.NUMBER_BASE && markerId < NMapPOIflagType.NUMBER_END) { // Direction Number icons
             int resourceId = (focused) ? R.drawable.ic_map_no_02 : R.drawable.ic_map_no_01;
             int fontColor = (focused) ? POI_FONT_COLOR_ALPHABET : POI_FONT_COLOR_NUMBER;
-
             String strNumber = String.valueOf(markerId - NMapPOIflagType.NUMBER_BASE);
-
             drawable = getDrawableWithNumber(resourceId, strNumber, 0.0F, fontColor, POI_FONT_SIZE_NUMBER);
         } else if (markerId >= NMapPOIflagType.CUSTOM_BASE && markerId < NMapPOIflagType.CUSTOM_END) { // Custom POI icons
 
         }
-
         return drawable;
     }
 
@@ -310,12 +185,9 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
 
         int width = bitmapBackground.getWidth();
         int height = bitmapBackground.getHeight();
-        //Log.i(LOG_TAG, "getBitmapWithText: width=" + width + ", height=" + height + ", density=" + bitmapBackground.getDensity());
 
         Bitmap textBitmap = Bitmap.createBitmap(width, height, BITMAP_CONFIG_DEFAULT);
-
         Canvas canvas = new Canvas(textBitmap);
-
         canvas.drawBitmap(bitmapBackground, 0, 0, null);
 
         // set font style
@@ -327,7 +199,6 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
             mTextPaint.setTypeface(POI_FONT_TYPEFACE);
         }
 
-        // get text offset
         mTextPaint.getTextBounds(strNumber, 0, strNumber.length(), mTempRect);
         float offsetX = (width - mTempRect.width()) / 2 - mTempRect.left;
         if (offsetY == 0.0F) {
@@ -335,30 +206,20 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
         } else {
             offsetY = offsetY * mScaleFactor + mTempRect.height();
         }
-
-        //Log.i(LOG_TAG, "getBitmapWithText: number=" + number + ", focused=" + focused);
-        //Log.i(LOG_TAG, "getBitmapWithText: offsetX=" + offsetX + ", offsetY=" + offsetY + ", boundsWidth=" + mTempRect.width() + ", boundsHeight=" + mTempRect.height());
-
-        // draw text
         canvas.drawText(strNumber, offsetX, offsetY, mTextPaint);
-
         return textBitmap;
     }
 
     @Override
     public Drawable getCalloutBackground(NMapOverlayItem item) {
-
         if (item instanceof NMapPOIitem) {
             NMapPOIitem poiItem = (NMapPOIitem) item;
-
             if (poiItem.showRightButton()) {
                 Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_speech);
                 return drawable;
             }
         }
-
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.pin_ballon_bg);
-
         return drawable;
     }
 
@@ -366,10 +227,8 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
     public String getCalloutRightButtonText(NMapOverlayItem item) {
         if (item instanceof NMapPOIitem) {
             NMapPOIitem poiItem = (NMapPOIitem) item;
-
             if (poiItem.showRightButton()) {
                 return "완료";
-                // return mContext.getResources().getString(R.string.str_done);
             }
         }
 
@@ -418,13 +277,6 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
         return null;
     }
 
-    /**
-     * 말풍선의 텍스트 색상을 customize한다.
-     *
-     * @param item
-     * @return
-     * @see com.nhn.android.mapviewer.overlay.NMapCalloutCustomOverlay.ResourceProvider#getCalloutTextColors(com.nhn.android.maps.NMapOverlayItem)
-     */
     @Override
     public int[] getCalloutTextColors(NMapOverlayItem item) {
         int[] colors = new int[4];
@@ -437,72 +289,62 @@ public class NMapViewerResourceProvider extends NMapResourceProvider implements 
 
     @Override
     public int getParentLayoutIdForOverlappedListView() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getOverlappedListViewId() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getLayoutIdForOverlappedListView() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getListItemLayoutIdForOverlappedListView() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getListItemTextViewId() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getListItemTailTextViewId() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getListItemImageViewId() {
-        // not supported
         return 0;
     }
 
     @Override
     public int getListItemDividerId() {
-        // not supported
         return 0;
     }
 
     @Override
     public void setOverlappedListViewLayout(ListView listView, int itemCount, int width, int height) {
-        // not supported
+
     }
 
     @Override
     public void setOverlappedItemResource(NMapPOIitem poiItem, ImageView imageView) {
-        // not supported
+
     }
 
     private int getResourceIdOnMapView(int markerId, boolean focused, ResourceIdsOnMap resourceIdsArray[]) {
         int resourceId = 0;
-
         for (ResourceIdsOnMap resourceIds : resourceIdsArray) {
             if (resourceIds.markerId == markerId) {
                 resourceId = (focused) ? resourceIds.resourceIdFocused : resourceIds.resourceId;
                 break;
             }
         }
-
         return resourceId;
     }
 }

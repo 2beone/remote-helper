@@ -487,7 +487,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
                         @Override
                         public void onFinish() {
-                            clientWebSocket.onMute(mutests);
+                            try{
+                                clientWebSocket.onMute(mutests);
+                            }catch (Exception e){
+
+                            }
                         }
                     }.start();
                 } catch (Exception e) {

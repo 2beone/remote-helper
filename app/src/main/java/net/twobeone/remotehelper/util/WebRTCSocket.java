@@ -97,6 +97,8 @@ public class WebRTCSocket {
 
         void downloadThread(String serverPath, String localPath, String filename);
 
+        void onLeave();
+
         void onClose();
     }
 
@@ -593,7 +595,8 @@ public class WebRTCSocket {
         mWebSocketClient.close();
         PeerConnectionFactory.initializeAndroidGlobals(null, false, false, false, null);
         factory = null;
-        mListener.onClose();
+//        mListener.onClose();
+        mListener.onLeave();
     }
 
     private int findEndPoint() {

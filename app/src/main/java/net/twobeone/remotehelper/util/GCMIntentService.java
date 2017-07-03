@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -125,6 +126,7 @@ public class GCMIntentService extends IntentService {
 
         mBuilder.setVibrate(new long[]{0, 500}); // 진동 효과 (퍼미션 필요)
         mBuilder.setAutoCancel(true); // 클릭하면 삭제
+        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

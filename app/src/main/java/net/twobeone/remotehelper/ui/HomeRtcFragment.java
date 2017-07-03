@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -53,6 +54,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -115,6 +118,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private int sub;
     private String FileExtend = "";
     private String LocalPath = "";
+    private MediaPlayer music;
 
     private void setting() {
         cam = Camera.open(1);
@@ -144,6 +148,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         vsv.setPreserveEGLContextOnPause(true);
         vsv.setKeepScreenOn(true);
         sv = (SurfaceView) view.findViewById(R.id.preview);
+
+        music = MediaPlayer.create(getContext(), R.raw.test);
+        music.setLooping(false);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         userName = prefs.getString(Constants.PREF_USER_NAME, null);
@@ -499,6 +506,41 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
                         .setNegativeButton("취소", cancelListener).show();
             }
+            if(msg.what == 6){
+                vsv.setVisibility(vsv.INVISIBLE);
+                voice_img.setVisibility(voice_img.VISIBLE);
+                mute_button.setVisibility(mute_button.INVISIBLE);
+                change_voice.setVisibility(change_voice.INVISIBLE);
+                change_camera.setVisibility(change_camera.INVISIBLE);
+                hangup.setVisibility(hangup.INVISIBLE);
+
+                try {
+                    music.prepare();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                music.seekTo(0);
+                music.start();
+
+                Timer timer = new Timer();
+                TimerTask timerTask = new TimerTask() {
+                    public void run() {
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                if (music.isPlaying()) {
+                                    music.stop();
+
+                                    getActivity().onBackPressed();
+                                }
+                            }
+                        });
+                    }
+                };
+
+                timer.schedule(timerTask, music.getDuration() - 500);
+            }
         }
     };
 
@@ -615,5 +657,10 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
             e.printStackTrace();
         }
         return nowAddress;
+    }
+
+    @Override
+    public void onLeave(){
+        handler.sendEmptyMessage(6);
     }
 }

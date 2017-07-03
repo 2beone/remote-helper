@@ -78,7 +78,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private VideoRendererGui.ScalingType scalingType = VideoRendererGui.ScalingType.SCALE_ASPECT_FILL;
     private GLSurfaceView vsv = null;
     private VideoRenderer.Callbacks localRender = null;
-    //    private VideoRenderer.Callbacks remoteRender;
     private String mSocketAddress;
     private WebRTCSocket clientWebSocket = null;
     private View view;
@@ -119,6 +118,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private String FileExtend = "";
     private String LocalPath = "";
     private MediaPlayer music;
+    private String mDeviceID;
 
     private void setting() {
         cam = Camera.open(1);
@@ -126,6 +126,12 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         sh = sv.getHolder();
         sh.addCallback(this);
         sh.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDeviceID = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     @Nullable
@@ -252,29 +258,27 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 true, false, 640, 360, 30, 1, VIDEO_CODEC_VP9, true, 1, AUDIO_CODEC_OPUS, true);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String device_ID = Settings.Secure.getString(getActivity().getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         clientWebSocket = new WebRTCSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
-                getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), device_ID);
+                getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), mDeviceID);
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        vsv.onPause();
         if (clientWebSocket != null) {
             clientWebSocket.onPause();
         }
+        vsv.onPause();
+        super.onPause();
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-        vsv.onResume();
-        Log.e("SSSSS", "onResume");
         if (clientWebSocket != null) {
             clientWebSocket.onResume();
         }
+        vsv.onResume();
+        super.onResume();
     }
 
     @Override
@@ -290,6 +294,21 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         }
         clientWebSocket = null;
         handler.removeCallbacks(runnable);
+
+        if (recording) {
+            try {
+                mediaRecorder.stop();
+                mediaRecorder.release();
+                mediaRecorder = null;
+                recording = false;
+                cam.stopPreview();
+                cam.release();
+            } catch (Exception e) {
+                Log.e("JH", "CAM " + e.toString());
+            }
+            File file = new File(Save_Path + save_name + ".mp4");
+            file.delete();
+        }
         super.onDetach();
     }
 
@@ -457,7 +476,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
             }
             if (msg.what == 3) {
-                try{
+                try {
                     new CountDownTimer(2000, 500) {
                         @Override
                         public void onTick(long millisUntilFinished) {
@@ -468,8 +487,8 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                             clientWebSocket.onMute(mutests);
                         }
                     }.start();
-                }catch (Exception e){
-                    Log.e("SSSSS",e.toString());
+                } catch (Exception e) {
+                    Log.e("SSSSS", e.toString());
                 }
             }
             if (msg.what == 4) {
@@ -506,7 +525,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
                         .setNegativeButton("취소", cancelListener).show();
             }
-            if(msg.what == 6){
+            if (msg.what == 6) {
                 vsv.setVisibility(vsv.INVISIBLE);
                 voice_img.setVisibility(voice_img.VISIBLE);
                 mute_button.setVisibility(mute_button.INVISIBLE);
@@ -549,7 +568,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         String pathToOurFile = save_name + ".mp4";
         String urlServer = "https://remohelper.com:440/m/websocket/getValue.do";
 
-        String device_ID = Settings.Secure.getString(getActivity().getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -571,7 +589,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
             RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("file", pathToOurFile, RequestBody.create(media_type_video, file))
-                    .addFormDataPart("sariodId", device_ID/* regid */).addFormDataPart("type", "S")
+                    .addFormDataPart("sariodId", mDeviceID/* regid */).addFormDataPart("type", "S")
                     .addFormDataPart("param", obj.toString()).build();
 
             builder.build();
@@ -660,7 +678,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     }
 
     @Override
-    public void onLeave(){
+    public void onLeave() {
         handler.sendEmptyMessage(6);
     }
 }

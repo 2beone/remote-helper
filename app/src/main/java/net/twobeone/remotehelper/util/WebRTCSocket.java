@@ -276,7 +276,6 @@ public class WebRTCSocket {
                                             people = data.getJSONArray("people").getString(1);
                                         }
 
-//                                        people = "chae";//임의 2beone1로만 연결
                                         JSONObject message = new JSONObject();
                                         message.put("type", "call");
                                         message.put("name", people);
@@ -577,14 +576,22 @@ public class WebRTCSocket {
      * Call this method in Activity.onPause()
      */
     public void onPause() {
-        if (videoSource != null) videoSource.stop();
+        Log.e("SSSSS","onPause");
+        if (videoSource != null){
+            localMS.videoTracks.getFirst().setEnabled(false);
+            videoSource.stop();
+        }
     }
 
     /**
      * Call this method in Activity.onResume()
      */
     public void onResume() {
-        if (videoSource != null) videoSource.restart();
+        Log.e("SSSSS","onResume");
+        if (videoSource != null) {
+            localMS.videoTracks.getFirst().setEnabled(true);
+            videoSource.restart();
+        }
     }
 
     /**
@@ -595,7 +602,6 @@ public class WebRTCSocket {
         mWebSocketClient.close();
         PeerConnectionFactory.initializeAndroidGlobals(null, false, false, false, null);
         factory = null;
-//        mListener.onClose();
         mListener.onLeave();
     }
 

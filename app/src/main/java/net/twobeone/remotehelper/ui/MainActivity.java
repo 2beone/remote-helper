@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -171,18 +170,6 @@ public final class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
-//            backKeyPressedTime = System.currentTimeMillis();
-//            Toast.makeText(this,"한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-//            super.onBackPressed();
-//        }
-//    }
-
     public void setupViewPager(ViewPager viewPager) {
         MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mainPagerAdapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
@@ -233,10 +220,6 @@ public final class MainActivity extends BaseActivity {
                 }
                 return;
             }
-            default: {
-                Log.e("SSSSS","TEST");
-                return;
-            }
         }
     }
 
@@ -256,10 +239,6 @@ public final class MainActivity extends BaseActivity {
             return "";
         }
         return registrationId;
-    }
-
-    private SharedPreferences getGCMPreferences(Context context) {
-        return getSharedPreferences(MainActivity.class.getSimpleName(), Context.MODE_PRIVATE);
     }
 
     private static int getAppVersion(Context context) {

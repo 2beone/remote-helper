@@ -20,7 +20,8 @@ import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.databinding.ActivityMapBinding;
 import net.twobeone.remotehelper.map.NMapPOIflagType;
-import net.twobeone.remotehelper.rest.NaverSearchAPI;
+import net.twobeone.remotehelper.rest.NaverMapAPI;
+import net.twobeone.remotehelper.rest.model.NaverMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,22 +35,23 @@ public class MapActivity extends MapActivityParent {
         @Override
         public void onClick(View v) {
 
-            Log.d("TEST", v.getTag().toString());
-            Log.d("TEST", "getMyLocation:" + mMapLocationManager.getMyLocation());
+            String query = mMyLocationName + " " + v.getTag().toString();
 
-            NaverSearchAPI.retrofit.create(NaverSearchAPI.class).local("vaaipy79LqtPJRueO9eJ", "y6UNfzsFFK").enqueue(new Callback<String>() {
+            NaverMapAPI.retrofit.create(NaverMapAPI.class).geocode(mMyLocationName + " " + v.getTag().toString()).enqueue(new Callback<NaverMap>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    Log.d("TEST", "response:" + response.body());
+                public void onResponse(Call<NaverMap> call, Response<NaverMap> response) {
+                    NaverMap naverMap = response.body();
+                    Log.d("TEST", "getLastBuildDate:" + naverMap.getLastBuildDate());
+
+                    mOverlayManager.clearOverlays();
+                    testPOIdataOverlay();
                 }
+
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<NaverMap> call, Throwable t) {
 
                 }
             });
-
-            mOverlayManager.clearOverlays();
-            testPOIdataOverlay();
         }
     };
 
@@ -78,19 +80,25 @@ public class MapActivity extends MapActivityParent {
         // Markers for POI item
         int markerId = NMapPOIflagType.PIN;
 
+        ////////////////////////////
+// new NGeoPoint()
+        // Geocoder
+        //////////////////////////////
+
         // set POI data
         NMapPOIdata poiData = new NMapPOIdata(2, mMapViewerResourceProvider);
         poiData.beginPOIdata(2);
         NMapPOIitem item = poiData.addPOIitem(127.0630205, 37.5091300, "Pizza 777-111", markerId, 0);
         item.setRightAccessory(true, NMapPOIflagType.CLICKABLE_ARROW);
-        poiData.addPOIitem(127.061, 37.51, "Pizza 123-456", markerId, 0);
+        // poiData.addPOIitem(127.061, 37.51, "Pizza 123-456", markerId, 0);
+        // poiData.addPOIitem(lng.intValue(), lat.intValue(), "Pizza 123-456", markerId, 1);
         poiData.endPOIdata();
 
         // create POI data overlay
         NMapPOIdataOverlay poiDataOverlay = mOverlayManager.createPOIdataOverlay(poiData, null);
 
         // select an item
-        poiDataOverlay.selectPOIitem(0, true);
+        // poiDataOverlay.selectPOIitem(0, true); 해당 위치로 이동???
 
         // show all POI data
         //poiDataOverlay.showAllPOIdata(0);

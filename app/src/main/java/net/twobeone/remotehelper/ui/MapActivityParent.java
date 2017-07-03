@@ -1,5 +1,6 @@
 package net.twobeone.remotehelper.ui;
 
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
@@ -8,13 +9,14 @@ import com.nhn.android.maps.NMapLocationManager;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
+import com.nhn.android.maps.nmapmodel.NMapPlacemark;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.map.NMapViewerResourceProvider;
 
-public class MapActivityParent extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapLocationManager.OnLocationChangeListener {
+public class MapActivityParent extends NMapActivity implements NMapView.OnMapStateChangeListener, NMapLocationManager.OnLocationChangeListener, NMapActivity.OnDataProviderListener {
 
     protected NMapView mMapView;
     protected NMapController mMapController;
@@ -22,6 +24,7 @@ public class MapActivityParent extends NMapActivity implements NMapView.OnMapSta
     protected NMapMyLocationOverlay mMyLocationOverlay;
     protected NMapLocationManager mMapLocationManager;
     protected NMapViewerResourceProvider mMapViewerResourceProvider;
+    protected String mMyLocationName;
 
     protected void setMapView(NMapView mapView) {
 
@@ -47,6 +50,12 @@ public class MapActivityParent extends NMapActivity implements NMapView.OnMapSta
         mMapLocationManager.setOnLocationChangeListener(this);
 
         mMyLocationOverlay = mOverlayManager.createMyLocationOverlay(mMapLocationManager, null);
+    }
+
+    @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setMapDataProviderListener(this);
     }
 
     @Override
@@ -78,6 +87,7 @@ public class MapActivityParent extends NMapActivity implements NMapView.OnMapSta
     public boolean onLocationChanged(NMapLocationManager nMapLocationManager, NGeoPoint nGeoPoint) {
         if (mMapController != null) {
             mMapController.animateTo(nGeoPoint);
+            findPlacemarkAtLocation(nGeoPoint.longitude, nGeoPoint.latitude);
         }
         return true;
     }
@@ -104,4 +114,11 @@ public class MapActivityParent extends NMapActivity implements NMapView.OnMapSta
             return false;
         }
     };
+
+    @Override
+    public void onReverseGeocoderResponse(NMapPlacemark nMapPlacemark, NMapError nMapError) {
+        if (nMapError == null) {
+            mMyLocationName = nMapPlacemark.toString();
+        }
+    }
 }

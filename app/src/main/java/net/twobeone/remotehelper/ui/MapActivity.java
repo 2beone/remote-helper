@@ -16,6 +16,7 @@ import net.twobeone.remotehelper.rest.NMap;
 import net.twobeone.remotehelper.rest.NMapAPI;
 import net.twobeone.remotehelper.util.GeoTrans;
 import net.twobeone.remotehelper.util.GeoTransPoint;
+import net.twobeone.remotehelper.util.StringUtils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,7 +67,7 @@ public class MapActivity extends NMapActivityParent {
         for (NMap.Item item : nMap.getItems()) {
             GeoTransPoint katec = new GeoTransPoint(item.getMapx(), item.getMapy());
             GeoTransPoint geo = GeoTrans.convert(GeoTrans.KATEC, GeoTrans.GEO, katec);
-            poiData.addPOIitem(geo.getX(), geo.getY(), item.getTitle(), NMapPOIflagType.PIN, 0);
+            poiData.addPOIitem(geo.getX(), geo.getY(), StringUtils.removeHtmlTag(item.getTitle()), NMapPOIflagType.PIN, 0);
         }
         poiData.endPOIdata();
 

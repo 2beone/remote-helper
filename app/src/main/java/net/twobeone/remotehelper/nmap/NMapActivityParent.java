@@ -117,7 +117,9 @@ public class NMapActivityParent extends NMapActivity implements NMapView.OnMapSt
             mOverlayManager.addOverlay(mMyLocationOverlay);
         }
         boolean isMyLocationEnabled = mMapLocationManager.enableMyLocation(true);
-        if (!isMyLocationEnabled) {
+        if (isMyLocationEnabled) {
+            Toast.makeText(this, "현재 위치를 찾고 있습니다.\n잠시만 기다려 주시기 바랍니다.", Toast.LENGTH_LONG).show();
+        } else {
             Toast.makeText(this, "Please enable a My Location source in system settings", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         }

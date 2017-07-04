@@ -1,5 +1,6 @@
 package net.twobeone.remotehelper.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.FileUtils;
+import net.twobeone.remotehelper.util.PermissionUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -118,14 +120,16 @@ public final class FileBoxFragment extends BaseFragment {
         }
 
         public void selectItems() {
-            mFiles = new LinkedList<>(Arrays.asList(mDirectory.listFiles()));
-            for (int i = mFiles.size() - 1; i >= 0; i--) {
-                File file = mFiles.get(i);
-                if (file.isDirectory() || file.length() == 0) {
-                    mFiles.remove(file);
+            if (PermissionUtils.hasPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                mFiles = new LinkedList<>(Arrays.asList(mDirectory.listFiles()));
+                for (int i = mFiles.size() - 1; i >= 0; i--) {
+                    File file = mFiles.get(i);
+                    if (file.isDirectory() || file.length() == 0) {
+                        mFiles.remove(file);
+                    }
                 }
+                notifyDataSetChanged();
             }
-            notifyDataSetChanged();
         }
 
         private Drawable getFileTypeDrawble(File file) {
@@ -160,7 +164,7 @@ public final class FileBoxFragment extends BaseFragment {
                             backKeyPressedTime = System.currentTimeMillis();
                             Bundle args = new Bundle();
                             int sub = tvFileName.getText().toString().indexOf(".");
-                            args.putString("name", tvFileName.getText().toString().substring(0,sub));
+                            args.putString("name", tvFileName.getText().toString().substring(0, sub));
                             args.putString("extend", tvFileName.getText().toString().substring(sub));
                             fragment.setArguments(args);
                             fragmentTransaction = fm.beginTransaction();

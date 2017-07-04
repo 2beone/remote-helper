@@ -705,4 +705,22 @@ public class WebRTCSocket {
         }
     }
 
+    public void mediaDipose(){
+        try{
+            localMS.dispose();
+            localMS = null;
+            videoSource.dispose();
+            videoSource = null;
+            videoCapturer.dispose();
+            videoCapturer = null;
+            audioSource.dispose();
+            audioSource = null;
+            factory.dispose();
+            factory = null;
+        }catch (Exception e) {
+
+        }
+
+    }
+
 }

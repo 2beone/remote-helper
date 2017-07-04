@@ -89,6 +89,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private Camera cam = null;
     private MediaRecorder mediaRecorder = null;
     private boolean recording = false;
+    private boolean camSetting = false;
     private String save_name = System.currentTimeMillis() + "";
     private SurfaceHolder sh;
     private SurfaceView sv;
@@ -177,16 +178,20 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, false);
 
-        mAudioManager = (AudioManager) getActivity().getSystemService(getActivity().getApplicationContext().AUDIO_SERVICE);
-        mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-        mAudioManager.setSpeakerphoneOn(true);
-        mAudioManager.setMicrophoneMute(false);
-        mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
-                (int) (mAudioManager.getStreamMaxVolume(mAudioManager.STREAM_VOICE_CALL)),
-                AudioManager.FLAG_PLAY_SOUND);
+        try{
+            mAudioManager = (AudioManager) getActivity().getSystemService(getActivity().getApplicationContext().AUDIO_SERVICE);
+            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+            mAudioManager.setSpeakerphoneOn(true);
+            mAudioManager.setMicrophoneMute(false);
+            mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+                    (int) (mAudioManager.getStreamMaxVolume(mAudioManager.STREAM_VOICE_CALL)),
+                    AudioManager.FLAG_PLAY_SOUND);
 
-        AcousticEchoCanceler.create(AudioManager.MODE_IN_CALL);
-        NoiseSuppressor.create(AudioManager.MODE_IN_CALL);
+            AcousticEchoCanceler.create(AudioManager.MODE_IN_CALL);
+            NoiseSuppressor.create(AudioManager.MODE_IN_CALL);
+        }catch (Exception e){
+
+        }
         return view;
     }
 
@@ -239,7 +244,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         mutests = true;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_off);
                     }
-                    clientWebSocket.onMute(mutests);
+                    try{
+                        clientWebSocket.onMute(mutests);
+                    }catch (Exception e) {
+
+                    }
                     break;
                 case R.id.change_camera:
                     clientWebSocket.onChangeCamera();
@@ -301,11 +310,16 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         localRender = null;
         VideoRendererGui.remove(localRender);
         sos_button.setVisibility(sos_button.VISIBLE);
-        if (!clientWebSocket.mWebSocketClient.isClosed()) {
-            Log.e("SSSSS", "clientWebSocket disconnect");
-            clientWebSocket.clearSocket();
-            clientWebSocket.mWebSocketClient.close();
+        try{
+            if (!clientWebSocket.mWebSocketClient.isClosed()) {
+                Log.e("SSSSS", "clientWebSocket disconnect");
+                clientWebSocket.clearSocket();
+                clientWebSocket.mWebSocketClient.close();
+            }
+        }catch (Exception e) {
+
         }
+        clientWebSocket.mediaDipose();
         clientWebSocket = null;
         handler.removeCallbacks(runnable);
 
@@ -318,7 +332,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 cam.stopPreview();
                 cam.release();
             } catch (Exception e) {
-                Log.e("JH", "CAM " + e.toString());
+                Log.e("JH", "recording " + e.toString());
             }
             File file = new File(Save_Path + save_name + ".mp4");
             file.delete();

@@ -63,6 +63,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="2dp"
+                android:background="@drawable/button"
+                android:textColor="@drawable/buttontxt"
                 android:text="닫기" />
         </LinearLayout>
     </RelativeLayout>

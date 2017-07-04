@@ -82,17 +82,29 @@ public class UserInfoActivity extends BaseActivity {
         mBinding.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveData();
-                hideSoftInputFromWindow();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        userInfoUpload();
-                    }
-                }).start();
+                if (isValid()) {
+                    saveData();
+                    hideSoftInputFromWindow();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            userInfoUpload();
+                        }
+                    }).start();
+                }
             }
         });
+    }
+
+    private boolean isValid() {
+        String userName = mBinding.etUserName.getText().toString().trim();
+        mBinding.etUserName.setText(userName);
+        if (userName.matches("")) {
+            Toast.makeText(this, "성명을 입력해 주세요.", Toast.LENGTH_LONG).show();
+            mBinding.etUserName.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -37,7 +37,6 @@ public final class Constants {
     /**
      * 설정
      */
-    public static final String PREF_MANUALS_SAMPLES_COPIED = "manuals_amples_copied";
     public static final String PREF_LOCATION_ENABLED = "location_enabled";
     public static final String PREF_USER_NAME = "user_name";
     public static final String PREF_USER_AGE = "user_age";

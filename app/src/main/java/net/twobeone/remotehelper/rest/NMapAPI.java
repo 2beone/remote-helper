@@ -17,3 +17,4 @@ public interface NMapAPI {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 }
+

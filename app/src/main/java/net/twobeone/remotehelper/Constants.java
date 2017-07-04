@@ -7,10 +7,10 @@ public final class Constants {
      */
     public static final String TROUBLES_HTTP_URI = "https://test.webrtc.org";
 
-    public static final String HTTP_URI_REQ_INSERT = "https://remohelper.com:441/m/reqInsertSaviorInfo.ajax";
-    public static final String HTTP_URI_WEBSOCKET = "wss://remohelper.com:9094";
-    public static final String HTTP_URI_VIDEO_UPLOAD = "https://remohelper.com:441/m/websocket/getValue.do";
-    public static final String HTTP_URI_FILE_DOWNLOAD = "https://remohelper.com:441/download/";
+    public static final String HTTP_URI_REQ_INSERT = "https://remohelper.com:440/m/reqInsertSaviorInfo.ajax";
+    public static final String HTTP_URI_WEBSOCKET = "wss://remohelper.com:9090";
+    public static final String HTTP_URI_VIDEO_UPLOAD = "https://remohelper.com:440/m/websocket/getValue.do";
+    public static final String HTTP_URI_FILE_DOWNLOAD = "https://remohelper.com:440/download/";
 
     /**
      * 다운로드 디렉토리명

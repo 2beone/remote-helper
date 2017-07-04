@@ -27,7 +27,7 @@
     <!-- 설정 -->
     <string name="pref_user_info_title">내 정보</string>
     <string name="pref_user_name_title">성명</string>
-    <string name="pref_user_name_summary">사용자 정보를 관리합니다.</string>
+    <string name="pref_user_name_summary">여기를 클릭하여 내 정보를 등록, 수정할 수 있습니다.</string>
     <string name="pref_app_info2">앱 정보</string>
     <string name="pref_app_version_title">현재 버전</string>
     <string name="pref_app_info_title">애플리케이션 정보</string>

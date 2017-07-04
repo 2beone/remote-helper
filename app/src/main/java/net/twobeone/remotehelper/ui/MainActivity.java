@@ -28,17 +28,11 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
-import net.twobeone.remotehelper.util.AppUtils;
-import net.twobeone.remotehelper.util.FileUtils;
-import net.twobeone.remotehelper.util.PermissionUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public final class MainActivity extends BaseActivity {
+
     private static String regid;
     private GoogleCloudMessaging gcm;
     private Context context;
@@ -95,42 +89,6 @@ public final class MainActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        // 매뉴얼샘플
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, false)) {
-            if (PermissionUtils.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                if (AppUtils.getDownloadDirectory().listFiles().length == 0) {
-                    copyManualSamples();
-                    prefs.edit().putBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, true).commit();
-                }
-            }
-        }
-    }
-
-    private void copyManualSamples() {
-        File downloadDirectory = AppUtils.getDownloadDirectory();
-        String[] samples = null;
-        try {
-            samples = getAssets().list(Constants.ASSETS_MANUALS_SAMPLES_DIRECTORY_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (samples != null) {
-            for (String sample : samples) {
-                InputStream inputStream = null;
-                OutputStream outputStream = null;
-                try {
-                    inputStream = getAssets().open(Constants.ASSETS_MANUALS_SAMPLES_DIRECTORY_PATH + "/" + sample);
-                    outputStream = new FileOutputStream(new File(downloadDirectory, sample));
-                    FileUtils.copy(inputStream, outputStream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    FileUtils.close(inputStream, outputStream);
-                }
-            }
-        }
     }
 
     @Override
@@ -143,7 +101,7 @@ public final class MainActivity extends BaseActivity {
     private void selectUserInfo() {
         mUserName.setText(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREF_USER_NAME, ""));
         if (TextUtils.isEmpty(mUserName.getText())) {
-            mUserName.setText("성명을 입력해 주세요");
+            mUserName.setText("여기를 클릭 후 성명을 입력해 주세요");
         }
     }
 

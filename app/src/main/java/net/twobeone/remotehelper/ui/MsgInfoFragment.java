@@ -3,6 +3,7 @@ package net.twobeone.remotehelper.ui;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -61,10 +62,19 @@ public class MsgInfoFragment extends Fragment {
 
         WebSettings webSettings = google_doc.getSettings();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            google_doc.setWebContentsDebuggingEnabled(true);
+        }
+
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
 
         google_doc.setWebChromeClient(new WebChromeClient());
 
@@ -132,7 +142,7 @@ public class MsgInfoFragment extends Fragment {
             }
         } else if (name_extend.equals(".pdf")) {
             google_doc.setVisibility(google_doc.VISIBLE);
-            google_doc.loadUrl("file:///android_asset/pdfjs/web/viewer.html?file=" + file.getAbsolutePath() + "#zoom=page-width");
+            google_doc.loadUrl("file:///android_asset/pdfjs/web/viewer.html?file=" + file.getAbsolutePath());// + "#zoom=page-width");
         }
     }
 }

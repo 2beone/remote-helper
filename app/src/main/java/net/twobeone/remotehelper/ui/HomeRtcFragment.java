@@ -8,8 +8,11 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.NoiseSuppressor;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -119,6 +122,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private MediaPlayer music;
     private String mDeviceID;
     private ViewGroup viewGroupParent;
+    private AudioManager mAudioManager;
 
     private void setting() {
         cam = Camera.open(1);
@@ -172,6 +176,17 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         localRender = VideoRendererGui.create(
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, false);
+
+        mAudioManager = (AudioManager) getActivity().getSystemService(getActivity().getApplicationContext().AUDIO_SERVICE);
+        mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+        mAudioManager.setSpeakerphoneOn(true);
+        mAudioManager.setMicrophoneMute(false);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+                (int) (mAudioManager.getStreamMaxVolume(mAudioManager.STREAM_VOICE_CALL)),
+                AudioManager.FLAG_PLAY_SOUND);
+
+        AcousticEchoCanceler.create(AudioManager.MODE_IN_CALL);
+        NoiseSuppressor.create(AudioManager.MODE_IN_CALL);
         return view;
     }
 

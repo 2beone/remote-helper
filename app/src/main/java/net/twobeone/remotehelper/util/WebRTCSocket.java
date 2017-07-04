@@ -626,13 +626,13 @@ public class WebRTCSocket {
 
         MediaConstraints audioConstraints = new MediaConstraints();
         audioConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("googEchoCancellation", "false"));
+                new MediaConstraints.KeyValuePair("googEchoCancellation", "true"));
         audioConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("googAutoGainControl", "false"));
+                new MediaConstraints.KeyValuePair("googAutoGainControl", "true"));
         audioConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("googHighpassFilter", "false"));
+                new MediaConstraints.KeyValuePair("googHighpassFilter", "true"));
         audioConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("googNoiseSuppression", "false"));
+                new MediaConstraints.KeyValuePair("googNoiseSuppression", "true"));
 
         audioSource = factory.createAudioSource(audioConstraints);
         localMS.addTrack(factory.createAudioTrack("ARDAMSa0", audioSource));

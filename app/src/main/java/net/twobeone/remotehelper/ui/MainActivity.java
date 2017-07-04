@@ -216,7 +216,6 @@ public final class MainActivity extends BaseActivity {
                                     Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.GET_ACCOUNTS},
                             100);
-
                 }
                 return;
             }

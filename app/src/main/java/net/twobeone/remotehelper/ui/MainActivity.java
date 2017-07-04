@@ -101,7 +101,7 @@ public final class MainActivity extends BaseActivity {
     private void selectUserInfo() {
         mUserName.setText(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREF_USER_NAME, ""));
         if (TextUtils.isEmpty(mUserName.getText())) {
-            mUserName.setText("성명을 입력해 주세요");
+            mUserName.setText("여기를 클릭 후 성명을 입력해 주세요");
         }
     }
 

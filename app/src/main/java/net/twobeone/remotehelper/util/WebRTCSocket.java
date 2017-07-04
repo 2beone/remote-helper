@@ -172,7 +172,7 @@ public class WebRTCSocket {
     }
 
     public WebRTCSocket(Context context, WebRTCSocket.RtcListener listener, String host, WebRTCParams params,
-                        EGLContext mEGLcontext, String nowAddress , double lati, double longi, String name, String regid, String deviceID) {
+                        EGLContext mEGLcontext, String nowAddress, double lati, double longi, String name, String regid, String deviceID) {
 
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
         mContext = context;
@@ -248,14 +248,14 @@ public class WebRTCSocket {
                                     payload = data.getJSONObject("answer");
                                 } else if (type.equals("leave")) {
                                     try {
-                                        if(people == data.getString("name")){
+                                        if (people == data.getString("name")) {
                                             JSONObject message = new JSONObject();
                                             message.put("type", "leave");
                                             message.put("name", people);
                                             mWebSocketClient.send(message.toString());
                                             removePeer(people);
                                         }
-                                    }catch (Exception e){
+                                    } catch (Exception e) {
                                         JSONObject message = new JSONObject();
                                         message.put("type", "leave");
                                         message.put("name", people);
@@ -267,7 +267,7 @@ public class WebRTCSocket {
                                     if (data.getJSONArray("people").length() > 0) {
                                         people = data.getJSONArray("people").getString(0);
 
-                                        if(people.equals("police")){
+                                        if (people.equals("police")) {
                                             people = "";
                                             people = data.getJSONArray("people").getString(1);
                                         }
@@ -506,7 +506,7 @@ public class WebRTCSocket {
             try {
                 remoteMS = mediaStream;
                 Log.e("SSSSS", "onAddRemoteStream " + mediaStream.label());
-            }catch (Exception e){
+            } catch (Exception e) {
             }
         }
 
@@ -571,8 +571,8 @@ public class WebRTCSocket {
      * Call this method in Activity.onPause()
      */
     public void onPause() {
-        Log.e("SSSSS","onPause");
-        if (videoSource != null){
+        Log.e("SSSSS", "onPause");
+        if (videoSource != null) {
             localMS.videoTracks.getFirst().setEnabled(false);
         }
     }
@@ -581,7 +581,7 @@ public class WebRTCSocket {
      * Call this method in Activity.onResume()
      */
     public void onResume() {
-        Log.e("SSSSS","onResume");
+        Log.e("SSSSS", "onResume");
         if (videoSource != null) {
             localMS.videoTracks.getFirst().setEnabled(true);
         }

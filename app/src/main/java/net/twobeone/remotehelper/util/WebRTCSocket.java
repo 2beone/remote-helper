@@ -658,6 +658,8 @@ public class WebRTCSocket {
             mWebSocketClient.send(message.toString());
         } catch (JSONException e) {
 
+        } catch (Exception e) {
+
         }
     }
 

@@ -112,8 +112,8 @@ public final class MainActivity extends BaseActivity {
         // 매뉴얼샘플
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.getBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, false)) {
-            if (AppUtils.getDownloadDirectory().listFiles().length == 0) {
-                if (PermissionUtils.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (PermissionUtils.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (AppUtils.getDownloadDirectory().listFiles().length == 0) {
                     copyManualSamples();
                     prefs.edit().putBoolean(Constants.PREF_MANUALS_SAMPLES_COPIED, true).commit();
                 }

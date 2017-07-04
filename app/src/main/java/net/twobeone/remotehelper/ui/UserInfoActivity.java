@@ -182,7 +182,6 @@ public class UserInfoActivity extends BaseActivity {
 
     public void userInfoUpload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String urlServer = "https://remohelper.com:440/m/reqInsertSaviorInfo.ajax";
 
         String device_ID = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -194,21 +193,21 @@ public class UserInfoActivity extends BaseActivity {
             RequestBody requestBody = builder
                     .add("deviceId", device_ID)
                     .add("saviorId", device_ID)
-                    .add("saviorName", prefs.getString(Constants.PREF_USER_NAME, ""))
-                    .add("age", prefs.getString(Constants.PREF_USER_AGE, ""))
+                    .add("saviorName", prefs.getString(Constants.PREF_USER_NAME, "").trim())
+                    .add("age", prefs.getString(Constants.PREF_USER_AGE, "").trim())
                     .add("birth", "")
                     .add("sex", "")
-                    .add("mobileNumber", prefs.getString(Constants.PREF_USER_MOBILE, ""))
-                    .add("emergencyNumber", prefs.getString(Constants.PREF_USER_EMERGENCY_CONTACT, ""))
+                    .add("mobileNumber", prefs.getString(Constants.PREF_USER_MOBILE, "").trim())
+                    .add("emergencyNumber", prefs.getString(Constants.PREF_USER_EMERGENCY_CONTACT, "").trim())
                     .add("address", "")
-                    .add("bloodgroups", prefs.getString(Constants.PREF_USER_BLOOD_TYPE, ""))
+                    .add("bloodgroups", prefs.getString(Constants.PREF_USER_BLOOD_TYPE, "").trim())
                     .add("sickness", "")
                     .add("hospital", "")
                     .add("doctor", "")
-                    .add("etc", prefs.getString(Constants.PREF_USER_ETC, ""))
-                    .add("regId", prefs.getString(Constants.PROPERTY_REG_ID, "")).build();
+                    .add("etc", prefs.getString(Constants.PREF_USER_ETC, "").trim())
+                    .add("regId", prefs.getString(Constants.PROPERTY_REG_ID, "").trim()).build();
 
-            Request request = new Request.Builder().url(urlServer).post(requestBody).build();
+            Request request = new Request.Builder().url(Constants.HTTP_URI_REQ_INSERT).post(requestBody).build();
             Response response = client.newCall(request).execute();
 
         } catch (Exception ex) {

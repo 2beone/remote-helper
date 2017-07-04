@@ -7,6 +7,8 @@ public final class Constants {
      */
     public static final String TROUBLES_HTTP_URI = "https://test.webrtc.org";
 
+    public static final String HTTP_URI_REQ_INSERT = "https://remohelper.com:440/m/reqInsertSaviorInfo.ajax";
+
     /**
      * 다운로드 디렉토리명
      */

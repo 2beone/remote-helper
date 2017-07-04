@@ -78,7 +78,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private VideoRendererGui.ScalingType scalingType = VideoRendererGui.ScalingType.SCALE_ASPECT_FILL;
     private GLSurfaceView vsv = null;
     private VideoRenderer.Callbacks localRender = null;
-    private String mSocketAddress;
     private WebRTCSocket clientWebSocket = null;
     private View view;
 
@@ -147,7 +146,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         | LayoutParams.FLAG_DISMISS_KEYGUARD
                         | LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | LayoutParams.FLAG_TURN_SCREEN_ON);
-        mSocketAddress = "wss://remohelper.com:9090";
         Log.e("SSSSS", "onCreateview");
 
         sos_button = (Button) getActivity().findViewById(R.id.btn_call);
@@ -260,7 +258,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        clientWebSocket = new WebRTCSocket(getActivity(), this, mSocketAddress, params, VideoRendererGui.getEGLContext(),
+        clientWebSocket = new WebRTCSocket(getActivity(), this, Constants.HTTP_URI_WEBSOCKET, params, VideoRendererGui.getEGLContext(),
                 getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), mDeviceID);
     }
 
@@ -577,8 +575,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     public void fileUpload() {
 
         String pathToOurFile = save_name + ".mp4";
-        String urlServer = "https://remohelper.com:440/m/websocket/getValue.do";
-
 
         try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -604,7 +600,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     .addFormDataPart("param", obj.toString()).build();
 
             builder.build();
-            Request request = new Request.Builder().url(urlServer).post(requestBody).build();
+            Request request = new Request.Builder().url(Constants.HTTP_URI_VIDEO_UPLOAD).post(requestBody).build();
             Response response = client.newCall(request).execute();
             System.out.println(response.body().string());
 
@@ -644,15 +640,14 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         try {
             cam.stopPreview();
         } catch (Exception e) {
-            // ignore: tried to stop a non-existent preview
-            Log.e("SSSSS", "Preview?!? " + e.toString());
+
         }
         setCamera(camera);
         try {
             cam.setPreviewDisplay(sh);
             cam.startPreview();
         } catch (Exception e) {
-            Log.e("SSSSS", "Preview?? " + e.toString());
+
         }
     }
 

@@ -22,6 +22,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import net.twobeone.remotehelper.Constants;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
@@ -77,7 +79,6 @@ public class WebRTCSocket {
     private VideoCapturer videoCapturer;
     private String camera = "front";
     private String Save_Path;
-    private String url = "https://remohelper.com:440/download/";
     private JSONObject payload = null;
     private JSONObject data = null;
     private double latitude = 0;
@@ -312,7 +313,7 @@ public class WebRTCSocket {
                                     filePath = data.getString("filepath");
                                     Log.e("SSSSS", "fileName ::: " + fileName + " filePath ::: " + filePath);
 
-                                    mListener.downloadThread(url + filePath, Save_Path + fileName, fileName);
+                                    mListener.downloadThread(Constants.HTTP_URI_FILE_DOWNLOAD + filePath, Save_Path + fileName, fileName);
                                 } else if (type.equals("police")) {
                                     JSONObject message = new JSONObject();
                                     message.put("type", "leave");

@@ -5,7 +5,6 @@ package net.twobeone.remotehelper.util;
  */
 
 import android.app.IntentService;
-import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -38,8 +37,6 @@ public class GCMIntentService extends IntentService {
     // web server 에서 받을 extras key
 
     private static PowerManager.WakeLock sCpuWakeLock;
-    private static KeyguardManager.KeyguardLock mKeyguardLock;
-    private static boolean isScreenLock;
 
     private int sub = 0;
     private Intent intent;

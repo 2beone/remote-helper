@@ -297,7 +297,6 @@ html {
 body {
   height: 100%;
   width: 100%;
-  background-color: #404040;
   background-image: url(images/texture.png);
 }
 
@@ -487,9 +486,9 @@ html[dir='rtl'] #sidebarContent {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   position: absolute;
-  top: 32px;
+  top: 8px;
   right: 0;
-  bottom: 0;
+  bottom: 8px;
   left: 0;
   outline: none;
 }

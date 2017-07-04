@@ -173,7 +173,6 @@ public class WebRTCSocket {
     public WebRTCSocket(Context context, WebRTCSocket.RtcListener listener, String host, WebRTCParams params,
                         EGLContext mEGLcontext, String nowAddress , double lati, double longi, String name, String regid, String deviceID) {
 
-        Log.e("SSSSS", "WebRTCSocket Init");
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
         mContext = context;
         mListener = listener;
@@ -188,10 +187,7 @@ public class WebRTCSocket {
 
         PeerConnectionFactory.initializeAndroidGlobals(mContext, true, true, params.videoCodecHwAcceleration, mEGLcontext);
 
-        Log.e("SSSSS", "initializeAndroidGlobals Init");
-
         factory = new PeerConnectionFactory();
-        Log.e("SSSSS", "PeerConnectionFactory Init");
 
         mWebSocketClient = null;
 
@@ -212,7 +208,6 @@ public class WebRTCSocket {
 
         try {
             uri = new URI(host);
-            Log.e("SSSSS", "URI OK");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -228,7 +223,7 @@ public class WebRTCSocket {
 
                         @Override
                         public void onOpen(ServerHandshake handshakedata) {
-                            Log.e("SSSSS", "Opened");
+                            Log.e("SSSSS", "SocketOpened");
                             try {
                                 JSONObject message = new JSONObject();
                                 message.put("type", "login");
@@ -439,7 +434,7 @@ public class WebRTCSocket {
                 payload.put("type", sdp.type.canonicalForm());
                 if (sdp.type.canonicalForm().equals("offer") ||
                         sdp.type.canonicalForm().equals("offer2")) {
-                    Log.e("SSSSS", "offer sdp change video codecs");
+                    Log.e("SSSSS", "offer :: local sdp change video codecs");
                     payload.put("sdp", sdp.description.replace("m=video 9 RTP/SAVPF", "m=video 9 RTP/SAVPF 98")
                             .replace("VP8", "VP9")
                             .replace("a=rtpmap:100 VP9", "a=rtcp-rsize\r\n" +
@@ -509,15 +504,14 @@ public class WebRTCSocket {
         public void onAddStream(MediaStream mediaStream) {
             try {
                 remoteMS = mediaStream;
-                Log.e("SSSSS", "onAddStream " + mediaStream.label());
+                Log.e("SSSSS", "onAddRemoteStream " + mediaStream.label());
             }catch (Exception e){
-                Log.e("SSSSS", "onAddStream " + e.toString());
             }
         }
 
         @Override
         public void onRemoveStream(MediaStream mediaStream) {
-            Log.e("SSSSS", "onRemoveStream " + mediaStream.label());
+            Log.e("SSSSS", "onRemoveRemoteStream " + mediaStream.label());
         }
 
         @Override
@@ -579,7 +573,6 @@ public class WebRTCSocket {
         Log.e("SSSSS","onPause");
         if (videoSource != null){
             localMS.videoTracks.getFirst().setEnabled(false);
-//            videoSource.stop();
         }
     }
 
@@ -590,7 +583,6 @@ public class WebRTCSocket {
         Log.e("SSSSS","onResume");
         if (videoSource != null) {
             localMS.videoTracks.getFirst().setEnabled(true);
-//            videoSource.restart();
         }
     }
 

@@ -212,8 +212,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
             mutests = true;
             mute_button.setBackgroundResource(R.drawable.btn_mute_off);
         }
-
-        Log.e("SSSSS", "onStart");
     }
 
     ImageButton.OnClickListener onClickListener = new View.OnClickListener() {
@@ -409,7 +407,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     if (!file.exists())
                         file.createNewFile();
                     FileOutputStream fos = new FileOutputStream(file);
-                    for (; ; ) {
+                    for ( ; ; ) {
                         Read = is.read(tmpByte);
                         if (Read <= 0) {
                             break;
@@ -432,146 +430,146 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
     public Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            if (msg.what == 0) {
-                mute_button.setVisibility(mute_button.INVISIBLE);
-                change_voice.setVisibility(change_voice.INVISIBLE);
-                change_camera.setVisibility(change_camera.INVISIBLE);
-                hangup.setVisibility(hangup.INVISIBLE);
-                sv.setVisibility(sv.VISIBLE);
-                vsv.setVisibility(vsv.INVISIBLE);
-            }
-            if (msg.what == 1) {
-                new CountDownTimer(5000, 500) {
+            switch (msg.what) {
+                case 0:
+                    mute_button.setVisibility(mute_button.INVISIBLE);
+                    change_voice.setVisibility(change_voice.INVISIBLE);
+                    change_camera.setVisibility(change_camera.INVISIBLE);
+                    hangup.setVisibility(hangup.INVISIBLE);
+                    sv.setVisibility(sv.VISIBLE);
+                    vsv.setVisibility(vsv.INVISIBLE);
+                    break;
+                case 1:
+                    new CountDownTimer(5000, 500) {
 
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        if (recording) {
-                            try {
-                                mediaRecorder.stop();
-                                mediaRecorder.release();
-                                mediaRecorder = null;
-                                recording = false;
-                                cam.stopPreview();
-                                cam.release();
-                            } catch (Exception e) {
-                                Log.e("JH", "CAM " + e.toString());
-                            }
-
-                            // 서버로 녹화한 영상 전송
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    fileUpload();
-                                    File file = new File(Save_Path + save_name + ".mp4");
-                                    file.delete();
-                                }
-                            }).start();
-                            onClose();
-                        }
-                    }
-                }.start();
-            }
-            if (msg.what == 2) {
-                Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
-            }
-            if (msg.what == 3) {
-                try {
-                    new CountDownTimer(2000, 500) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                         }
 
                         @Override
                         public void onFinish() {
-                            try{
-                                clientWebSocket.onMute(mutests);
-                            }catch (Exception e){
+                            if (recording) {
+                                try {
+                                    mediaRecorder.stop();
+                                    mediaRecorder.release();
+                                    mediaRecorder = null;
+                                    recording = false;
+                                    cam.stopPreview();
+                                    cam.release();
+                                } catch (Exception e) {
+                                    Log.e("JH", "CAM " + e.toString());
+                                }
 
+                                // 서버로 녹화한 영상 전송
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        fileUpload();
+                                        File file = new File(Save_Path + save_name + ".mp4");
+                                        file.delete();
+                                    }
+                                }).start();
+                                onClose();
                             }
                         }
                     }.start();
-                } catch (Exception e) {
-                    Log.e("SSSSS", e.toString());
-                }
-            }
-            if (msg.what == 4) {
-                getActivity().onBackPressed();
-            }
-            if (msg.what == 5) {
-                DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
+                    break;
+                case 2:
+                    Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    try {
+                        new CountDownTimer(2000, 500) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        fragment = new MsgInfoFragment();
-                        fm = getFragmentManager();
-                        Bundle args = new Bundle();
-                        args.putString("name", FileName);
-                        args.putString("extend", FileExtend);
-                        fragment.setArguments(args);
-                        fragmentTransaction = fm.beginTransaction();
-                        fragmentTransaction.replace(R.id.rtc_fragment, fragment, "msginfofragment");
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                    }
-                };
-                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onFinish() {
+                                try {
+                                    clientWebSocket.onMute(mutests);
+                                } catch (Exception e) {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        dialog.dismiss();
-                    }
-                };
-
-                new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT)
-                        .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
-                        .setNegativeButton("취소", cancelListener).show();
-            }
-            if (msg.what == 6) {
-                vsv.setVisibility(vsv.INVISIBLE);
-                voice_img.setVisibility(voice_img.VISIBLE);
-                mute_button.setVisibility(mute_button.INVISIBLE);
-                change_voice.setVisibility(change_voice.INVISIBLE);
-                change_camera.setVisibility(change_camera.INVISIBLE);
-                hangup.setVisibility(hangup.INVISIBLE);
-
-                try {
-                    music.prepare();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                music.seekTo(0);
-                music.start();
-
-                Timer timer = new Timer();
-                TimerTask timerTask = new TimerTask() {
-                    public void run() {
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                if (music.isPlaying()) {
-                                    music.stop();
-
-                                    sos_button.setVisibility(sos_button.VISIBLE);
-                                    viewGroupParent.removeView(view);
-                                    fm = getFragmentManager();
-                                    fragmentTransaction = fm.beginTransaction();
-                                    fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-                                    fragmentTransaction.commitAllowingStateLoss();
-//                                    getActivity().onBackPressed();
                                 }
                             }
-                        });
+                        }.start();
+                    } catch (Exception e) {
+                        Log.e("SSSSS", e.toString());
                     }
-                };
+                    break;
+                case 4:
+                    getActivity().onBackPressed();
+                    break;
+                case 5:
+                    DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
 
-                timer.schedule(timerTask, music.getDuration() - 500);
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            fragment = new MsgInfoFragment();
+                            fm = getFragmentManager();
+                            Bundle args = new Bundle();
+                            args.putString("name", FileName);
+                            args.putString("extend", FileExtend);
+                            fragment.setArguments(args);
+                            fragmentTransaction = fm.beginTransaction();
+                            fragmentTransaction.replace(R.id.rtc_fragment, fragment, "msginfofragment");
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        }
+                    };
+                    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            dialog.dismiss();
+                        }
+                    };
+
+                    new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT)
+                            .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
+                            .setNegativeButton("취소", cancelListener).show();
+                    break;
+                case 6:
+                    vsv.setVisibility(vsv.INVISIBLE);
+                    voice_img.setVisibility(voice_img.VISIBLE);
+                    mute_button.setVisibility(mute_button.INVISIBLE);
+                    change_voice.setVisibility(change_voice.INVISIBLE);
+                    change_camera.setVisibility(change_camera.INVISIBLE);
+                    hangup.setVisibility(hangup.INVISIBLE);
+
+                    try {
+                        music.prepare();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    music.seekTo(0);
+                    music.start();
+
+                    Timer timer = new Timer();
+                    TimerTask timerTask = new TimerTask() {
+                        public void run() {
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    if (music.isPlaying()) {
+                                        music.stop();
+
+                                        sos_button.setVisibility(sos_button.VISIBLE);
+                                        viewGroupParent.removeView(view);
+                                        fm = getFragmentManager();
+                                        fragmentTransaction = fm.beginTransaction();
+                                        fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+                                        fragmentTransaction.commitAllowingStateLoss();
+                                    }
+                                }
+                            });
+                        }
+                    };
+                    timer.schedule(timerTask, music.getDuration() - 500);
+                    break;
             }
         }
     };
@@ -672,8 +670,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
             } else {
                 if (geocoder != null) {
                     address = geocoder.getFromLocation(lat, lng, 1);
-                    // 세번째 파라미터는 좌표에 대해 주소를 리턴 받는 갯수로 한좌표에 대해 두개이상의 이름이 존재할수있기에
-                    // 주소배열을 리턴받기 위해 최대갯수 설정
+                    // 세번째 파라미터는 좌표에 대해 주소를 리턴 받는 갯수로 한좌표에 대해 두개이상의 이름이 존재할수있기에 리턴 최대값 설정
 
                     if (address != null && address.size() > 0) {
                         // 주소 받아오기

@@ -15,9 +15,6 @@ import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -45,13 +42,8 @@ public class GCMIntentService extends IntentService {
     private static boolean isScreenLock;
 
     private int sub = 0;
-    public static final String PROPERTY_REG_ID = "registration_id";
     private Intent intent;
     private NotificationCompat.Builder mBuilder = null;
-
-    private static Fragment fragment;
-    private static FragmentManager fm;
-    private FragmentTransaction fragmentTransaction;
 
     public GCMIntentService() {
         super("");

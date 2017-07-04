@@ -48,4 +48,5 @@ public final class Constants {
      */
     public static final String PROPERTY_REG_ID = "registration_id";
     public static final String PROPERTY_APP_VERSION = "appver";
+    public static final String SENDER_ID = "186620067699";
 }

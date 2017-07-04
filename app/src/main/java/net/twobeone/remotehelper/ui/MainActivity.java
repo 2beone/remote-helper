@@ -1,7 +1,6 @@
 package net.twobeone.remotehelper.ui;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,10 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -44,7 +39,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public final class MainActivity extends BaseActivity {
-    private static String SENDER_ID = "186620067699";
     private static String regid;
     private GoogleCloudMessaging gcm;
     private Context context;
@@ -52,13 +46,6 @@ public final class MainActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TextView mUserName;
-
-    private long backKeyPressedTime = 0;
-    private String reCall = "";
-
-    private Fragment fragment;
-    private FragmentManager fm;
-    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,31 +180,8 @@ public final class MainActivity extends BaseActivity {
                     || ContextCompat.checkSelfPermission(getApplicationContext(),
                     Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.GET_ACCOUNTS},
-                        100);
-
-            }
-
-        }
-    }
-
-    @SuppressLint("Override")
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 100: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    onResume();
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.GET_ACCOUNTS},
-                            100);
-                }
-                return;
+                Intent intent = new Intent(this, PermissionActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -260,7 +224,7 @@ public final class MainActivity extends BaseActivity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
-                    regid = gcm.register(SENDER_ID);
+                    regid = gcm.register(Constants.SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
                     Log.e("SSSSS", msg);
 

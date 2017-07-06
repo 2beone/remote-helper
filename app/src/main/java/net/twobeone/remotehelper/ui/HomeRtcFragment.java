@@ -151,7 +151,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         | LayoutParams.FLAG_DISMISS_KEYGUARD
                         | LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         | LayoutParams.FLAG_TURN_SCREEN_ON);
-        Log.e("SSSSS", "onCreateview");
 
         sos_button = (Button) getActivity().findViewById(R.id.btn_call);
         sos_button.setVisibility(sos_button.INVISIBLE);
@@ -317,9 +316,8 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 clientWebSocket.mWebSocketClient.close();
             }
         }catch (Exception e) {
-
+            clientWebSocket.mediaDipose();
         }
-        clientWebSocket.mediaDipose();
         clientWebSocket = null;
         handler.removeCallbacks(runnable);
 

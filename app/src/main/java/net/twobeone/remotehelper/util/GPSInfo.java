@@ -62,17 +62,13 @@ public class GPSInfo extends Service implements LocationListener {
 			isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
 			if (!isGPSEnabled && !isNetworkEnabled) {
-				Log.e("SSSSSS", "!isGPSEnabled && !isNetworkEnabled");
 			} else {
-				Log.d("SSSSSS", "2");
 				this.isGetLocation = true;
 
 				if (isNetworkEnabled) {
 					try {
-						Log.d("SSSSSS", "3");
 						locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
 								MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-						Log.d("SSSSSS", "4");
 						if (locationManager != null) {
 							location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 							if (location != null) {
@@ -86,24 +82,17 @@ public class GPSInfo extends Service implements LocationListener {
 				}
 
 				if (isGPSEnabled) {
-					Log.d("SSSSSS", "5");
 					if (location == null) {
-						Log.d("SSSSSS", "6");
 						try {
 							locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
 									MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-							Log.d("SSSSSS", "7");
 							if (locationManager != null) {
-								Log.d("SSSSSS", "8");
 								location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-								Log.d("SSSSSS", "9");
 								if (location != null) {
-									Log.d("SSSSSS", "10");
 									lat = location.getLatitude();
 									lon = location.getLongitude();
 								}
 							} else {
-								Log.d("SSSSSS", "11");
 							}
 						} catch (SecurityException e) {
 							Log.e("SSSSSS", "location GPS error : " + e.getLocalizedMessage());

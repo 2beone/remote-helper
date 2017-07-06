@@ -87,6 +87,7 @@ public class WebRTCSocket {
     private String nowAddr = "";
     private String regId = "";
     private String device_ID = "";
+    private boolean helper_Recall = false;
 
     public interface RtcListener {
 
@@ -172,7 +173,7 @@ public class WebRTCSocket {
     }
 
     public WebRTCSocket(Context context, WebRTCSocket.RtcListener listener, String host, WebRTCParams params,
-                        EGLContext mEGLcontext, String nowAddress, double lati, double longi, String name, String regid, String deviceID) {
+                        EGLContext mEGLcontext, String nowAddress, double lati, double longi, String name, String regid, String deviceID, final String helper_id) {
 
         Save_Path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/RemoteHelper_download/";
         mContext = context;
@@ -185,6 +186,14 @@ public class WebRTCSocket {
         userName = name;
         regId = regid;
         device_ID = deviceID;
+
+        try {
+            if (!helper_id.equals("false")) {
+                helper_Recall = true;
+            }
+        } catch (Exception e) {
+            helper_Recall = false;
+        }
 
         PeerConnectionFactory.initializeAndroidGlobals(mContext, true, true, params.videoCodecHwAcceleration, mEGLcontext);
 
@@ -265,18 +274,40 @@ public class WebRTCSocket {
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
-                                        people = data.getJSONArray("people").getString(0);
+                                        if (helper_Recall && data.getJSONArray("people").toString().contains(helper_id)) {
+                                            people = helper_id;
 
-                                        if (people.equals("police")) {
-                                            people = "";
-                                            people = data.getJSONArray("people").getString(1);
+                                            JSONObject message = new JSONObject();
+                                            message.put("type", "call");
+                                            message.put("name", people);
+                                            message.put("saviorName", userName);
+                                            mWebSocketClient.send(message.toString());
+
+                                        } else if (!helper_Recall) {
+
+                                            people = data.getJSONArray("people").getString(0);
+
+                                            if (people.equals("police")) {
+                                                people = "";
+                                                people = data.getJSONArray("people").getString(1);
+                                            }
+
+                                            JSONObject message = new JSONObject();
+                                            message.put("type", "call");
+                                            message.put("name", people);
+                                            message.put("saviorName", userName);
+                                            mWebSocketClient.send(message.toString());
+                                        } else {
+                                            localMS.dispose();
+                                            localMS = null;
+                                            videoSource.dispose();
+                                            videoSource = null;
+                                            videoCapturer.dispose();
+                                            videoCapturer = null;
+                                            audioSource.dispose();
+                                            audioSource = null;
+                                            startRecording();
                                         }
-
-                                        JSONObject message = new JSONObject();
-                                        message.put("type", "call");
-                                        message.put("name", people);
-                                        message.put("saviorName", userName);
-                                        mWebSocketClient.send(message.toString());
                                     } else {
                                         localMS.dispose();
                                         localMS = null;
@@ -705,8 +736,8 @@ public class WebRTCSocket {
         }
     }
 
-    public void mediaDipose(){
-        try{
+    public void mediaDipose() {
+        try {
             localMS.dispose();
             localMS = null;
             videoSource.dispose();
@@ -717,7 +748,7 @@ public class WebRTCSocket {
             audioSource = null;
             factory.dispose();
             factory = null;
-        }catch (Exception e) {
+        } catch (Exception e) {
 
         }
 

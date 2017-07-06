@@ -40,11 +40,20 @@ public final class MainActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
     private ViewPager mViewPager;
     private TextView mUserName;
+    private String helper_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        helper_id = "false";
+        try{
+            helper_id = intent.getExtras().getString("helper_id");
+        }catch (Exception e){
+            Log.e("SSSSS", "GCMNoCallPush :::: " + helper_id);
+        }
 
         checkPermissions();
 
@@ -116,8 +125,14 @@ public final class MainActivity extends BaseActivity {
     }
 
     public void setupViewPager(ViewPager viewPager) {
+        android.support.v4.app.Fragment homeFragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putString("helper_id", helper_id);
+        homeFragment.setArguments(args);
+        Log.e("SSSSS", "setupViewPager :::: " + helper_id);
+
         MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-        mainPagerAdapter.addFragment(new HomeFragment(), getResources().getString(R.string.main_tab1_title));
+        mainPagerAdapter.addFragment(homeFragment, getResources().getString(R.string.main_tab1_title));
         mainPagerAdapter.addFragment(new FileBoxFragment(), getResources().getString(R.string.rtc_tab1_title));
         viewPager.setAdapter(mainPagerAdapter);
     }

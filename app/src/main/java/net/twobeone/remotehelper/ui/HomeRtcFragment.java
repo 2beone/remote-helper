@@ -282,7 +282,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         clientWebSocket = new WebRTCSocket(getActivity(), this, Constants.HTTP_URI_WEBSOCKET, params, VideoRendererGui.getEGLContext(),
-                getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), mDeviceID);
+                getAddress(getContext(), latitude, longitude), latitude, longitude, userName, prefs.getString(Constants.PROPERTY_REG_ID, ""), mDeviceID, getArguments().getString("helper_id"));
     }
 
     @Override

@@ -76,8 +76,8 @@ public class GCMIntentService extends IntentService {
     private void sendNotification(Bundle extras) {
         // 혹시 모를 사용가능한 코드
         String typeCode = extras.getString(TYPE_EXTRA_CODE);
-        String regid = getRegistrationId(getApplicationContext()); // 기존에 발급받은 등록 아이디를 가져온다
-        Log.e("SSSSS",URLDecoder.decode(extras.getString(MSG_EXTRA_KEY)));
+        //String regid = getRegistrationId(getApplicationContext()); // 기존에 발급받은 등록 아이디를 가져온다
+        Log.e("SSSSS", URLDecoder.decode(extras.getString(MSG_EXTRA_KEY)));
 
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         try {
@@ -86,6 +86,10 @@ public class GCMIntentService extends IntentService {
                 sub = URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").indexOf("&");
 
                 intent = new Intent(this, MainActivity.class);
+                intent.putExtra("helper_id", URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").substring(
+                        URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").indexOf("=") + 1));
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.ic_launcher_round)
                         .setContentTitle(URLDecoder.decode(extras.getString(TITLE_EXTRA_KEY), "UTF-8"))
@@ -94,6 +98,8 @@ public class GCMIntentService extends IntentService {
                         .setContentText(URLDecoder.decode(extras.getString(MSG_EXTRA_KEY), "UTF-8").substring(0, sub));
             } else {
                 intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.ic_launcher_round)
                         .setContentTitle(URLDecoder.decode(extras.getString(TITLE_EXTRA_KEY), "UTF-8"))
@@ -106,7 +112,7 @@ public class GCMIntentService extends IntentService {
             e2.printStackTrace();
         }
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         mBuilder.setVibrate(new long[]{0, 500}); // 진동 효과 (퍼미션 필요)
         mBuilder.setAutoCancel(true); // 클릭하면 삭제

@@ -51,20 +51,7 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         view = mBinding.getRoot();
-        return view;
-    }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         sos_button = (Button) view.findViewById(R.id.btn_call);
         sos_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,6 +119,32 @@ public class HomeFragment extends BaseFragment {
                 return false;
             }
         });
+
+        if(!getArguments().getString("helper_id").equals("false")){
+            sos_button.setEnabled(false);
+            Handler h = new Handler();
+            h.postDelayed(new splashhandler(), 3000);
+
+            Bundle args = new Bundle();
+            args.putString("isMute", "false");
+            args.putString("helper_id", getArguments().getString("helper_id"));
+            fragment = new HomeRtcFragment();
+            fm = getFragmentManager();
+            fragment.setArguments(args);
+            fragmentTransaction = fm.beginTransaction();
+            fragmentTransaction.replace(R.id.home_fragment, fragment, "rtcfragment");
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 
     @Override

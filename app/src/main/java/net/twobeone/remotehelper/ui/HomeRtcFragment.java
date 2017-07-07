@@ -340,10 +340,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
     @Override
     public void onStatusChanged(final String newStatus) {
+        iceStatus = newStatus;
         if (newStatus.equals("CONNECTING")) {
             handler.sendEmptyMessage(3);
+            iceStatus = "상담원과 연결이 되었습니다.";
         }
-        iceStatus = newStatus;
         handler.sendEmptyMessage(2);
     }
 

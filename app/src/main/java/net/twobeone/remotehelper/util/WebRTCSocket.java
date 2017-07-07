@@ -274,6 +274,10 @@ public class WebRTCSocket {
                                 } else if (type.equals("login")) {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
+
+                                        int random_list = (int) (Math.random() * data.getJSONArray("people").length());
+                                        Log.e("SSSSS","random :: " + random_list);
+
                                         if (helper_Recall && data.getJSONArray("people").toString().contains(helper_id)) {
                                             people = helper_id;
 
@@ -283,13 +287,22 @@ public class WebRTCSocket {
                                             message.put("saviorName", userName);
                                             mWebSocketClient.send(message.toString());
 
+                                        } else if (data.getJSONArray("people").toString().contains(userName)) {
+                                            people = userName;
+
+                                            JSONObject message = new JSONObject();
+                                            message.put("type", "call");
+                                            message.put("name", people);
+                                            message.put("saviorName", userName);
+                                            mWebSocketClient.send(message.toString());
+
                                         } else if (!helper_Recall) {
 
-                                            people = data.getJSONArray("people").getString(0);
+                                            people = data.getJSONArray("people").getString(random_list);
 
                                             if (people.equals("police")) {
                                                 people = "";
-                                                people = data.getJSONArray("people").getString(1);
+                                                people = data.getJSONArray("people").getString(0);
                                             }
 
                                             JSONObject message = new JSONObject();

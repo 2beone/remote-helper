@@ -1,7 +1,7 @@
 <resources>
 
     <!-- 전역 -->
-    <string name="app_name">오산시청 원격안전도우미</string>
+    <string name="app_name">원격안전도우미</string>
     <string name="main_tab1_title">홈</string>
     <string name="rtc_tab1_title">보관함</string>
     <string name="action_settings">설정</string>

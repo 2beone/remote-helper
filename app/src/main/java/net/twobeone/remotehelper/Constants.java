@@ -44,6 +44,7 @@ public final class Constants {
     public static final String PREF_USER_EMERGENCY_CONTACT = "user_emergency_contact";
     public static final String PREF_USER_BLOOD_TYPE = "user_blood_type";
     public static final String PREF_USER_ETC = "user_etc";
+    public static final String PREF_FILE_RECEIVE_DT = "file_receive_dt";
 
     /**
      * GCM

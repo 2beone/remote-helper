@@ -172,8 +172,8 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("상담원을 찾는 중입니다.");
-        progressDialog.show();
+//        progressDialog.setMessage("상담원을 찾는 중입니다.");
+//        progressDialog.show();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         userName = prefs.getString(Constants.PREF_USER_NAME, null);
@@ -631,7 +631,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     progressDialog.show();
                     break;
                 case 8:
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                     progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
                     progressDialog.show();
                     break;

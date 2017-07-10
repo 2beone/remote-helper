@@ -127,6 +127,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private ViewGroup viewGroupParent;
     private AudioManager mAudioManager;
     private ProgressDialog progressDialog;
+    private String helper_ID;
 
     private void setting() {
         cam = Camera.open(1);
@@ -357,13 +358,16 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     }
 
     @Override
-    public void onStatusChanged(final String newStatus) {
+    public void onStatusChanged(final String newStatus, final String helper_id) {
         iceStatus = newStatus;
         if (newStatus.equals("CONNECTING")) {
             handler.sendEmptyMessage(3);
             iceStatus = "상담원과 연결이 되었습니다.";
+            handler.sendEmptyMessage(2);
+        } else if(newStatus.contains("HELPERID")){
+            helper_ID = helper_id;
+            handler.sendEmptyMessage(8);
         }
-        handler.sendEmptyMessage(2);
     }
 
     @Override
@@ -624,6 +628,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     break;
                 case 7:
                     progressDialog.setMessage("파일을 다운로드받는 중입니다.");
+                    progressDialog.show();
+                    break;
+                case 8:
+                    progressDialog.dismiss();
+                    progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
                     progressDialog.show();
                     break;
             }

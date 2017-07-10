@@ -289,7 +289,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     @Override
     public void onPause() {
         if (clientWebSocket != null) {
-            clientWebSocket.onPause();
+            try{
+                clientWebSocket.onPause();
+            }catch (Exception e){
+
+            }
         }
         vsv.onPause();
         super.onPause();
@@ -298,7 +302,10 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     @Override
     public void onResume() {
         if (clientWebSocket != null) {
-            clientWebSocket.onResume();
+            try{
+                clientWebSocket.onResume();
+            }catch (Exception e) {
+            }
         }
         vsv.onResume();
         super.onResume();
@@ -506,7 +513,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     break;
                 case 3:
                     try {
-                        new CountDownTimer(2000, 500) {
+                        new CountDownTimer(1000, 500) {
                             @Override
                             public void onTick(long millisUntilFinished) {
                             }

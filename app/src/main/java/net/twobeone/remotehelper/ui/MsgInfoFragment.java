@@ -116,6 +116,8 @@ public class MsgInfoFragment extends Fragment {
             fileUri = Uri.fromFile(file);
             recv_vid.setVideoURI(fileUri);
             recv_vid.requestFocus();
+//            recv_vid.setZOrderMediaOverlay(true);
+            recv_vid.setZOrderOnTop(true);
             recv_vid.start();
         } else if (name_extend.equals(".jpg") || name_extend.equals(".jpeg") || name_extend.equals(".JPG")
                 || name_extend.equals(".gif") || name_extend.equals(".png") || name_extend.equals(".bmp")) {

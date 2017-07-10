@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.util.DateUtils;
 import net.twobeone.remotehelper.util.GPSInfo;
 import net.twobeone.remotehelper.util.WebRTCParams;
 import net.twobeone.remotehelper.util.WebRTCSocket;
@@ -177,7 +178,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 LOCAL_X_CONNECTING, LOCAL_Y_CONNECTING,
                 LOCAL_WIDTH_CONNECTING, LOCAL_HEIGHT_CONNECTING, scalingType, false);
 
-        try{
+        try {
             mAudioManager = (AudioManager) getActivity().getSystemService(getActivity().getApplicationContext().AUDIO_SERVICE);
             mAudioManager.setMode(AudioManager.MODE_IN_CALL);
             mAudioManager.setSpeakerphoneOn(true);
@@ -188,7 +189,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
             AcousticEchoCanceler.create(AudioManager.MODE_IN_CALL);
             NoiseSuppressor.create(AudioManager.MODE_IN_CALL);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return view;
@@ -243,9 +244,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         mutests = true;
                         mute_button.setBackgroundResource(R.drawable.btn_mute_off);
                     }
-                    try{
+                    try {
                         clientWebSocket.onMute(mutests);
-                    }catch (Exception e) {
+                    } catch (Exception e) {
 
                     }
                     break;
@@ -309,13 +310,13 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
         localRender = null;
         VideoRendererGui.remove(localRender);
         sos_button.setVisibility(sos_button.VISIBLE);
-        try{
+        try {
             if (!clientWebSocket.mWebSocketClient.isClosed()) {
                 Log.e("SSSSS", "clientWebSocket disconnect");
                 clientWebSocket.clearSocket();
                 clientWebSocket.mWebSocketClient.close();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             clientWebSocket.mediaDipose();
         }
         clientWebSocket = null;
@@ -433,7 +434,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     if (!file.exists())
                         file.createNewFile();
                     FileOutputStream fos = new FileOutputStream(file);
-                    for ( ; ; ) {
+                    for (; ; ) {
                         Read = is.read(tmpByte);
                         if (Read <= 0) {
                             break;
@@ -556,6 +557,8 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT)
                             .setTitle("안전도우미가 전송한 메시지가 도착하였습니다.").setPositiveButton("확인", okListener)
                             .setNegativeButton("취소", cancelListener).show();
+
+                    PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(Constants.PREF_FILE_RECEIVE_DT, DateUtils.getTimeString()).apply();
                     break;
                 case 6:
                     vsv.setVisibility(vsv.INVISIBLE);

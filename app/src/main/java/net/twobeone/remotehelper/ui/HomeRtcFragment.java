@@ -1,6 +1,7 @@
 package net.twobeone.remotehelper.ui;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -125,6 +126,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     private String mDeviceID;
     private ViewGroup viewGroupParent;
     private AudioManager mAudioManager;
+    private ProgressDialog progressDialog;
 
     private void setting() {
         cam = Camera.open(1);
@@ -163,6 +165,14 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
         music = MediaPlayer.create(getContext(), R.raw.test);
         music.setLooping(false);
+
+        progressDialog = new ProgressDialog(
+                getContext());
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("상담원을 찾는 중입니다.");
+        progressDialog.show();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         userName = prefs.getString(Constants.PREF_USER_NAME, null);
@@ -432,6 +442,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 URL fileurl;
                 int Read;
                 try {
+                    handler.sendEmptyMessage(7);
                     fileurl = new URL(ServerUrl);
                     HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
                     byte[] tmpByte = new byte[1024];
@@ -472,6 +483,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     hangup.setVisibility(hangup.INVISIBLE);
                     sv.setVisibility(sv.VISIBLE);
                     vsv.setVisibility(vsv.INVISIBLE);
+                    progressDialog.dismiss();
                     break;
                 case 1:
                     new CountDownTimer(5000, 500) {
@@ -510,6 +522,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     break;
                 case 2:
                     Toast.makeText(getActivity().getApplicationContext(), iceStatus, Toast.LENGTH_SHORT).show();
+                    if(iceStatus.equals("상담원과 연결이 되었습니다.")){
+                        progressDialog.dismiss();
+                    }
                     break;
                 case 3:
                     try {
@@ -535,6 +550,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     getActivity().onBackPressed();
                     break;
                 case 5:
+                    progressDialog.dismiss();
                     DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
 
                         @Override
@@ -605,6 +621,10 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                         }
                     };
                     timer.schedule(timerTask, music.getDuration() - 500);
+                    break;
+                case 7:
+                    progressDialog.setMessage("파일을 다운로드받는 중입니다.");
+                    progressDialog.show();
                     break;
             }
         }

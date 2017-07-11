@@ -29,6 +29,7 @@ import net.twobeone.remotehelper.util.PermissionUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -146,7 +147,9 @@ public final class FileBoxFragment extends BaseFragment {
 
         public void selectItems() {
             if (PermissionUtils.hasPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                mFiles = new LinkedList<>(Arrays.asList(mDirectory.listFiles()));
+                File[] listFiles = mDirectory.listFiles();
+                Arrays.sort(listFiles, new FileSort());
+                mFiles = new LinkedList<>(Arrays.asList(listFiles));
                 for (int i = mFiles.size() - 1; i >= 0; i--) {
                     File file = mFiles.get(i);
                     if (file.isDirectory() || file.length() == 0) {
@@ -154,6 +157,19 @@ public final class FileBoxFragment extends BaseFragment {
                     }
                 }
                 notifyDataSetChanged();
+            }
+        }
+
+        private class FileSort implements Comparator<File> {
+
+            @Override
+            public int compare(File f1, File f2) {
+                if (f1.lastModified() > f2.lastModified())
+                    return -1;
+                else if (f1.lastModified() == f2.lastModified())
+                    return 0;
+                else
+                    return 1;
             }
         }
 

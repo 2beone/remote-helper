@@ -361,18 +361,19 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     public void onStatusChanged(final String newStatus, final String helper_id) {
         iceStatus = newStatus;
         if (newStatus.equals("CONNECTING")) {
-            handler.sendEmptyMessage(3);
             iceStatus = "상담원과 연결이 되었습니다.";
             handler.sendEmptyMessage(2);
-        } else if(newStatus.contains("HELPERID")){
+        } else if(newStatus.equals("HELPERID")){
             helper_ID = helper_id;
-            handler.sendEmptyMessage(8);
+            handler.sendEmptyMessage(7);
+        } else if (newStatus.equals("ONADDSTREAM")){
+            clientWebSocket.onMute(mutests);
         }
     }
 
     @Override
     public void onClose() {
-        handler.sendEmptyMessage(4);
+        handler.sendEmptyMessage(3);
     }
 
     @Override
@@ -446,7 +447,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                 URL fileurl;
                 int Read;
                 try {
-                    handler.sendEmptyMessage(7);
+                    handler.sendEmptyMessage(6);
                     fileurl = new URL(ServerUrl);
                     HttpURLConnection conn = (HttpURLConnection) fileurl.openConnection();
                     byte[] tmpByte = new byte[1024];
@@ -467,7 +468,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     fos.close();
                     conn.disconnect();
 
-                    handler.sendEmptyMessage(5);
+                    handler.sendEmptyMessage(4);
                 } catch (MalformedURLException e) {
                     Log.e("ERROR1", e.getMessage());
                 } catch (IOException e) {
@@ -531,29 +532,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     }
                     break;
                 case 3:
-                    try {
-                        new CountDownTimer(1000, 500) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                try {
-                                    clientWebSocket.onMute(mutests);
-                                } catch (Exception e) {
-
-                                }
-                            }
-                        }.start();
-                    } catch (Exception e) {
-                        Log.e("SSSSS", e.toString());
-                    }
-                    break;
-                case 4:
                     getActivity().onBackPressed();
                     break;
-                case 5:
+                case 4:
                     progressDialog.dismiss();
                     DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
 
@@ -587,7 +568,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
                     PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putString(Constants.PREF_FILE_RECEIVE_DT, DateUtils.getTimeString()).apply();
                     break;
-                case 6:
+                case 5:
                     vsv.setVisibility(vsv.INVISIBLE);
                     voice_img.setVisibility(voice_img.VISIBLE);
                     mute_button.setVisibility(mute_button.INVISIBLE);
@@ -626,11 +607,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     };
                     timer.schedule(timerTask, music.getDuration() - 500);
                     break;
-                case 7:
+                case 6:
                     progressDialog.setMessage("파일을 다운로드받는 중입니다.");
                     progressDialog.show();
                     break;
-                case 8:
+                case 7:
 //                    progressDialog.dismiss();
                     progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
                     progressDialog.show();
@@ -751,6 +732,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
     @Override
     public void onLeave() {
-        handler.sendEmptyMessage(6);
+        handler.sendEmptyMessage(5);
     }
 }

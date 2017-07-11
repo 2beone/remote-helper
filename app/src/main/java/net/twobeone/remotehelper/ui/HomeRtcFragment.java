@@ -396,6 +396,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
             if (!dir.exists()) {
                 dir.mkdir();
             }
+
             try {
                 mediaRecorder = new MediaRecorder();
                 cam.lock();

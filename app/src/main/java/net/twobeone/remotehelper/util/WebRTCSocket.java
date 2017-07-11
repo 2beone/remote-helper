@@ -574,6 +574,7 @@ public class WebRTCSocket {
             try {
                 remoteMS = mediaStream;
                 Log.e("SSSSS", "onAddRemoteStream " + mediaStream.label());
+
                 mListener.onStatusChanged("ONADDSTREAM","");
             } catch (Exception e) {
             }

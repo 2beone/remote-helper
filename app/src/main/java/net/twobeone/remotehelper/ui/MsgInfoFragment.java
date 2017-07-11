@@ -27,10 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-/**
- * Created by Administrator on 2017-06-22.
- */
-
 public class MsgInfoFragment extends Fragment {
 
     private View view;

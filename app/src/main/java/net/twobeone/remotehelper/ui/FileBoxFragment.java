@@ -97,13 +97,13 @@ public final class FileBoxFragment extends BaseFragment {
         super.onStop();
     }
 
-    public static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+    static final class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
         private final Context mContext;
         private final File mDirectory;
         private List<File> mFiles;
 
-        public RecyclerViewAdapter(Context context) {
+        RecyclerViewAdapter(Context context) {
             mContext = context;
             mDirectory = FileUtils.makeDirectoryIfNotExists(String.format("%s/%s/", Environment.getExternalStorageDirectory().getAbsolutePath(), Constants.DONWLOAD_DIRECTORY_NAME));
         }
@@ -125,7 +125,12 @@ public final class FileBoxFragment extends BaseFragment {
             }
         }
 
-        public long getMediaDuration(File file) {
+        @Override
+        public int getItemCount() {
+            return mFiles == null ? 0 : mFiles.size();
+        }
+
+        long getMediaDuration(File file) {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             try {
                 retriever.setDataSource(mContext, Uri.fromFile(file));
@@ -140,12 +145,7 @@ public final class FileBoxFragment extends BaseFragment {
             return 0;
         }
 
-        @Override
-        public int getItemCount() {
-            return mFiles == null ? 0 : mFiles.size();
-        }
-
-        public void selectItems() {
+        void selectItems() {
             if (PermissionUtils.hasPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 File[] listFiles = mDirectory.listFiles();
                 Arrays.sort(listFiles, new FileSort());
@@ -192,7 +192,7 @@ public final class FileBoxFragment extends BaseFragment {
             TextView tvFileDuration;
             FragmentTransaction fragmentTransaction;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 ivFileType = (ImageView) view.findViewById(R.id.iv_file_type);
                 tvFileName = (TextView) view.findViewById(R.id.tv_file_name);

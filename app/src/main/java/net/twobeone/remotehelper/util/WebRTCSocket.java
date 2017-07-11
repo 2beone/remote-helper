@@ -88,10 +88,12 @@ public class WebRTCSocket {
     private String regId = "";
     private String device_ID = "";
     private boolean helper_Recall = false;
+    private int random_list;
+    private int list_cnt;
 
     public interface RtcListener {
 
-        void onStatusChanged(String newStatus);
+        void onStatusChanged(String newStatus, String helper_id);
 
         void onLocalStream(MediaStream localStream);
 
@@ -275,7 +277,8 @@ public class WebRTCSocket {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
 
-                                        int random_list = (int) (Math.random() * data.getJSONArray("people").length());
+                                        list_cnt = data.getJSONArray("people").length() - 1;
+                                        random_list = (int) (Math.random() * data.getJSONArray("people").length());
                                         Log.e("SSSSS","random :: " + random_list);
 
                                         if (helper_Recall && data.getJSONArray("people").toString().contains(helper_id)) {
@@ -299,11 +302,6 @@ public class WebRTCSocket {
                                         } else if (!helper_Recall) {
 
                                             people = data.getJSONArray("people").getString(random_list);
-
-                                            if (people.equals("police")) {
-                                                people = "";
-                                                people = data.getJSONArray("people").getString(0);
-                                            }
 
                                             JSONObject message = new JSONObject();
                                             message.put("type", "call");
@@ -332,6 +330,7 @@ public class WebRTCSocket {
                                         audioSource = null;
                                         startRecording();
                                     }
+                                    mListener.onStatusChanged("HELPERID",people);
                                 } else if (type.equals("candidate")) {
                                     payload = data.getJSONObject("candidate");
                                 } else if (type.equals("callAnswer")) {
@@ -377,6 +376,32 @@ public class WebRTCSocket {
                                     message.put("name", people);
                                     message.put("saviorName", userName);
                                     mWebSocketClient.send(message.toString());
+                                } else if (type.equals("callNotAnswer")){
+                                    if(list_cnt == 0){
+                                        localMS.dispose();
+                                        localMS = null;
+                                        videoSource.dispose();
+                                        videoSource = null;
+                                        videoCapturer.dispose();
+                                        videoCapturer = null;
+                                        audioSource.dispose();
+                                        audioSource = null;
+                                        startRecording();
+                                    }else{
+                                        if(list_cnt == random_list) {
+                                            --random_list;
+                                        } else{
+                                            ++random_list;
+                                        }
+                                        people = data.getJSONArray("people").getString(random_list);
+                                        Log.e("SSSSS","random :: " + random_list);
+
+                                        JSONObject message = new JSONObject();
+                                        message.put("type", "call");
+                                        message.put("name", people);
+                                        message.put("saviorName", userName);
+                                        mWebSocketClient.send(message.toString());
+                                    }
                                 }
                                 // if peer is unknown, try to add him
                                 if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call")
@@ -524,7 +549,6 @@ public class WebRTCSocket {
                 for (WebRTCSocket.Peer peer : peers.values()) {
                     peer.pc.dispose();
                 }
-                mListener.onStatusChanged("DISCONNECTED");
             }
         }
 
@@ -576,7 +600,7 @@ public class WebRTCSocket {
 
             pc.addStream(localMS); //, new MediaConstraints()
 
-            mListener.onStatusChanged("CONNECTING");
+            mListener.onStatusChanged("CONNECTING","");
         }
     }
 

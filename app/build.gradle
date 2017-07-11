@@ -9,7 +9,7 @@ android {
         targetSdkVersion 25
         // multiDexEnabled true
         versionCode 2
-        versionName "0.9.7"
+        versionName "0.9.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dataBinding {

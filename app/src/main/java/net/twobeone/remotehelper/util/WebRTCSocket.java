@@ -89,7 +89,7 @@ public class WebRTCSocket {
     private String device_ID = "";
     private boolean helper_Recall = false;
     private int random_list;
-    private int list_cnt;
+    private boolean helper_emty = true;
 
     public interface RtcListener {
 
@@ -277,7 +277,6 @@ public class WebRTCSocket {
                                     Log.e("SSSSS list", "" + data.getJSONArray("people").length());
                                     if (data.getJSONArray("people").length() > 0) {
 
-                                        list_cnt = data.getJSONArray("people").length() - 1;
                                         random_list = (int) (Math.random() * data.getJSONArray("people").length());
                                         Log.e("SSSSS","random :: " + random_list);
 
@@ -377,7 +376,9 @@ public class WebRTCSocket {
                                     message.put("saviorName", userName);
                                     mWebSocketClient.send(message.toString());
                                 } else if (type.equals("callNotAnswer")){
-                                    if(list_cnt == 0){
+
+                                        helper_emty = false;
+                                        mListener.onStatusChanged("callNotAnswer",people);
                                         localMS.dispose();
                                         localMS = null;
                                         videoSource.dispose();
@@ -387,25 +388,35 @@ public class WebRTCSocket {
                                         audioSource.dispose();
                                         audioSource = null;
                                         startRecording();
-                                    }else{
-                                        if(list_cnt == random_list) {
-                                            --random_list;
-                                        } else{
-                                            ++random_list;
-                                        }
-                                        people = data.getJSONArray("people").getString(random_list);
-                                        Log.e("SSSSS","random :: " + random_list);
 
-                                        JSONObject message = new JSONObject();
-                                        message.put("type", "call");
-                                        message.put("name", people);
-                                        message.put("saviorName", userName);
-                                        mWebSocketClient.send(message.toString());
-                                    }
+//                                    if(data.getJSONArray("people").length() == 0){
+//                                    if(true){
+//                                        helper_emty = false;
+//                                        mListener.onStatusChanged("callNotAnswer",people);
+//                                        localMS.dispose();
+//                                        localMS = null;
+//                                        videoSource.dispose();
+//                                        videoSource = null;
+//                                        videoCapturer.dispose();
+//                                        videoCapturer = null;
+//                                        audioSource.dispose();
+//                                        audioSource = null;
+//                                        startRecording();
+//                                    }else{
+//                                        people = data.getJSONArray("people").getString(random_list);
+//                                        Log.e("SSSSS","random :: " + random_list);
+//
+//                                        JSONObject message = new JSONObject();
+//                                        message.put("type", "call");
+//                                        message.put("name", people);
+//                                        message.put("saviorName", userName);
+//                                        mWebSocketClient.send(message.toString());
+//                                        mListener.onStatusChanged("HELPERID",people);
+//                                    }
                                 }
                                 // if peer is unknown, try to add him
                                 if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call")
-                                        && !type.equals("cameraClick") && !type.equals("file") && !type.equals("police") && !people.equals("")) {
+                                        && !type.equals("cameraClick") && !type.equals("file") && !type.equals("police") && !people.equals("") && !type.equals("callNotAnswer")) {
                                     // if MAX_PEER is reach, ignore the call
 
                                     int endPoint = findEndPoint();
@@ -415,7 +426,7 @@ public class WebRTCSocket {
                                         Log.e("SSSSS", "TYPE!!!!!!" + type);
                                         commandMap.get(type).execute(people, payload);
                                     }
-                                } else if (!type.equals("leave") && !type.equals("login") && !type.equals("file") && !people.equals("") && !type.equals("police")) {
+                                } else if (!type.equals("leave") && !type.equals("login") && !type.equals("file") && !people.equals("") && !type.equals("police") && !type.equals("callNotAnswer")) {
                                     Log.e("SSSSS", "TYPE!!!!!!" + type);
                                     commandMap.get(type).execute(people, payload);
                                 }
@@ -721,15 +732,18 @@ public class WebRTCSocket {
     }
 
     public void clearSocket() {
-        try {
-            JSONObject message = new JSONObject();
-            message.put("type", "leave");
-            message.put("name", people);
-            mWebSocketClient.send(message.toString());
-        } catch (JSONException e) {
+        if(helper_emty){
+            try {
+                JSONObject message = new JSONObject();
+                message.put("type", "leave");
+                message.put("name", people);
+                mWebSocketClient.send(message.toString());
+                Log.e("SSSSS","clearSocket");
+            } catch (JSONException e) {
 
-        } catch (Exception e) {
+            } catch (Exception e) {
 
+            }
         }
     }
 

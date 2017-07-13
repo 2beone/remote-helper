@@ -368,6 +368,9 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
             handler.sendEmptyMessage(7);
         } else if (newStatus.equals("ONADDSTREAM")){
             clientWebSocket.onMute(mutests);
+        } else if (newStatus.equals("callNotAnswer")){
+            iceStatus = "상담원("+helper_id+") 연결에 실패하였습니다.";
+            handler.sendEmptyMessage(2);
         }
     }
 
@@ -613,7 +616,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     progressDialog.show();
                     break;
                 case 7:
-//                    progressDialog.dismiss();
+                    try{
+                        progressDialog.dismiss();
+                    }catch (Exception e){
+
+                    }
                     progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
                     progressDialog.show();
                     break;

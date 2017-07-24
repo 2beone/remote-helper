@@ -36,7 +36,11 @@ public final class MainActivity extends BaseActivity {
     public static final String REDIRECT = "redirect";
 
     public interface Redirect {
-        int FILE_BOX = 1;
+        int CALL = 1;
+        int FILE_BOX = 2;
+        int HELP = 3;
+        int SETTINGS = 4;
+        int SAFETY = 5;
     }
 
     private static String regid;

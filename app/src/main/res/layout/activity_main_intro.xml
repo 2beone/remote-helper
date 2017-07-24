@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
@@ -19,24 +20,58 @@
         android:layout_height="match_parent"
         android:layout_marginTop="70dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="안전지대" />
-
-        <Button
-            android:id="@+id/btn_file_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="보관함" />
-
+        <!-- 영상통화 -->
         <ImageButton
             android:id="@+id/btn_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@null"
-            android:src="@drawable/btn_call_intro" />
+            android:src="@drawable/btn_intro_call" />
+
+        <!-- 설정 -->
+        <ImageButton
+            android:id="@+id/btn_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_call"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:background="@null"
+            android:src="@drawable/btn_intro_setting" />
+
+        <!-- 안전지대 -->
+        <ImageButton
+            android:id="@+id/btn_safety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/btn_call"
+            android:background="@null"
+            android:src="@drawable/btn_intro_safety" />
+
+        <!-- 도움말 -->
+        <ImageButton
+            android:id="@+id/btn_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/btn_call"
+            android:background="@null"
+            android:src="@drawable/btn_intro_help" />
+
+        <!-- 보관함 -->
+        <ImageButton
+            android:id="@+id/btn_file_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_call"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:src="@drawable/btn_intro_filebox" />
     </RelativeLayout>
 
 </LinearLayout>

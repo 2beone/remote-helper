@@ -7,7 +7,7 @@ import android.os.Handler;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.PermissionUtils;
 
-public class IntroActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity {
 
     private static final int REQUEST_CODE_PERMISSION = 1;
 
@@ -35,7 +35,7 @@ public class IntroActivity extends BaseActivity {
     }
 
     private void startIntroActivity() {
-        setContentView(R.layout.activity_intro);
+        setContentView(R.layout.activity_splash);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -45,7 +45,7 @@ public class IntroActivity extends BaseActivity {
     }
 
     private void startMainActivity() {
-        startActivity(new Intent(IntroActivity.this, MainActivity.class));
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
         overridePendingTransition(R.transition.slide_fade_in, R.transition.slide_fade_out);
         finish();
     }

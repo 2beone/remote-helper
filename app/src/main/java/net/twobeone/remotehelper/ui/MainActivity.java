@@ -33,6 +33,12 @@ import java.io.IOException;
 
 public final class MainActivity extends BaseActivity {
 
+    public static final String REDIRECT = "redirect";
+
+    public interface Redirect {
+        int FILE_BOX = 1;
+    }
+
     private static String regid;
     private GoogleCloudMessaging gcm;
     private Context context;
@@ -49,9 +55,9 @@ public final class MainActivity extends BaseActivity {
 
         Intent intent = getIntent();
         helper_id = "false";
-        try{
+        try {
             helper_id = intent.getExtras().getString("helper_id");
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("SSSSS", "GCMNoCallPush :::: " + helper_id);
         }
 
@@ -98,6 +104,14 @@ public final class MainActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // 리다이렉트
+        switch (getIntent().getIntExtra(REDIRECT, 0)) {
+            case Redirect.FILE_BOX:
+                // tabLayout.getTabAt(1).select();
+                mViewPager.setCurrentItem(1);
+                break;
+        }
     }
 
     @Override

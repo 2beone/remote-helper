@@ -5,7 +5,6 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -15,7 +14,6 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="net.twobeone.remotehelper.permission.C2D_MESSAGE" />
-
 
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.VIBRATE" />

@@ -35,13 +35,16 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
                 startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.FILE_BOX));
                 break;
             case R.id.btn_help:
-                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.HELP));
+                startActivity(new Intent(this, HelpActivity.class));
+                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.HELP));
                 break;
             case R.id.btn_setting:
-                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SETTINGS));
+                startActivity(new Intent(this, SettingsActivity.class));
+                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SETTINGS));
                 break;
             case R.id.btn_safety:
-                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SAFETY));
+                startActivity(new Intent(this, MapActivity.class));
+                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SAFETY));
                 break;
         }
     }

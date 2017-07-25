@@ -122,6 +122,7 @@ public class HomeFragment extends BaseFragment {
         });
 
         Log.e("SSSSS", "상담원 연결 :: " + getArguments().getString("helper_id", "false"));
+
         switch (getArguments().getString("helper_id", "false")) {
             case "false":
                 break;

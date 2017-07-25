@@ -376,7 +376,6 @@ public class WebRTCSocket {
                                     message.put("saviorName", userName);
                                     mWebSocketClient.send(message.toString());
                                 } else if (type.equals("callNotAnswer")){
-
                                         helper_emty = false;
                                         mListener.onStatusChanged("callNotAnswer",people);
                                         localMS.dispose();
@@ -388,31 +387,6 @@ public class WebRTCSocket {
                                         audioSource.dispose();
                                         audioSource = null;
                                         startRecording();
-
-//                                    if(data.getJSONArray("people").length() == 0){
-//                                    if(true){
-//                                        helper_emty = false;
-//                                        mListener.onStatusChanged("callNotAnswer",people);
-//                                        localMS.dispose();
-//                                        localMS = null;
-//                                        videoSource.dispose();
-//                                        videoSource = null;
-//                                        videoCapturer.dispose();
-//                                        videoCapturer = null;
-//                                        audioSource.dispose();
-//                                        audioSource = null;
-//                                        startRecording();
-//                                    }else{
-//                                        people = data.getJSONArray("people").getString(random_list);
-//                                        Log.e("SSSSS","random :: " + random_list);
-//
-//                                        JSONObject message = new JSONObject();
-//                                        message.put("type", "call");
-//                                        message.put("name", people);
-//                                        message.put("saviorName", userName);
-//                                        mWebSocketClient.send(message.toString());
-//                                        mListener.onStatusChanged("HELPERID",people);
-//                                    }
                                 }
                                 // if peer is unknown, try to add him
                                 if (!peers.containsKey(people) && !type.equals("leave") && !type.equals("login") && !type.equals("call")

@@ -172,8 +172,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
 
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
-//        progressDialog.setMessage("상담원을 찾는 중입니다.");
-//        progressDialog.show();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         userName = prefs.getString(Constants.PREF_USER_NAME, null);
@@ -325,6 +323,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     @Override
     public void onDetach() {
         Log.e("SSSSS", "Here6");
+        try{
+            progressDialog.dismiss();
+        }catch (Exception e){
+
+        }
         localRender = null;
         VideoRendererGui.remove(localRender);
         sos_button.setVisibility(sos_button.VISIBLE);
@@ -392,6 +395,7 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     public void onStartRecording() {
         VideoRendererGui.remove(localRender);
         handler.sendEmptyMessage(0);
+
         if (!recording) {
             setting();
             File dir = new File(Save_Path);

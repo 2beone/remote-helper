@@ -57,12 +57,14 @@ public final class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        helper_id = "false";
         try {
-            helper_id = intent.getExtras().getString("helper_id");
+            helper_id = getIntent().getExtras().getString("helper_id");
         } catch (Exception e) {
-            Log.e("SSSSS", "GCMNoCallPush :::: " + helper_id);
+            helper_id = "false";
+        }
+
+        if(getIntent().getIntExtra(REDIRECT, 0) == Redirect.CALL){
+            helper_id = "redirect";
         }
 
         checkPermissions();
@@ -115,6 +117,15 @@ public final class MainActivity extends BaseActivity {
                 // tabLayout.getTabAt(1).select();
                 mViewPager.setCurrentItem(1);
                 break;
+            case Redirect.SETTINGS:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                break;
+            case Redirect.HELP:
+                startActivity(new Intent(MainActivity.this, HelpActivity.class));
+                break;
+            case Redirect.SAFETY:
+                startActivity(new Intent(MainActivity.this, MapActivity.class));
+                break;
         }
     }
 
@@ -143,11 +154,12 @@ public final class MainActivity extends BaseActivity {
     }
 
     public void setupViewPager(ViewPager viewPager) {
+        if(helper_id == null)
+            helper_id = "false";
         android.support.v4.app.Fragment homeFragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString("helper_id", helper_id);
         homeFragment.setArguments(args);
-        Log.e("SSSSS", "setupViewPager :::: " + helper_id);
 
         MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mainPagerAdapter.addFragment(homeFragment, getResources().getString(R.string.main_tab1_title));

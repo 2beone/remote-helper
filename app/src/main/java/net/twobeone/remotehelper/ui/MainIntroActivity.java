@@ -31,7 +31,7 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_call:
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_video_call_black_24dp).setTitle(R.string.confirm).setMessage(R.string.confirm_call).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this).setIcon(R.drawable.ic_video_call_black_24dp).setTitle(R.string.confirm_call_title).setMessage(R.string.confirm_call).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         startActivity(new Intent(MainIntroActivity.this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.CALL));

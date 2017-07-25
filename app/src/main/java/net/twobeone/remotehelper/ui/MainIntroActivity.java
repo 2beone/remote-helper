@@ -17,7 +17,7 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_intro);
-        ((TextView) findViewById(R.id.tv_title)).setText("원격안전도우미 v" + AppUtils.getPackageInfo(this).versionName);
+        ((TextView) findViewById(R.id.tv_version)).setText("현재버전: v" + AppUtils.getPackageInfo(this).versionName);
         setOnClickListener(R.id.btn_call, R.id.btn_file_box, R.id.btn_help, R.id.btn_setting, R.id.btn_safety);
 
         if (!hasAllPermissions()) {

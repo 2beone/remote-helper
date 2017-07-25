@@ -15,10 +15,17 @@
         android:textColor="#fff"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:paddingLeft="17dp"
+        android:textColor="#fff" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="70dp">
+        android:layout_marginTop="50dp">
 
         <!-- 영상통화 -->
         <ImageButton

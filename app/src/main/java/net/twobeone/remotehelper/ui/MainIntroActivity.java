@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
+import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
 import net.twobeone.remotehelper.util.AppUtils;
 import net.twobeone.remotehelper.util.PermissionUtils;
+import net.twobeone.remotehelper.util.StringUtils;
 
 public class MainIntroActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
 
@@ -31,12 +34,22 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_call:
-                new AlertDialog.Builder(this).setIcon(R.drawable.ic_video_call_black_24dp).setTitle(R.string.confirm_call_title).setMessage(R.string.confirm_call).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(MainIntroActivity.this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.CALL));
-                    }
-                }).show();
+
+                if (StringUtils.isNullOrEmpty(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREF_USER_NAME, ""))) {
+                    new AlertDialog.Builder(this).setMessage(R.string.confirm_need_myinfo_title).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(MainIntroActivity.this, UserInfoActivity.class));
+                        }
+                    }).show();
+                } else {
+                    new AlertDialog.Builder(this).setIcon(R.drawable.ic_video_call_black_24dp).setTitle(R.string.confirm_call_title).setMessage(R.string.confirm_call).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(MainIntroActivity.this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.CALL));
+                        }
+                    }).show();
+                }
                 break;
             case R.id.btn_file_box:
                 startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.FILE_BOX));

@@ -34,9 +34,8 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_call:
-
                 if (StringUtils.isNullOrEmpty(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREF_USER_NAME, ""))) {
-                    new AlertDialog.Builder(this).setMessage(R.string.confirm_need_myinfo_title).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(this).setIcon(R.drawable.ic_assignment_black_24dp).setTitle(R.string.confirm_need_myinfo_title).setMessage(R.string.confirm_need_myinfo).setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             startActivity(new Intent(MainIntroActivity.this, UserInfoActivity.class));

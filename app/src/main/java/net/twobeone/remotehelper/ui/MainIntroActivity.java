@@ -51,6 +51,11 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_call:
+                startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.MUTECALL));
+                break;
+        }
         return true;
     }
 

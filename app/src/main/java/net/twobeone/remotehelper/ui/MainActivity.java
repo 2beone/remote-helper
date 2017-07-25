@@ -41,6 +41,7 @@ public final class MainActivity extends BaseActivity {
         int HELP = 3;
         int SETTINGS = 4;
         int SAFETY = 5;
+        int MUTECALL = 6;
     }
 
     private static String regid;
@@ -65,6 +66,8 @@ public final class MainActivity extends BaseActivity {
 
         if(getIntent().getIntExtra(REDIRECT, 0) == Redirect.CALL){
             helper_id = "redirect";
+        } else if (getIntent().getIntExtra(REDIRECT, 0) == Redirect.MUTECALL){
+            helper_id = "redirect_mute";
         }
 
         checkPermissions();

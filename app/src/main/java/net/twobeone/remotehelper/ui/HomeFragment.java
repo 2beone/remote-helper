@@ -101,21 +101,25 @@ public class HomeFragment extends BaseFragment {
         sos_button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                //중복 클릭 방지
-                sos_button.setEnabled(false);
-                Handler h = new Handler();
-                h.postDelayed(new splashhandler(), 3000);
+                // 사용자를 체크합니다.
+                if (!UserUtils.isRegisted(getActivity())) {
+                    Toast.makeText(getContext(), "먼저 사용자 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                }else{
+                    //중복 클릭 방지
+                    sos_button.setEnabled(false);
+                    Handler h = new Handler();
+                    h.postDelayed(new splashhandler(), 3000);
 
-                Bundle args = new Bundle();
-                args.putString("isMute", "true");
-                fragment = new HomeRtcFragment();
-                fm = getFragmentManager();
-                fragment.setArguments(args);
-                fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.home_fragment, fragment, "rtcfragment");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-
+                    Bundle args = new Bundle();
+                    args.putString("isMute", "true");
+                    fragment = new HomeRtcFragment();
+                    fm = getFragmentManager();
+                    fragment.setArguments(args);
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.replace(R.id.home_fragment, fragment, "rtcfragment");
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
                 return false;
             }
         });
@@ -124,7 +128,6 @@ public class HomeFragment extends BaseFragment {
             case "false":
                 break;
             case "redirect":
-
                 // 사용자를 체크합니다.
                 if (!UserUtils.isRegisted(getActivity())) {
                     Toast.makeText(getContext(), "먼저 사용자 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show();
@@ -145,8 +148,28 @@ public class HomeFragment extends BaseFragment {
                     fragmentTransaction.commit();
                 }
                 break;
-            default:
+            case "redirect_mute":
+                // 사용자를 체크합니다.
+                if (!UserUtils.isRegisted(getActivity())) {
+                    Toast.makeText(getContext(), "먼저 사용자 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                }else{
+                    //중복 클릭 방지
+                    sos_button.setEnabled(false);
+                    Handler h = new Handler();
+                    h.postDelayed(new splashhandler(), 3000);
 
+                    Bundle args = new Bundle();
+                    args.putString("isMute", "true");
+                    fragment = new HomeRtcFragment();
+                    fm = getFragmentManager();
+                    fragment.setArguments(args);
+                    fragmentTransaction = fm.beginTransaction();
+                    fragmentTransaction.replace(R.id.home_fragment, fragment, "rtcfragment");
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                break;
+            default:
                 sos_button.setEnabled(false);
                 Handler h = new Handler();
                 h.postDelayed(new splashhandler(), 3000);

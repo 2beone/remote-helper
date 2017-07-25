@@ -18,7 +18,7 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_intro);
         ((TextView) findViewById(R.id.tv_version)).setText("현재버전: v" + AppUtils.getPackageInfo(this).versionName);
-        setOnClickListener(R.id.btn_call, R.id.btn_file_box, R.id.btn_help, R.id.btn_setting, R.id.btn_safety);
+        setOnClickListener(R.id.btn_call, R.id.btn_file_box, R.id.btn_help, R.id.btn_setting, R.id.btn_myinfo, R.id.btn_safety);
 
         if (!hasAllPermissions()) {
             startActivityForResult(new Intent(this, PermissionActivity.class), REQUEST_CODE_PERMISSION);
@@ -36,15 +36,15 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_help:
                 startActivity(new Intent(this, HelpActivity.class));
-                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.HELP));
                 break;
             case R.id.btn_setting:
                 startActivity(new Intent(this, SettingsActivity.class));
-                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SETTINGS));
+                break;
+            case R.id.btn_myinfo:
+                startActivity(new Intent(this, UserInfoActivity.class));
                 break;
             case R.id.btn_safety:
                 startActivity(new Intent(this, MapActivity.class));
-                // startActivity(new Intent(this, MainActivity.class).putExtra(MainActivity.REDIRECT, MainActivity.Redirect.SAFETY));
                 break;
         }
     }

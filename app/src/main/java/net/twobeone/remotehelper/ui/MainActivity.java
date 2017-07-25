@@ -109,13 +109,12 @@ public final class MainActivity extends BaseActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        // 리다이렉트
-        switch (getIntent().getIntExtra(REDIRECT, 0)) {
-            case Redirect.FILE_BOX:
-                // tabLayout.getTabAt(1).select();
-                mViewPager.setCurrentItem(1);
-                break;
-        }
+//        // 리다이렉트
+//        switch (getIntent().getIntExtra(REDIRECT, 0)) {
+//            case Redirect.FILE_BOX:
+//                mViewPager.setCurrentItem(1);
+//                break;
+//        }
     }
 
     @Override

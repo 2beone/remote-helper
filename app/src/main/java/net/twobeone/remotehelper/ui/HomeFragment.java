@@ -120,7 +120,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        if (!getArguments().getString("helper_id").equals("false")) {
+        if (!"false".equals(getArguments().getString("helper_id"))) {
             sos_button.setEnabled(false);
             Handler h = new Handler();
             h.postDelayed(new splashhandler(), 3000);

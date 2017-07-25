@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,8 +119,6 @@ public class HomeFragment extends BaseFragment {
                 return false;
             }
         });
-
-        Log.e("SSSSS", "상담원 연결 :: " + getArguments().getString("helper_id", "false"));
 
         switch (getArguments().getString("helper_id", "false")) {
             case "false":

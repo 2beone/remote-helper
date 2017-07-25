@@ -64,7 +64,6 @@ public final class MainActivity extends BaseActivity {
         }
 
         if(getIntent().getIntExtra(REDIRECT, 0) == Redirect.CALL){
-
             helper_id = "redirect";
         }
 

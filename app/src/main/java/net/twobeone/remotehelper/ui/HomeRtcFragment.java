@@ -147,7 +147,6 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_rtc, container, false);
-
         viewGroupParent = container;
 
         getActivity().getWindow().addFlags(

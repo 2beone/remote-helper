@@ -156,6 +156,7 @@ public final class MainActivity extends BaseActivity {
     public void setupViewPager(ViewPager viewPager) {
         if(helper_id == null)
             helper_id = "false";
+
         android.support.v4.app.Fragment homeFragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString("helper_id", helper_id);

@@ -124,6 +124,7 @@ public class HomeFragment extends BaseFragment {
             case "false":
                 break;
             case "redirect":
+
                 // 사용자를 체크합니다.
                 if (!UserUtils.isRegisted(getActivity())) {
                     Toast.makeText(getContext(), "먼저 사용자 정보를 입력해 주세요.", Toast.LENGTH_SHORT).show();
@@ -145,6 +146,7 @@ public class HomeFragment extends BaseFragment {
                 }
                 break;
             default:
+
                 sos_button.setEnabled(false);
                 Handler h = new Handler();
                 h.postDelayed(new splashhandler(), 3000);

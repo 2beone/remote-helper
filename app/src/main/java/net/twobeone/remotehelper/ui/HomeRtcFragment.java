@@ -627,7 +627,11 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     }catch (Exception e){
 
                     }
-                    progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
+                    if(helper_ID == ""){
+                        progressDialog.setMessage("상담원을 찾지 못하였습니다.");
+                    } else {
+                        progressDialog.setMessage("상담원(" + helper_ID + ")에게 연결 중입니다.");
+                    }
                     progressDialog.show();
                     break;
             }

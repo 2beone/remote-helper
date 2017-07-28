@@ -98,4 +98,15 @@ public class MainIntroActivity extends BaseActivity implements View.OnClickListe
     private boolean hasAllPermissions() {
         return PermissionUtils.getRequiredPermissions(this).length == 0;
     }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this).setTitle("알림").setMessage("어플리케이션을 종료하시겠습니까?")
+                .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        }).show();
+    }
 }

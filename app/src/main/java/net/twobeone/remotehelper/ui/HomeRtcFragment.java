@@ -1,5 +1,6 @@
 package net.twobeone.remotehelper.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -596,20 +597,22 @@ public class HomeRtcFragment extends BaseFragment implements WebRTCSocket.RtcLis
                     Timer timer = new Timer();
                     TimerTask timerTask = new TimerTask() {
                         public void run() {
-                            getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    if (music.isPlaying()) {
-                                        music.stop();
-
-                                        sos_button.setVisibility(sos_button.VISIBLE);
-                                        viewGroupParent.removeView(view);
-                                        fm = getFragmentManager();
-                                        fragmentTransaction = fm.beginTransaction();
-                                        fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
-                                        fragmentTransaction.commitAllowingStateLoss();
+                            Activity parent = getActivity();
+                            if(parent != null) {
+                                parent.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        if (music.isPlaying()) {
+                                            music.stop();
+                                            sos_button.setVisibility(sos_button.VISIBLE);
+                                            viewGroupParent.removeView(view);
+                                            fm = getFragmentManager();
+                                            fragmentTransaction = fm.beginTransaction();
+                                            fragmentTransaction.remove(fm.findFragmentByTag("rtcfragment"));
+                                            fragmentTransaction.commitAllowingStateLoss();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     };
                     timer.schedule(timerTask, music.getDuration() - 500);

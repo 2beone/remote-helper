@@ -22,6 +22,7 @@
     <string name="nav_family_title">패밀리</string>
     <string name="nav_family1_title">오산시청 홈페이지</string>
     <string name="nav_family2_title">스마트오산</string>
+    <string name="nav_chat">상담톡(Demo)</string>
 
     <!-- 액티비티 타이틀 -->
     <string name="settings_activity_title">설정</string>

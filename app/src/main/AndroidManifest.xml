@@ -105,6 +105,13 @@
             </intent-filter>
         </receiver>
 
+
+        <!--상담톡-->
+        <activity
+            android:name=".ui.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppTheme"  />
+
         <!-- GCM 메세지 -->
         <receiver
             android:name="net.twobeone.remotehelper.util.GcmBroadcastReceiver"

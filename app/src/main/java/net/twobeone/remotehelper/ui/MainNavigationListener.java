@@ -42,6 +42,9 @@ public final class MainNavigationListener implements NavigationView.OnNavigation
             case R.id.nav_osan_smart:
                 AppUtils.launchOrMarket(mActivity, "kr.go.mosan");
                 break;
+            case R.id.nav_chat:
+                mActivity.startActivity(new Intent(mActivity, ChatActivity.class));
+                break;
         }
         return true;
     }

@@ -13,6 +13,11 @@ public final class Constants {
     public static final String HTTP_URI_FILE_DOWNLOAD = "https://remohelper.com:440/download/";
 
     /**
+     * Chat API URI
+     */
+    public static final String HTTP_URI_CHAT = "http://210.205.92.24:8220/chatbot/api/";
+
+    /**
      * 다운로드 디렉토리명
      */
     public static final String DONWLOAD_DIRECTORY_NAME = "RemoteHelper_download";

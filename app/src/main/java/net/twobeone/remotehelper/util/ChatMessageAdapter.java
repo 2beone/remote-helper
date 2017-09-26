@@ -1,25 +1,8 @@
-/*
- * Copyright 2014 Pierre Chabardes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.twobeone.remotehelper.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -77,14 +60,18 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
         chatText = (TextView) row.findViewById(R.id.singleMessage);
         ID = (TextView) row.findViewById(R.id.ID);
         chatText.setText(chatMessageObj.message);
-        chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bg_chat_in : R.drawable.bg_chat_in);
+        chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bg_chat : R.drawable.bg_chat);
+        chatText.setBackgroundColor(chatMessageObj.left ? Color.GREEN : Color.CYAN);
+        if(chatMessageObj.left){
+            singleMessageContainer.setPadding(10,0,300,0);
+            chatText.setPadding(10,0,0,0);
+        } else {
+            singleMessageContainer.setPadding(300,0,10,0);
+            chatText.setPadding(0,0,10,0);
+        }
         ID.setText(chatMessageObj.left ? "안전도우미" : userName);
         singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
         ID.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
         return row;
-    }
-
-    public Bitmap decodeToBitmap(byte[] decodedByte) {
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 }

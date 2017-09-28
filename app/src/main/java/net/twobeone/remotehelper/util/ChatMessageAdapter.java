@@ -1,77 +1,99 @@
 package net.twobeone.remotehelper.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.preference.PreferenceManager;
-import android.view.Gravity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.twobeone.remotehelper.Constants;
 import net.twobeone.remotehelper.R;
+import net.twobeone.remotehelper.model.ChatMessage;
+import net.twobeone.remotehelper.model.ChatUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
+public class ChatMessageAdapter extends RecyclerView.Adapter {
 
+    private Context mContext;
+    private ChatUser mChatUser;
+    private List<ChatMessage> mMessageList;
 
-public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
+    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
+    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
 
-    private TextView chatText;
-    private TextView ID;
-    private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
-    private LinearLayout singleMessageContainer;
+    public ChatMessageAdapter(Context context, ChatUser chatUser, List<ChatMessage> messageList) {
+        mContext = context;
+        mChatUser = chatUser;
+        mMessageList = messageList;
+    }
 
     @Override
-    public void add(ChatMessage object) {
-        chatMessageList.add(object);
-        super.add(object);
+    public int getItemCount() {
+        return mMessageList == null ? 0 : mMessageList.size();
     }
 
-    public ChatMessageAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-    }
-
-    public int getCount() {
-        return this.chatMessageList.size();
-    }
-
-    public ChatMessage getItem(int index) {
-        return this.chatMessageList.get(index);
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        if (row == null) {
-            LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.activity_chat_adapter, parent, false);
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String userName = prefs.getString(Constants.PREF_USER_NAME, "이름없음");
-
-        singleMessageContainer = (LinearLayout) row.findViewById(R.id.singleMessageContainer);
-        ChatMessage chatMessageObj = getItem(position);
-        chatText = (TextView) row.findViewById(R.id.singleMessage);
-        ID = (TextView) row.findViewById(R.id.ID);
-        chatText.setText(chatMessageObj.message);
-        chatText.setBackgroundResource(chatMessageObj.left ? R.drawable.bg_chat : R.drawable.bg_chat);
-        chatText.setBackgroundColor(chatMessageObj.left ? Color.GREEN : Color.CYAN);
-        if(chatMessageObj.left){
-            singleMessageContainer.setPadding(10,0,300,0);
-            chatText.setPadding(10,0,0,0);
+    @Override
+    public int getItemViewType(int position) {
+        ChatMessage message = mMessageList.get(position);
+        if (mChatUser.getUserId().equals(message.getSender().getUserId())) {
+            return VIEW_TYPE_MESSAGE_SENT;
         } else {
-            singleMessageContainer.setPadding(300,0,10,0);
-            chatText.setPadding(0,0,10,0);
+            return VIEW_TYPE_MESSAGE_RECEIVED;
         }
-        ID.setText(chatMessageObj.left ? "안전도우미" : userName);
-        singleMessageContainer.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
-        ID.setGravity(chatMessageObj.left ? Gravity.LEFT : Gravity.RIGHT);
-        return row;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
+            return new SentMessageHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_sent, parent, false));
+        } else if (viewType == VIEW_TYPE_MESSAGE_RECEIVED) {
+            return new ReceivedMessageHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_received, parent, false));
+        }
+        throw new IllegalArgumentException("viewType is not valid");
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ChatMessage message = mMessageList.get(position);
+        switch (holder.getItemViewType()) {
+            case VIEW_TYPE_MESSAGE_SENT:
+                ((SentMessageHolder) holder).bind(message);
+                break;
+            case VIEW_TYPE_MESSAGE_RECEIVED:
+                ((ReceivedMessageHolder) holder).bind(message);
+        }
+    }
+
+    private class SentMessageHolder extends RecyclerView.ViewHolder {
+        TextView messageText, timeText;
+
+        SentMessageHolder(View itemView) {
+            super(itemView);
+            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
+            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+        }
+
+        void bind(ChatMessage message) {
+            messageText.setText(message.getMessage());
+            timeText.setText(DateUtils.formatSameDayTime(message.getCreatedAt()));
+        }
+    }
+
+    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
+        TextView messageText, timeText, nameText;
+
+        ReceivedMessageHolder(View itemView) {
+            super(itemView);
+            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
+            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+            nameText = (TextView) itemView.findViewById(R.id.text_message_name);
+        }
+
+        void bind(ChatMessage message) {
+            messageText.setText(message.getMessage());
+            timeText.setText(DateUtils.formatSameDayTime(message.getCreatedAt()));
+            nameText.setText(message.getSender().getUserId());
+        }
     }
 }
